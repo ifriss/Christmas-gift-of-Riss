@@ -23,8 +23,6 @@ body{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;color:va
 button{font:inherit;font-size:11px;color:var(--fg);background:#101b3a;border:1px solid #2a3b70;border-radius:999px;padding:7px 11px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 button[aria-pressed="true"]{background:#1d2f63;border-color:var(--gold);color:var(--gold)}
 button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-
-/* Modal nhập tên */
 #modal{position:fixed;inset:0;background:rgba(3,6,26,0.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
 #modal.hidden{display:none}
 .modal-box{background:#0d1633;border:1px solid #2a3b70;border-radius:16px;padding:24px;width:100%;max-width:340px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
@@ -38,7 +36,62 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="name" title="Nhấn để đổi tên">TruongThanhThong</div>
+<div id="name" title="Nhấn để đổi tên">Christmas gift of Riss</div>
 <div id="hint">Drag to rotate. Tap for sparkles.</div>
 <div id="tt">t 00.00</div>
-<div id="hud"><div>rotation <b id="hr">0</b>&deg;</div><div>
+<div id="hud"><div>rotation <b id="hr">0</b>&deg;</div><div>lights <b id="hl">0</b></div><div>letters <b id="hc">0</b></div><div>fps <b id="hf">0</b></div></div>
+<div id="bar"></div>
+
+<div id="modal">
+  <div class="modal-box">
+    <h3>NHẬP TÊN HIỂN THỊ</h3>
+    <p>Tên của bạn sẽ xuất hiện phía trên cây thông</p>
+    <input type="text" id="name-input" placeholder="Nhập tên của bạn..." maxlength="40" autocomplete="off">
+    <div class="modal-actions">
+      <button id="save-btn">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id),cv=$('c'),ctx=cv.getContext('2d');
+const nameEl=$('name'),modal=$('modal'),nameInput=$('name-input'),saveBtn=$('save-btn');
+const savedName=localStorage.getItem('xmas_custom_name');
+if(savedName){
+  nameEl.textContent=savedName;
+  nameInput.value=savedName;
+}
+function applyName(){
+  const val=nameInput.value.trim();
+  if(val){
+    nameEl.textContent=val;
+    localStorage.setItem('xmas_custom_name',val);
+  }
+  modal.classList.add('hidden');
+}
+saveBtn.onclick=applyName;
+nameInput.onkeydown=e=>{if(e.key==='Enter')applyName()};
+nameEl.onclick=()=>{
+  nameInput.value=nameEl.textContent;
+  modal.classList.remove('hidden');
+  setTimeout(()=>nameInput.focus(),50);
+};
+setTimeout(()=>nameInput.focus(),100);
+
+const PAL=['#0d7a33','#17b848','#35e866','#b4ffbe','#ff3b3b','#ffcf4a','#4aa3ff','#ffffff','#ff7ad9','#8aa0c8','#eaf4ff','#fff1a8','#6b7fa6','#46557c','#52f0ff','#ff9a3c','#8b5a2b','#c4301f'];
+const rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const S={spin:!rm,snow:true,lights:true,garland:true,orn:true,star:true,gifts:true,sparkle:true,aurora:false,fire:false};
+const F={};for(const k in S)F[k]=0;
+const TAU=Math.PI*2,rnd=Math.random,cl=(v,a=0,b=1)=>v<a?a:v>b?b:v;
+const hs=(a,b)=>{let h=(Math.imul(a|0,374761393)+Math.imul(b|0,668265263))|0;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967296};
+const MODES=['Rise','Spiral','Sweep','Bloom'];let MODE=0,bp=-.25,mT=0;
+let W,H,dpr,cw,chh,cols,rows,N,chars,colr,zb,cx,baseY,treeH,groundRow,sky,msg='';
+const buckets=Array.from({length:PAL.length*8},()=>[]);
+function resize(){
+ dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;
+ cw=Math.max(5.5,Math.min(10,W/76));chh=cw*1.55;cols=Math.ceil(W/cw);rows=Math.ceil(H/chh);N=cols*rows;
+ chars=new Array(N);colr=new Int16Array(N);zb=new Float32Array(N);
+ treeH=Math.min(H*.55,W*1.25);cx=W/2;baseY=H*.72;groundRow=Math.floor(baseY/chh);
+ sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#03061a');sky.addColorStop(.7,'#0a1636');sky.addColorStop(1,'#0d1c42');
+ const m='MERRY CHRISTMAS';msg
