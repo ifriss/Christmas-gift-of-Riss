@@ -223,15 +223,15 @@
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
       top: calc(env(safe-area-inset-top, 0px) + 104px);
-      width: min(310px, calc(100vw - 28px));
-      max-height: min(420px, calc(100dvh - 245px));
-      background: rgba(13, 22, 51, 0.92);
+      width: min(340px, calc(100vw - 28px));
+      max-height: min(460px, calc(100dvh - 220px));
+      background: rgba(13, 22, 51, 0.94);
       border: 1px solid #2a3b70;
       border-radius: 14px;
       display: none;
       flex-direction: column;
       z-index: 40;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       overflow: hidden;
@@ -271,16 +271,20 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      font-size: 11px;
+      font-size: 11.5px;
     }
 
     .mb-item {
       background: #070e24;
       border: 1px solid #1e2d59;
       border-radius: 8px;
-      padding: 8px 10px;
-      line-height: 1.4;
+      padding: 9px 11px;
+      line-height: 1.5;
       word-break: break-word;
+    }
+
+    .mb-msg-text {
+      white-space: pre-wrap;
     }
 
     .mb-meta {
@@ -289,7 +293,7 @@
       color: var(--gold);
       font-weight: 700;
       font-size: 10px;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
 
     .mb-meta span {
@@ -301,6 +305,7 @@
       padding: 8px;
       border-top: 1px solid #2a3b70;
       display: flex;
+      align-items: flex-end;
       gap: 6px;
       background: #09112b;
     }
@@ -308,14 +313,20 @@
     #mb-input {
       flex: 1;
       min-width: 0;
+      min-height: 34px;
+      max-height: 120px;
+      resize: none;
+      overflow-y: auto;
       background: #050a1a;
       border: 1px solid #2a3b70;
       border-radius: 8px;
-      padding: 7px 9px;
+      padding: 8px 10px;
       color: var(--fg);
       font: inherit;
-      font-size: 11px;
+      font-size: 11.5px;
+      line-height: 1.4;
       outline: none;
+      box-sizing: border-box;
     }
 
     #mb-input:focus {
@@ -327,8 +338,9 @@
       border-color: var(--gold);
       color: var(--gold);
       font-weight: 700;
-      padding: 6px 12px;
+      padding: 8px 14px;
       white-space: nowrap;
+      height: 34px;
     }
 
     /* Tối ưu giao diện trên màn hình điện thoại */
@@ -472,7 +484,7 @@
       <div style="color:var(--dim);text-align:center;padding:16px 0">Đang tải lời chúc...</div>
     </div>
     <form class="mb-form" id="mb-form">
-      <input type="text" id="mb-input" placeholder="Gửi lời chúc của bạn..." maxlength="150" autocomplete="off">
+      <textarea id="mb-input" rows="1" placeholder="Viết thư chúc Giáng Sinh... (Shift+Enter xuống dòng)"></textarea>
       <button type="submit" id="mb-send">Gửi</button>
     </form>
   </div>
@@ -482,7 +494,7 @@
     <form class="modal-box" id="name-form">
       <h3>MÓN QUÀ GIÁNG SINH TỪ RISS ❤️</h3>
       <p>Nhập tên của bạn để nhận quà</p>
-      <input type="text" id="name-input" placeholder="Nhập tên của bạn..." maxlength="40" autocomplete="off">
+      <input type="text" id="name-input" placeholder="Nhập tên của bạn..." autocomplete="off">
       <div>
         <button type="submit" id="save-btn">Xác nhận</button>
       </div>
@@ -771,7 +783,7 @@
         input.focus();
       }, 100);
 
-      // --- Phần Mailbox Lời Chúc (Google Drive Sheets) ---
+      // --- Phần Mailbox Lời Chúc (Không giới hạn độ dài & số lượng) ---
       const mailBtn = document.getElementById('mail-btn');
       const mailbox = document.getElementById('mailbox');
       const mbClose = document.getElementById('mb-close');
@@ -783,7 +795,7 @@
 
       let wishes = [];
 
-      // Chống chèn mã HTML độc hại từ nội dung người dùng nhập
+      // Chống chèn mã HTML độc hại nhưng giữ nguyên dấu xuống dòng
       function escapeHTML(str) {
         return String(str).replace(/[&<>"']/g, function (m) {
           return {
@@ -806,7 +818,7 @@
           return (
             '<div class="mb-item">' +
               '<div class="mb-meta">' + escapeHTML(w.name) + '<span>' + escapeHTML(w.time || '') + '</span></div>' +
-              '<div>' + escapeHTML(w.msg) + '</div>' +
+              '<div class="mb-msg-text">' + escapeHTML(w.msg) + '</div>' +
             '</div>'
           );
         }).join('');
@@ -836,6 +848,22 @@
         mailbox.classList.remove('open');
       });
 
+      // Tự động giãn chiều cao ô nhập khi viết thư dài
+      function autoResizeInput() {
+        mbInput.style.height = 'auto';
+        mbInput.style.height = Math.min(mbInput.scrollHeight, 120) + 'px';
+      }
+
+      mbInput.addEventListener('input', autoResizeInput);
+
+      // Nhấn Enter để gửi, nhấn Shift + Enter để xuống dòng
+      mbInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          mbForm.dispatchEvent(new Event('submit', { cancelable: true }));
+        }
+      });
+
       mbForm.addEventListener('submit', async function (e) {
         e.preventDefault();
         const txt = mbInput.value.trim();
@@ -849,12 +877,13 @@
           String(d.getHours()).padStart(2, '0') + ':' +
           String(d.getMinutes()).padStart(2, '0');
 
-        // Hiển thị ngay lập tức trên giao diện cho mượt
+        // Hiển thị ngay lập tức trên giao diện
         wishes.unshift({ name: sender, msg: txt, time: nowStr });
         renderWishes();
         mbInput.value = '';
+        autoResizeInput();
 
-        // Gửi dữ liệu ngầm lên Google Sheet
+        // Gửi toàn bộ bức thư lên Google Sheet
         mbSend.disabled = true;
         mbSend.textContent = '...';
         try {
