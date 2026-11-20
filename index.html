@@ -119,24 +119,34 @@
       font-weight: 400;
     }
 
-    /* Chữ ký Dev góc phải dưới */
+    /* Chữ ký Dev góc phải dưới sát thanh nút bấm (3 màu tách biệt) */
     #dev-credit {
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 12px);
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 125px);
-      font-size: 10.5px;
-      line-height: 1.45;
-      color: var(--dim);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 48px);
+      font-size: 12.5px;
+      line-height: 1.5;
       text-align: right;
       pointer-events: none;
-      z-index: 10;
-      max-width: 220px;
+      z-index: 15;
+      max-width: 340px;
+      text-shadow: 0 2px 6px rgba(3, 6, 26, 0.95);
     }
 
-    #dev-credit b {
-      color: var(--gold);
+    #dev-credit .dc-role {
+      color: #52f0ff;
       font-weight: 700;
-      text-shadow: 0 0 8px #ffd36b44;
+    }
+
+    #dev-credit .dc-name {
+      color: #ffd36b;
+      font-weight: 700;
+      text-shadow: 0 0 10px #ffd36b55, 0 2px 6px rgba(3, 6, 26, 0.95);
+    }
+
+    #dev-credit .dc-wish {
+      color: #4ef57b;
+      font-weight: 600;
     }
 
     /* Thanh nút bấm điều khiển phía dưới */
@@ -330,12 +340,14 @@
       #name {
         top: calc(env(safe-area-inset-top, 0px) + 26px);
       }
-      #hud, #dev-credit {
+      #hud {
         font-size: 9.5px;
         bottom: calc(env(safe-area-inset-bottom, 0px) + 112px);
       }
       #dev-credit {
-        max-width: 170px;
+        font-size: 10.5px;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 74px);
+        max-width: 240px;
       }
       button {
         font-size: 10px;
@@ -443,8 +455,8 @@
   </div>
 
   <div id="dev-credit">
-    <b>DEV: RISS</b> - Trương Thành Thông<br>
-    chúc mọi người giáng sinh vui vẻ 🎄
+    <span class="dc-role">DEV:</span> <span class="dc-name">RISS - Trương Thành Thông</span><br>
+    <span class="dc-wish">chúc mọi người giáng sinh vui vẻ 🎄</span>
   </div>
 
   <div id="bar"></div>
