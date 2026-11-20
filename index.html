@@ -119,11 +119,11 @@
       font-weight: 400;
     }
 
-    /* Chữ ký Dev góc phải dưới sát thanh nút bấm (3 màu tách biệt) */
+    /* Chữ ký Dev góc phải dưới (3 màu tách biệt) */
     #dev-credit {
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 12px);
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 48px);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 52px);
       font-size: 12.5px;
       line-height: 1.5;
       text-align: right;
@@ -224,7 +224,7 @@
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
       top: calc(env(safe-area-inset-top, 0px) + 104px);
       width: min(340px, calc(100vw - 28px));
-      max-height: min(460px, calc(100dvh - 220px));
+      max-height: min(460px, calc(100dvh - 230px));
       background: rgba(13, 22, 51, 0.94);
       border: 1px solid #2a3b70;
       border-radius: 14px;
@@ -343,8 +343,8 @@
       height: 34px;
     }
 
-    /* Tối ưu giao diện trên màn hình điện thoại */
-    @media (max-width: 480px) {
+    /* Tối ưu giao diện trên màn hình điện thoại & tablet nhỏ */
+    @media (max-width: 640px) {
       #hint, #tt {
         font-size: 10px;
         top: calc(env(safe-area-inset-top, 0px) + 8px);
@@ -354,12 +354,13 @@
       }
       #hud {
         font-size: 9.5px;
-        bottom: calc(env(safe-area-inset-bottom, 0px) + 112px);
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 106px);
       }
+      /* Nâng chữ ký Dev cao hơn để không bao giờ chạm vào 2-3 hàng nút trên mobile */
       #dev-credit {
         font-size: 10.5px;
-        bottom: calc(env(safe-area-inset-bottom, 0px) + 74px);
-        max-width: 240px;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 106px);
+        max-width: 225px;
       }
       button {
         font-size: 10px;
@@ -371,6 +372,7 @@
       }
       #mailbox {
         top: calc(env(safe-area-inset-top, 0px) + 90px);
+        max-height: calc(100dvh - 245px);
       }
     }
 
@@ -732,11 +734,11 @@
   </script>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 2: XỬ LÝ MODAL NHẬP TÊN & MAILBOX LƯU GOOGLE SHEETS              -->
+  <!-- KHỐI 2: XỬ LÝ MODAL NHẬP TÊN & MAILBOX LƯU GOOGLE SHEETS (KÈM IP/DEV) -->
   <!-- ===================================================================== -->
   <script>
     (function () {
-      const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyyKNFQksKtjONL70AOoIIwg14K6m_-00yQoDO8yIsU4lfutB_wZjLorRg-vqu-N1BhSQ/exec";
+      const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxrsc-RtFFOPjfbTAjcTsxFcmlUMXPCkRslxr_ZotyQ0XaXHj0TecatX7oRseX22Zs24A/exec";
 
       // --- Phần Modal nhập tên người nhận quà ---
       const modal = document.getElementById('modal');
@@ -783,7 +785,7 @@
         input.focus();
       }, 100);
 
-      // --- Phần Mailbox Lời Chúc (Không giới hạn độ dài & số lượng) ---
+      // --- Phần Mailbox Lời Chúc (Không giới hạn độ dài & số lượng + ghi IP/Thiết bị) ---
       const mailBtn = document.getElementById('mail-btn');
       const mailbox = document.getElementById('mailbox');
       const mbClose = document.getElementById('mb-close');
@@ -795,7 +797,6 @@
 
       let wishes = [];
 
-      // Chống chèn mã HTML độc hại nhưng giữ nguyên dấu xuống dòng
       function escapeHTML(str) {
         return String(str).replace(/[&<>"']/g, function (m) {
           return {
@@ -806,6 +807,27 @@
             "'": '&#39;'
           }[m];
         });
+      }
+
+      function getDeviceInfo() {
+        const ua = navigator.userAgent;
+        let os = 'Khác';
+        if (/Windows NT 10\.0/.test(ua)) os = 'Windows 10/11';
+        else if (/Mac OS X/.test(ua)) os = 'macOS';
+        else if (/iPhone/.test(ua)) os = 'iPhone';
+        else if (/iPad/.test(ua)) os = 'iPad';
+        else if (/Android/.test(ua)) {
+          const match = ua.match(/Android\s[\d.]+;\s([^;)]+)/);
+          os = match ? 'Android (' + match[1].trim() + ')' : 'Android';
+        } else if (/Linux/.test(ua)) os = 'Linux';
+
+        let browser = 'Browser';
+        if (/Edg\//.test(ua)) browser = 'Edge';
+        else if (/Chrome\//.test(ua)) browser = 'Chrome';
+        else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) browser = 'Safari';
+        else if (/Firefox\//.test(ua)) browser = 'Firefox';
+
+        return os + ' - ' + browser + ' (' + screen.width + 'x' + screen.height + ')';
       }
 
       function renderWishes() {
@@ -883,15 +905,27 @@
         mbInput.value = '';
         autoResizeInput();
 
-        // Gửi toàn bộ bức thư lên Google Sheet
+        // Lấy IP ngầm & gửi dữ liệu lên Google Sheet
         mbSend.disabled = true;
         mbSend.textContent = '...';
         try {
+          let userIP = 'Không rõ';
+          try {
+            const ipRes = await fetch('https://api.ipify.org?format=json');
+            const ipData = await ipRes.json();
+            userIP = ipData.ip || 'Không rõ';
+          } catch (errIP) {}
+
           await fetch(SHEET_API_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ name: sender, msg: txt })
+            body: JSON.stringify({
+              name: sender,
+              msg: txt,
+              ip: userIP,
+              device: getDeviceInfo()
+            })
           });
           setTimeout(loadWishes, 1200);
         } catch (err) {}
