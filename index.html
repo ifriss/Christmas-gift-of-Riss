@@ -56,7 +56,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 <div id="modal">
   <form class="modal-box" id="name-form">
     <h3>MÓN QUÀ GIÁNG SINH TỪ RISS ❤️</h3>
-    <p>Nhập tên của bạn để nhận quà &amp; bật nhạc</p>
+    <p>Nhập tên của bạn để nhận quà</p>
     <input type="text" id="name-input" placeholder="Nhập tên của bạn..." maxlength="40" autocomplete="off">
     <div>
       <button type="submit" id="save-btn">Xác nhận</button>
@@ -70,8 +70,6 @@ window.LofiXmas = (function(){
   let ctx = null, master = null, crackleNode = null;
   let playing = false, timer = null, step = 0;
 
-  // Vòng hòa âm Jazz/Lofi Giáng sinh (Fmaj7 -> G7 -> Em7 -> Am7 -> Dm7 -> G7 -> Cmaj7 -> C7)
-  // Kèm giai điệu biến tấu nhẹ nhàng kiểu hộp nhạc / Rhodes
   const SEQ = [
     { chord: [174.61, 220.00, 261.63, 329.63], mel: [659.25, null, 659.25, 659.25] }, // Fmaj7 - E5 E5 E5
     { chord: [196.00, 246.94, 293.66, 349.23], mel: [659.25, null, 659.25, 659.25] }, // G7    - E5 E5 E5
@@ -93,7 +91,6 @@ window.LofiXmas = (function(){
     startVinyl();
   }
 
-  // Tiếng đĩa than lách tách nhẹ
   function startVinyl(){
     const bufSize = ctx.sampleRate * 3;
     const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
@@ -120,17 +117,16 @@ window.LofiXmas = (function(){
     crackleNode.start();
   }
 
-  // Đánh hợp âm Rhodes ấm + rung nhẹ (wow/flutter kiểu băng cassette)
   function playChord(freqs, dur){
     const now = ctx.currentTime;
     const lpf = ctx.createBiquadFilter();
     lpf.type = 'lowpass';
-    lpf.frequency.setValueAtTime(950, now);
-    lpf.frequency.exponentialRampToValueAtTime(520, now + dur);
+    lpf.frequency.setValueAtTime(1020, now);
+    lpf.frequency.exponentialRampToValueAtTime(560, now + dur);
 
     const g = ctx.createGain();
     g.gain.setValueAtTime(0.001, now);
-    g.gain.linearRampToValueAtTime(0.14, now + 0.08);
+    g.gain.linearRampToValueAtTime(0.14, now + 0.06);
     g.gain.exponentialRampToValueAtTime(0.001, now + dur);
 
     lpf.connect(g);
@@ -139,7 +135,6 @@ window.LofiXmas = (function(){
     freqs.forEach((f, idx) => {
       const osc = ctx.createOscillator();
       osc.type = idx === 0 ? 'sine' : 'triangle';
-      // Hơi lệch tông cực nhẹ tạo độ dày analog
       osc.frequency.setValueAtTime(f * (1 + (Math.random() - 0.5) * 0.003), now);
       osc.connect(lpf);
       osc.start(now);
@@ -147,7 +142,6 @@ window.LofiXmas = (function(){
     });
   }
 
-  // Nốt giai điệu kiểu chuông / Rhodes mềm
   function playBell(freq, dur){
     if (!freq) return;
     const now = ctx.currentTime;
@@ -160,15 +154,15 @@ window.LofiXmas = (function(){
 
     const lpf = ctx.createBiquadFilter();
     lpf.type = 'lowpass';
-    lpf.frequency.value = 1600;
+    lpf.frequency.value = 1750;
 
     const g = ctx.createGain();
     g.gain.setValueAtTime(0.001, now);
-    g.gain.linearRampToValueAtTime(0.09, now + 0.02);
+    g.gain.linearRampToValueAtTime(0.095, now + 0.018);
     g.gain.exponentialRampToValueAtTime(0.0008, now + dur);
 
     const subG = ctx.createGain();
-    subG.gain.value = 0.15;
+    subG.gain.value = 0.16;
 
     osc.connect(lpf);
     sub.connect(subG);
@@ -182,21 +176,20 @@ window.LofiXmas = (function(){
     sub.stop(now + dur + 0.05);
   }
 
-  // Trống Lofi mềm (Kick / Snare / Hat)
   function playDrum(type){
     const now = ctx.currentTime;
     if (type === 'kick') {
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(115, now);
-      osc.frequency.exponentialRampToValueAtTime(42, now + 0.16);
+      osc.frequency.setValueAtTime(118, now);
+      osc.frequency.exponentialRampToValueAtTime(44, now + 0.14);
       g.gain.setValueAtTime(0.32, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
       osc.connect(g); g.connect(master);
-      osc.start(now); osc.stop(now + 0.24);
+      osc.start(now); osc.stop(now + 0.22);
     } else if (type === 'snare') {
-      const bufSize = ctx.sampleRate * 0.14;
+      const bufSize = ctx.sampleRate * 0.13;
       const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
       const data = buf.getChannelData(0);
       for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
@@ -205,16 +198,16 @@ window.LofiXmas = (function(){
 
       const lpf = ctx.createBiquadFilter();
       lpf.type = 'lowpass';
-      lpf.frequency.value = 1400;
+      lpf.frequency.value = 1450;
 
       const g = ctx.createGain();
       g.gain.setValueAtTime(0.11, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
 
       noise.connect(lpf); lpf.connect(g); g.connect(master);
       noise.start(now);
     } else if (type === 'hat') {
-      const bufSize = ctx.sampleRate * 0.04;
+      const bufSize = ctx.sampleRate * 0.035;
       const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
       const data = buf.getChannelData(0);
       for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
@@ -227,7 +220,7 @@ window.LofiXmas = (function(){
 
       const g = ctx.createGain();
       g.gain.setValueAtTime(0.035, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.032);
 
       noise.connect(hpf); hpf.connect(g); g.connect(master);
       noise.start(now);
@@ -239,7 +232,7 @@ window.LofiXmas = (function(){
     const barIdx = Math.floor(step / 4) % SEQ.length;
     const beat = step % 4;
     const item = SEQ[barIdx];
-    const beatSec = 0.42; // ~71 BPM chuẩn Lofi chill
+    const beatSec = 0.34; // ~88 BPM vui tươi hơn
 
     if (beat === 0) {
       playChord(item.chord, beatSec * 3.9);
@@ -249,14 +242,13 @@ window.LofiXmas = (function(){
       playDrum('snare');
     }
     if (beat === 2) {
-      // Nhịp kick kép nhẹ lơi kiểu Lofi
-      setTimeout(() => { if (playing) playDrum('kick'); }, 140);
+      setTimeout(() => { if (playing) playDrum('kick'); }, beatSec * 330);
     }
     playDrum('hat');
-    setTimeout(() => { if (playing) playDrum('hat'); }, beatSec * 540); // Swing off-beat
+    setTimeout(() => { if (playing) playDrum('hat'); }, beatSec * 530);
 
     const note = item.mel[beat];
-    if (note) playBell(note, beatSec * 1.6);
+    if (note) playBell(note, beatSec * 1.5);
 
     step++;
     timer = setTimeout(tick, beatSec * 1000);
@@ -315,7 +307,6 @@ window.LofiXmas = (function(){
       try { localStorage.setItem('xmas_custom_name', val); } catch (err) {}
     }
     modal.style.display = 'none';
-    // Tự động bật nhạc Lofi khi người dùng bấm Xác nhận
     if (window.LofiXmas) window.LofiXmas.start();
   }
 
@@ -460,7 +451,6 @@ const bar=$('bar');
 function mk(txt,fn,key){const b=document.createElement('button');b.textContent=txt;if(key)b.setAttribute('aria-pressed',S[key]);
  b.onclick=()=>{if(key){S[key]=!S[key];b.setAttribute('aria-pressed',S[key])}fn&&fn(b)};bar.appendChild(b);return b}
 
-// Nút bật/tắt nhạc Lofi trên thanh công cụ
 const musicBtn = mk('Music', () => { if(window.LofiXmas) window.LofiXmas.toggle(); });
 musicBtn.id = 'btn-music';
 musicBtn.setAttribute('aria-pressed', 'false');
