@@ -6,23 +6,34 @@
 <title>Christmas gift of Riss</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#050a1a;--fg:#cfe3ff;--dim:#7389b0;--gold:#ffd36b;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-html,body{height:100%;margin:0;background:var(--bg);overflow:hidden}
+:root{--bg:#050a1a;--fg:#cfe3ff;--dim:#7389b0;--gold:#ffd36b;color-scheme:dark;box-sizing:border-box}
+html,body{height:100%;height:100dvh;margin:0;background:var(--bg);overflow:hidden}
 body{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;color:var(--fg);-webkit-user-select:none;user-select:none}
-#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
-#hud{position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 118px);font-size:11px;line-height:1.55;color:var(--dim);pointer-events:none}
-#hud b{color:var(--fg);font-weight:400}
-#tt{position:fixed;right:12px;top:calc(env(safe-area-inset-top,0px) + 10px);font-size:11px;color:#ff8a8a;pointer-events:none}
-#hint{position:fixed;left:12px;top:calc(env(safe-area-inset-top,0px) + 10px);font-size:11px;color:var(--dim);pointer-events:none}
-#name{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 36px);text-align:center;font-size:17px;font-weight:700;letter-spacing:.08em;color:var(--gold);text-shadow:0 0 10px #ffcf4a99,0 0 22px #ffcf4a44;cursor:pointer;animation:nm 3.2s ease-in-out infinite;white-space:nowrap;padding:4px 10px;border-radius:8px;transition:background .2s}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab;z-index:1}
+
+#hint{position:fixed;left:max(14px,env(safe-area-inset-left,0px) + 10px);top:calc(env(safe-area-inset-top,0px) + 10px);font-size:11px;color:var(--dim);pointer-events:none;z-index:10}
+#tt{position:fixed;right:max(14px,env(safe-area-inset-right,0px) + 10px);top:calc(env(safe-area-inset-top,0px) + 10px);font-size:11px;color:#ff8a8a;pointer-events:none;z-index:10}
+
+#name{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 32px);text-align:center;font-size:clamp(14px,4.5vw,18px);font-weight:700;letter-spacing:.06em;color:var(--gold);text-shadow:0 0 10px #ffcf4a99,0 0 22px #ffcf4a44;cursor:pointer;animation:nm 3.2s ease-in-out infinite;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;padding:4px 10px;border-radius:8px;transition:background .2s;z-index:20}
 #name:hover{background:#101b3a88}
 @keyframes nm{50%{text-shadow:0 0 14px #ffcf4acc,0 0 30px #ffcf4a66}}
 @media (prefers-reduced-motion:reduce){#name{animation:none}}
-#bar{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:0 10px}
-button{font:inherit;font-size:11px;color:var(--fg);background:#101b3a;border:1px solid #2a3b70;border-radius:999px;padding:7px 11px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+
+#hud{position:fixed;left:max(14px,env(safe-area-inset-left,0px) + 12px);bottom:calc(env(safe-area-inset-bottom,0px) + 125px);font-size:11px;line-height:1.5;color:var(--dim);pointer-events:none;z-index:10}
+#hud b{color:var(--fg);font-weight:400}
+
+#bar{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);display:flex;gap:5px;justify-content:center;flex-wrap:wrap;padding:0 8px;z-index:10}
+button{font:inherit;font-size:11px;color:var(--fg);background:#101b3a;border:1px solid #2a3b70;border-radius:999px;padding:6px 10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 button[aria-pressed="true"]{background:#1d2f63;border-color:var(--gold);color:var(--gold)}
 button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+@media (max-width: 480px){
+  #hint,#tt{font-size:10px;top:calc(env(safe-area-inset-top,0px) + 8px)}
+  #name{top:calc(env(safe-area-inset-top,0px) + 26px)}
+  #hud{font-size:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 112px)}
+  button{font-size:10px;padding:5px 9px}
+}
+
 #modal{position:fixed;inset:0;background:rgba(3,6,26,0.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
 #modal.hidden{display:none}
 .modal-box{background:#0d1633;border:1px solid #2a3b70;border-radius:16px;padding:24px;width:100%;max-width:340px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
@@ -90,9 +101,10 @@ let W,H,dpr,cw,chh,cols,rows,N,chars,colr,zb,cx,baseY,treeH,groundRow,sky,msg=''
 const buckets=Array.from({length:PAL.length*8},()=>[]);
 function resize(){
  dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;
- cw=Math.max(5.5,Math.min(10,W/76));chh=cw*1.55;cols=Math.ceil(W/cw);rows=Math.ceil(H/chh);N=cols*rows;
+ const isMobile=W<520;
+ cw=Math.max(5.2,Math.min(10,W/76));chh=cw*1.55;cols=Math.ceil(W/cw);rows=Math.ceil(H/chh);N=cols*rows;
  chars=new Array(N);colr=new Int16Array(N);zb=new Float32Array(N);
- treeH=Math.min(H*.55,W*1.25);cx=W/2;baseY=H*.72;groundRow=Math.floor(baseY/chh);
+ treeH=Math.min(H*(isMobile?.46:.55),W*1.25);cx=W/2;baseY=H*(isMobile?.68:.72);groundRow=Math.floor(baseY/chh);
  sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#03061a');sky.addColorStop(.7,'#0a1636');sky.addColorStop(1,'#0d1c42');
  const m='MERRY CHRISTMAS';msg=(m.length*2<cols-4)?m.split('').join(' ').replace(/ {3}/,'   '):m;
 }
