@@ -1,467 +1,1502 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Christmas gift of Riss</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#050a1a;--fg:#cfe3ff;--dim:#7389b0;--gold:#ffd36b;color-scheme:dark;box-sizing:border-box}
-html,body{height:100%;height:100dvh;margin:0;background:var(--bg);overflow:hidden}
-body{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;color:var(--fg)}
-#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab;z-index:1;-webkit-user-select:none;user-select:none}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Christmas gift of Riss</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050a1a;
+      --fg: #cfe3ff;
+      --dim: #7389b0;
+      --gold: #ffd36b;
+      color-scheme: dark;
+      box-sizing: border-box;
+    }
 
-#hint{position:fixed;left:max(14px,env(safe-area-inset-left,0px) + 10px);top:calc(env(safe-area-inset-top,0px) + 10px);font-size:11px;color:var(--dim);pointer-events:none;z-index:10}
-#tt{position:fixed;right:max(14px,env(safe-area-inset-right,0px) + 10px);top:calc(env(safe-area-inset-top,0px) + 10px);font-size:11px;color:#ff8a8a;pointer-events:none;z-index:10}
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      margin: 0;
+      background: var(--bg);
+      overflow: hidden;
+    }
 
-#name{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 32px);text-align:center;font-size:clamp(14px,4.5vw,18px);font-weight:700;letter-spacing:.06em;color:var(--gold);text-shadow:0 0 10px #ffcf4a99,0 0 22px #ffcf4a44;cursor:pointer;animation:nm 3.2s ease-in-out infinite;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;padding:4px 10px;border-radius:8px;transition:background .2s;z-index:20}
-#name:hover{background:#101b3a88}
-@keyframes nm{50%{text-shadow:0 0 14px #ffcf4acc,0 0 30px #ffcf4a66}}
-@media (prefers-reduced-motion:reduce){#name{animation:none}}
+    body {
+      font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+      color: var(--fg);
+    }
 
-#hud{position:fixed;left:max(14px,env(safe-area-inset-left,0px) + 12px);bottom:calc(env(safe-area-inset-bottom,0px) + 125px);font-size:11px;line-height:1.5;color:var(--dim);pointer-events:none;z-index:10}
-#hud b{color:var(--fg);font-weight:400}
+    #c {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      cursor: grab;
+      z-index: 1;
+      -webkit-user-select: none;
+      user-select: none;
+    }
 
-#bar{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);display:flex;gap:5px;justify-content:center;flex-wrap:wrap;padding:0 8px;z-index:10}
-button{font:inherit;font-size:11px;color:var(--fg);background:#101b3a;border:1px solid #2a3b70;border-radius:999px;padding:6px 10px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-button[aria-pressed="true"]{background:#1d2f63;border-color:var(--gold);color:var(--gold)}
-button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+    /* Gợi ý và bộ đếm thời gian góc trên */
+    #hint {
+      position: fixed;
+      left: max(14px, env(safe-area-inset-left, 0px) + 10px);
+      top: calc(env(safe-area-inset-top, 0px) + 10px);
+      font-size: 11px;
+      color: var(--dim);
+      pointer-events: none;
+      z-index: 10;
+    }
 
-@media (max-width: 480px){
-  #hint,#tt{font-size:10px;top:calc(env(safe-area-inset-top,0px) + 8px)}
-  #name{top:calc(env(safe-area-inset-top,0px) + 26px)}
-  #hud{font-size:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 112px)}
-  button{font-size:10px;padding:5px 9px}
-}
+    #tt {
+      position: fixed;
+      right: max(14px, env(safe-area-inset-right, 0px) + 10px);
+      top: calc(env(safe-area-inset-top, 0px) + 10px);
+      font-size: 11px;
+      color: #ff8a8a;
+      pointer-events: none;
+      z-index: 10;
+    }
 
-#modal{position:fixed;inset:0;background:rgba(3,6,26,0.88);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:99999;padding:16px}
-.modal-box{background:#0d1633;border:1px solid #2a3b70;border-radius:16px;padding:24px 20px;width:100%;max-width:360px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
-.modal-box h3{margin:0 0 8px;color:var(--gold);font-size:14px;letter-spacing:.03em;line-height:1.4}
-.modal-box p{margin:0 0 16px;color:var(--dim);font-size:12px}
-#name-input{width:100%;box-sizing:border-box;background:#050a1a;border:1px solid #2a3b70;border-radius:8px;padding:12px;color:var(--fg);font:inherit;font-size:16px;text-align:center;margin-bottom:16px;outline:none}
-#name-input:focus{border-color:var(--gold);box-shadow:0 0 10px #ffd36b33}
-#save-btn{background:#1d2f63;border:1px solid var(--gold);color:var(--gold);font-weight:700;font-size:13px;padding:10px 26px;cursor:pointer}
-#save-btn:hover{background:#263d80}
-#save-btn:active{transform:scale(0.96)}
-</style>
+    /* Tên người nhận quà ở trên cùng chính giữa */
+    #name {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      top: calc(env(safe-area-inset-top, 0px) + 32px);
+      text-align: center;
+      font-size: clamp(14px, 4.5vw, 18px);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--gold);
+      text-shadow: 0 0 10px #ffcf4a99, 0 0 22px #ffcf4a44;
+      cursor: pointer;
+      animation: nm 3.2s ease-in-out infinite;
+      white-space: nowrap;
+      max-width: 92vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 4px 10px;
+      border-radius: 8px;
+      transition: background 0.2s;
+      z-index: 20;
+    }
+
+    #name:hover {
+      background: #101b3a88;
+    }
+
+    @keyframes nm {
+      50% {
+        text-shadow: 0 0 14px #ffcf4acc, 0 0 30px #ffcf4a66;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #name {
+        animation: none;
+      }
+    }
+
+    /* Bảng thông số kỹ thuật góc trái dưới */
+    #hud {
+      position: fixed;
+      left: max(14px, env(safe-area-inset-left, 0px) + 12px);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 125px);
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--dim);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    #hud b {
+      color: var(--fg);
+      font-weight: 400;
+    }
+
+    /* Chữ ký Dev góc phải dưới */
+    #dev-credit {
+      position: fixed;
+      right: max(14px, env(safe-area-inset-right, 0px) + 12px);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 125px);
+      font-size: 10.5px;
+      line-height: 1.45;
+      color: var(--dim);
+      text-align: right;
+      pointer-events: none;
+      z-index: 10;
+      max-width: 220px;
+    }
+
+    #dev-credit b {
+      color: var(--gold);
+      font-weight: 700;
+      text-shadow: 0 0 8px #ffd36b44;
+    }
+
+    /* Thanh nút bấm điều khiển phía dưới */
+    #bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 0 8px;
+      z-index: 10;
+    }
+
+    button {
+      font: inherit;
+      font-size: 11px;
+      color: var(--fg);
+      background: #101b3a;
+      border: 1px solid #2a3b70;
+      border-radius: 999px;
+      padding: 6px 10px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    button[aria-pressed="true"] {
+      background: #1d2f63;
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    button:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    /* Nút mở Mailbox và khung Hộp thư bên phải */
+    #mail-btn {
+      position: fixed;
+      right: max(14px, env(safe-area-inset-right, 0px) + 10px);
+      top: calc(env(safe-area-inset-top, 0px) + 68px);
+      z-index: 30;
+      background: #101b3ae6;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: transform 0.15s, background 0.2s;
+    }
+
+    #mail-btn:hover {
+      background: #1d2f63;
+      transform: translateY(-1px);
+    }
+
+    #mail-count {
+      background: #ff3b3b;
+      color: #ffffff;
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 99px;
+    }
+
+    #mailbox {
+      position: fixed;
+      right: max(14px, env(safe-area-inset-right, 0px) + 10px);
+      top: calc(env(safe-area-inset-top, 0px) + 104px);
+      width: min(310px, calc(100vw - 28px));
+      max-height: min(420px, calc(100dvh - 245px));
+      background: rgba(13, 22, 51, 0.92);
+      border: 1px solid #2a3b70;
+      border-radius: 14px;
+      display: none;
+      flex-direction: column;
+      z-index: 40;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+
+    #mailbox.open {
+      display: flex;
+    }
+
+    .mb-head {
+      padding: 10px 14px;
+      border-bottom: 1px solid #2a3b70;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .mb-close {
+      background: none;
+      border: none;
+      color: var(--dim);
+      font-size: 14px;
+      padding: 2px 6px;
+    }
+
+    .mb-close:hover {
+      color: var(--fg);
+    }
+
+    #mb-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 11px;
+    }
+
+    .mb-item {
+      background: #070e24;
+      border: 1px solid #1e2d59;
+      border-radius: 8px;
+      padding: 8px 10px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .mb-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 10px;
+      margin-bottom: 3px;
+    }
+
+    .mb-meta span {
+      color: var(--dim);
+      font-weight: 400;
+    }
+
+    .mb-form {
+      padding: 8px;
+      border-top: 1px solid #2a3b70;
+      display: flex;
+      gap: 6px;
+      background: #09112b;
+    }
+
+    #mb-input {
+      flex: 1;
+      min-width: 0;
+      background: #050a1a;
+      border: 1px solid #2a3b70;
+      border-radius: 8px;
+      padding: 7px 9px;
+      color: var(--fg);
+      font: inherit;
+      font-size: 11px;
+      outline: none;
+    }
+
+    #mb-input:focus {
+      border-color: var(--gold);
+    }
+
+    #mb-send {
+      background: #1d2f63;
+      border-color: var(--gold);
+      color: var(--gold);
+      font-weight: 700;
+      padding: 6px 12px;
+      white-space: nowrap;
+    }
+
+    /* Tối ưu giao diện trên màn hình điện thoại */
+    @media (max-width: 480px) {
+      #hint, #tt {
+        font-size: 10px;
+        top: calc(env(safe-area-inset-top, 0px) + 8px);
+      }
+      #name {
+        top: calc(env(safe-area-inset-top, 0px) + 26px);
+      }
+      #hud, #dev-credit {
+        font-size: 9.5px;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 112px);
+      }
+      #dev-credit {
+        max-width: 170px;
+      }
+      button {
+        font-size: 10px;
+        padding: 5px 9px;
+      }
+      #mail-btn {
+        top: calc(env(safe-area-inset-top, 0px) + 58px);
+        padding: 5px 10px;
+      }
+      #mailbox {
+        top: calc(env(safe-area-inset-top, 0px) + 90px);
+      }
+    }
+
+    /* Hộp thoại nhập tên ban đầu */
+    #modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 6, 26, 0.88);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      padding: 16px;
+    }
+
+    .modal-box {
+      background: #0d1633;
+      border: 1px solid #2a3b70;
+      border-radius: 16px;
+      padding: 24px 20px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-box h3 {
+      margin: 0 0 8px;
+      color: var(--gold);
+      font-size: 14px;
+      letter-spacing: 0.03em;
+      line-height: 1.4;
+    }
+
+    .modal-box p {
+      margin: 0 0 16px;
+      color: var(--dim);
+      font-size: 12px;
+    }
+
+    #name-input {
+      width: 100%;
+      box-sizing: border-box;
+      background: #050a1a;
+      border: 1px solid #2a3b70;
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--fg);
+      font: inherit;
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    #name-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 10px #ffd36b33;
+    }
+
+    #save-btn {
+      background: #1d2f63;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 10px 26px;
+      cursor: pointer;
+    }
+
+    #save-btn:hover {
+      background: #263d80;
+    }
+
+    #save-btn:active {
+      transform: scale(0.96);
+    }
+  </style>
 </head>
 <body>
-<canvas id="c"></canvas>
-<div id="name" title="Nhấn để đổi tên">Christmas gift of Riss</div>
-<div id="hint">Drag to rotate. Tap for sparkles.</div>
-<div id="tt">t 00.00</div>
-<div id="hud"><div>rotation <b id="hr">0</b>&deg;</div><div>lights <b id="hl">0</b></div><div>letters <b id="hc">0</b></div><div>fps <b id="hf">0</b></div></div>
-<div id="bar"></div>
+  <canvas id="c"></canvas>
 
-<div id="modal">
-  <form class="modal-box" id="name-form">
-    <h3>MÓN QUÀ GIÁNG SINH TỪ RISS ❤️</h3>
-    <p>Nhập tên của bạn để nhận quà</p>
-    <input type="text" id="name-input" placeholder="Nhập tên của bạn..." maxlength="40" autocomplete="off">
-    <div>
-      <button type="submit" id="save-btn">Xác nhận</button>
+  <div id="name" title="Nhấn để đổi tên">Christmas gift of Riss</div>
+  <div id="hint">Drag to rotate. Tap for sparkles.</div>
+  <div id="tt">t 00.00</div>
+
+  <div id="hud">
+    <div>rotation <b id="hr">0</b>&deg;</div>
+    <div>lights <b id="hl">0</b></div>
+    <div>letters <b id="hc">0</b></div>
+    <div>fps <b id="hf">0</b></div>
+  </div>
+
+  <div id="dev-credit">
+    <b>DEV: RISS</b> - Trương Thành Thông<br>
+    chúc mọi người giáng sinh vui vẻ 🎄
+  </div>
+
+  <div id="bar"></div>
+
+  <!-- Nút mở hộp thư và danh sách lời chúc -->
+  <button id="mail-btn" type="button">📩 Lời chúc <span id="mail-count">0</span></button>
+  <div id="mailbox">
+    <div class="mb-head">
+      <span>🎄 Hộp thư Giáng Sinh</span>
+      <button type="button" class="mb-close" id="mb-close">✕</button>
     </div>
-  </form>
-</div>
+    <div id="mb-list">
+      <div style="color:var(--dim);text-align:center;padding:16px 0">Đang tải lời chúc...</div>
+    </div>
+    <form class="mb-form" id="mb-form">
+      <input type="text" id="mb-input" placeholder="Gửi lời chúc của bạn..." maxlength="150" autocomplete="off">
+      <button type="submit" id="mb-send">Gửi</button>
+    </form>
+  </div>
 
-<script>
-// --- BỘ TỔNG HỢP NHẠC GIÁNG SINH LOFI (WEB AUDIO API) ---
-window.LofiXmas = (function(){
-  let ctx = null, master = null, crackleNode = null;
-  let playing = false, timer = null, step = 0;
+  <!-- Modal nhập tên khi mới vào trang -->
+  <div id="modal">
+    <form class="modal-box" id="name-form">
+      <h3>MÓN QUÀ GIÁNG SINH TỪ RISS ❤️</h3>
+      <p>Nhập tên của bạn để nhận quà</p>
+      <input type="text" id="name-input" placeholder="Nhập tên của bạn..." maxlength="40" autocomplete="off">
+      <div>
+        <button type="submit" id="save-btn">Xác nhận</button>
+      </div>
+    </form>
+  </div>
 
-  const SEQ = [
-    { chord: [174.61, 220.00, 261.63, 329.63], mel: [659.25, null, 659.25, 659.25] }, // Fmaj7 - E5 E5 E5
-    { chord: [196.00, 246.94, 293.66, 349.23], mel: [659.25, null, 659.25, 659.25] }, // G7    - E5 E5 E5
-    { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 783.99, 523.25, 587.33] }, // Em7   - E5 G5 C5 D5
-    { chord: [220.00, 261.63, 329.63, 392.00], mel: [659.25, null, null, null] },     // Am7   - E5
-    { chord: [146.83, 174.61, 220.00, 261.63], mel: [698.46, 698.46, 698.46, 698.46] }, // Dm7   - F5 F5 F5 F5
-    { chord: [196.00, 246.94, 293.66, 349.23], mel: [698.46, 659.25, 659.25, 659.25] }, // G7    - F5 E5 E5 E5
-    { chord: [130.81, 196.00, 246.94, 293.66], mel: [587.33, 587.33, 659.25, 587.33] }, // Cmaj7 - D5 D5 E5 D5
-    { chord: [130.81, 196.00, 233.08, 293.66], mel: [783.99, null, 659.25, 523.25] }  // C9    - G5 E5 C5
-  ];
+  <!-- ===================================================================== -->
+  <!-- KHỐI 1: BỘ TỔNG HỢP NHẠC GIÁNG SINH LOFI (WEB AUDIO API)              -->
+  <!-- ===================================================================== -->
+  <script>
+    window.LofiXmas = (function () {
+      let ctx = null;
+      let master = null;
+      let crackleNode = null;
+      let playing = false;
+      let timer = null;
+      let step = 0;
 
-  function init(){
-    if (ctx) return;
-    const AC = window.AudioContext || window.webkitAudioContext;
-    ctx = new AC();
-    master = ctx.createGain();
-    master.gain.value = 0.28;
-    master.connect(ctx.destination);
-    startVinyl();
-  }
+      // Vòng hòa âm Jazz/Lofi 8 ô nhịp + giai điệu chuông Jingle Bells
+      const SEQ = [
+        { chord: [174.61, 220.00, 261.63, 329.63], mel: [659.25, null, 659.25, 659.25] }, // Fmaj7
+        { chord: [196.00, 246.94, 293.66, 349.23], mel: [659.25, null, 659.25, 659.25] }, // G7
+        { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 783.99, 523.25, 587.33] }, // Em7
+        { chord: [220.00, 261.63, 329.63, 392.00], mel: [659.25, null, null, null] },     // Am7
+        { chord: [146.83, 174.61, 220.00, 261.63], mel: [698.46, 698.46, 698.46, 698.46] }, // Dm7
+        { chord: [196.00, 246.94, 293.66, 349.23], mel: [698.46, 659.25, 659.25, 659.25] }, // G7
+        { chord: [130.81, 196.00, 246.94, 293.66], mel: [587.33, 587.33, 659.25, 587.33] }, // Cmaj7
+        { chord: [130.81, 196.00, 233.08, 293.66], mel: [783.99, null, 659.25, 523.25] }  // C9
+      ];
 
-  function startVinyl(){
-    const bufSize = ctx.sampleRate * 3;
-    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < bufSize; i++) {
-      const r = Math.random();
-      data[i] = r > 0.9985 ? (Math.random() * 2 - 1) * 0.28 : (Math.random() * 2 - 1) * 0.008;
-    }
-    crackleNode = ctx.createBufferSource();
-    crackleNode.buffer = buf;
-    crackleNode.loop = true;
+      function init() {
+        if (ctx) return;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        ctx = new AudioCtx();
+        master = ctx.createGain();
+        master.gain.value = 0.28;
+        master.connect(ctx.destination);
+        startVinylCrackle();
+      }
 
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.value = 1800;
-    filter.Q.value = 0.9;
+      // Tạo tiếng đĩa than lách tách nhẹ ở nền
+      function startVinylCrackle() {
+        const bufSize = ctx.sampleRate * 3;
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        const data = buf.getChannelData(0);
 
-    const gain = ctx.createGain();
-    gain.gain.value = 0.22;
+        for (let i = 0; i < bufSize; i++) {
+          const r = Math.random();
+          data[i] = r > 0.9985 ? (Math.random() * 2 - 1) * 0.28 : (Math.random() * 2 - 1) * 0.008;
+        }
 
-    crackleNode.connect(filter);
-    filter.connect(gain);
-    gain.connect(master);
-    crackleNode.start();
-  }
+        crackleNode = ctx.createBufferSource();
+        crackleNode.buffer = buf;
+        crackleNode.loop = true;
 
-  function playChord(freqs, dur){
-    const now = ctx.currentTime;
-    const lpf = ctx.createBiquadFilter();
-    lpf.type = 'lowpass';
-    lpf.frequency.setValueAtTime(1020, now);
-    lpf.frequency.exponentialRampToValueAtTime(560, now + dur);
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 1800;
+        filter.Q.value = 0.9;
 
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.001, now);
-    g.gain.linearRampToValueAtTime(0.14, now + 0.06);
-    g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+        const gain = ctx.createGain();
+        gain.gain.value = 0.22;
 
-    lpf.connect(g);
-    g.connect(master);
+        crackleNode.connect(filter);
+        filter.connect(gain);
+        gain.connect(master);
+        crackleNode.start();
+      }
 
-    freqs.forEach((f, idx) => {
-      const osc = ctx.createOscillator();
-      osc.type = idx === 0 ? 'sine' : 'triangle';
-      osc.frequency.setValueAtTime(f * (1 + (Math.random() - 0.5) * 0.003), now);
-      osc.connect(lpf);
-      osc.start(now);
-      osc.stop(now + dur + 0.05);
-    });
-  }
+      // Đánh hợp âm đệm ấm áp
+      function playChord(freqs, dur) {
+        const now = ctx.currentTime;
+        const lpf = ctx.createBiquadFilter();
+        lpf.type = 'lowpass';
+        lpf.frequency.setValueAtTime(1020, now);
+        lpf.frequency.exponentialRampToValueAtTime(560, now + dur);
 
-  function playBell(freq, dur){
-    if (!freq) return;
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const sub = ctx.createOscillator();
-    osc.type = 'sine';
-    sub.type = 'triangle';
-    osc.frequency.setValueAtTime(freq, now);
-    sub.frequency.setValueAtTime(freq * 2, now);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.001, now);
+        g.gain.linearRampToValueAtTime(0.14, now + 0.06);
+        g.gain.exponentialRampToValueAtTime(0.001, now + dur);
 
-    const lpf = ctx.createBiquadFilter();
-    lpf.type = 'lowpass';
-    lpf.frequency.value = 1750;
+        lpf.connect(g);
+        g.connect(master);
 
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.001, now);
-    g.gain.linearRampToValueAtTime(0.095, now + 0.018);
-    g.gain.exponentialRampToValueAtTime(0.0008, now + dur);
+        freqs.forEach((f, idx) => {
+          const osc = ctx.createOscillator();
+          osc.type = idx === 0 ? 'sine' : 'triangle';
+          osc.frequency.setValueAtTime(f * (1 + (Math.random() - 0.5) * 0.003), now);
+          osc.connect(lpf);
+          osc.start(now);
+          osc.stop(now + dur + 0.05);
+        });
+      }
 
-    const subG = ctx.createGain();
-    subG.gain.value = 0.16;
+      // Nốt giai điệu kiểu chuông / Rhodes
+      function playBell(freq, dur) {
+        if (!freq) return;
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const sub = ctx.createOscillator();
+        osc.type = 'sine';
+        sub.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now);
+        sub.frequency.setValueAtTime(freq * 2, now);
 
-    osc.connect(lpf);
-    sub.connect(subG);
-    subG.connect(lpf);
-    lpf.connect(g);
-    g.connect(master);
+        const lpf = ctx.createBiquadFilter();
+        lpf.type = 'lowpass';
+        lpf.frequency.value = 1750;
 
-    osc.start(now);
-    sub.start(now);
-    osc.stop(now + dur + 0.05);
-    sub.stop(now + dur + 0.05);
-  }
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.001, now);
+        g.gain.linearRampToValueAtTime(0.095, now + 0.018);
+        g.gain.exponentialRampToValueAtTime(0.0008, now + dur);
 
-  function playDrum(type){
-    const now = ctx.currentTime;
-    if (type === 'kick') {
-      const osc = ctx.createOscillator();
-      const g = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(118, now);
-      osc.frequency.exponentialRampToValueAtTime(44, now + 0.14);
-      g.gain.setValueAtTime(0.32, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-      osc.connect(g); g.connect(master);
-      osc.start(now); osc.stop(now + 0.22);
-    } else if (type === 'snare') {
-      const bufSize = ctx.sampleRate * 0.13;
-      const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
-      const noise = ctx.createBufferSource();
-      noise.buffer = buf;
+        const subG = ctx.createGain();
+        subG.gain.value = 0.16;
 
-      const lpf = ctx.createBiquadFilter();
-      lpf.type = 'lowpass';
-      lpf.frequency.value = 1450;
+        osc.connect(lpf);
+        sub.connect(subG);
+        subG.connect(lpf);
+        lpf.connect(g);
+        g.connect(master);
 
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(0.11, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.start(now);
+        sub.start(now);
+        osc.stop(now + dur + 0.05);
+        sub.stop(now + dur + 0.05);
+      }
 
-      noise.connect(lpf); lpf.connect(g); g.connect(master);
-      noise.start(now);
-    } else if (type === 'hat') {
-      const bufSize = ctx.sampleRate * 0.035;
-      const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
-      const noise = ctx.createBufferSource();
-      noise.buffer = buf;
+      // Bộ trống Lofi (Kick / Snare / Hi-hat)
+      function playDrum(type) {
+        const now = ctx.currentTime;
+        if (type === 'kick') {
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(118, now);
+          osc.frequency.exponentialRampToValueAtTime(44, now + 0.14);
+          g.gain.setValueAtTime(0.32, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.connect(g);
+          g.connect(master);
+          osc.start(now);
+          osc.stop(now + 0.22);
+        } else {
+          const isSnare = type === 'snare';
+          const bufSize = ctx.sampleRate * (isSnare ? 0.13 : 0.035);
+          const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < bufSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
 
-      const hpf = ctx.createBiquadFilter();
-      hpf.type = 'highpass';
-      hpf.frequency.value = 6500;
+          const noise = ctx.createBufferSource();
+          noise.buffer = buf;
 
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(0.035, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.032);
+          const filter = ctx.createBiquadFilter();
+          filter.type = isSnare ? 'lowpass' : 'highpass';
+          filter.frequency.value = isSnare ? 1450 : 6500;
 
-      noise.connect(hpf); hpf.connect(g); g.connect(master);
-      noise.start(now);
-    }
-  }
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(isSnare ? 0.11 : 0.035, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + (isSnare ? 0.12 : 0.032));
 
-  function tick(){
-    if (!playing) return;
-    const barIdx = Math.floor(step / 4) % SEQ.length;
-    const beat = step % 4;
-    const item = SEQ[barIdx];
-    const beatSec = 0.34; // ~88 BPM vui tươi hơn
+          noise.connect(filter);
+          filter.connect(g);
+          g.connect(master);
+          noise.start(now);
+        }
+      }
 
-    if (beat === 0) {
-      playChord(item.chord, beatSec * 3.9);
-      playDrum('kick');
-    }
-    if (beat === 1 || beat === 3) {
-      playDrum('snare');
-    }
-    if (beat === 2) {
-      setTimeout(() => { if (playing) playDrum('kick'); }, beatSec * 330);
-    }
-    playDrum('hat');
-    setTimeout(() => { if (playing) playDrum('hat'); }, beatSec * 530);
+      // Vòng lặp nhịp điệu (~88 BPM vui tươi)
+      function tick() {
+        if (!playing) return;
+        const barIdx = Math.floor(step / 4) % SEQ.length;
+        const beat = step % 4;
+        const item = SEQ[barIdx];
+        const beatSec = 0.34;
 
-    const note = item.mel[beat];
-    if (note) playBell(note, beatSec * 1.5);
+        if (beat === 0) {
+          playChord(item.chord, beatSec * 3.9);
+          playDrum('kick');
+        }
+        if (beat === 1 || beat === 3) {
+          playDrum('snare');
+        }
+        if (beat === 2) {
+          setTimeout(() => {
+            if (playing) playDrum('kick');
+          }, beatSec * 330);
+        }
 
-    step++;
-    timer = setTimeout(tick, beatSec * 1000);
-  }
+        playDrum('hat');
+        setTimeout(() => {
+          if (playing) playDrum('hat');
+        }, beatSec * 530);
 
-  function start(){
-    init();
-    if (ctx.state === 'suspended') ctx.resume();
-    if (playing) return;
-    playing = true;
-    tick();
-    syncBtn();
-  }
+        const note = item.mel[beat];
+        if (note) {
+          playBell(note, beatSec * 1.5);
+        }
 
-  function stop(){
-    playing = false;
-    clearTimeout(timer);
-    if (ctx && ctx.state === 'running') ctx.suspend();
-    syncBtn();
-  }
+        step++;
+        timer = setTimeout(tick, beatSec * 1000);
+      }
 
-  function toggle(){
-    playing ? stop() : start();
-  }
+      function start() {
+        init();
+        if (ctx.state === 'suspended') ctx.resume();
+        if (playing) return;
+        playing = true;
+        tick();
+        syncBtn();
+      }
 
-  function syncBtn(){
-    const b = document.getElementById('btn-music');
-    if (b) b.setAttribute('aria-pressed', playing ? 'true' : 'false');
-  }
+      function stop() {
+        playing = false;
+        clearTimeout(timer);
+        if (ctx && ctx.state === 'running') ctx.suspend();
+        syncBtn();
+      }
 
-  return { start, stop, toggle, isPlaying: () => playing };
-})();
-</script>
+      function syncBtn() {
+        const b = document.getElementById('btn-music');
+        if (b) b.setAttribute('aria-pressed', playing ? 'true' : 'false');
+      }
 
-<script>
-(function(){
-  var modal = document.getElementById('modal');
-  var form = document.getElementById('name-form');
-  var input = document.getElementById('name-input');
-  var nameLabel = document.getElementById('name');
-  var btn = document.getElementById('save-btn');
+      return {
+        start,
+        stop,
+        toggle: () => (playing ? stop() : start())
+      };
+    })();
+  </script>
 
-  try {
-    var saved = localStorage.getItem('xmas_custom_name');
-    if (saved) {
-      nameLabel.textContent = saved;
-      input.value = saved;
-    }
-  } catch (e) {}
+  <!-- ===================================================================== -->
+  <!-- KHỐI 2: XỬ LÝ MODAL NHẬP TÊN & MAILBOX LƯU GOOGLE SHEETS              -->
+  <!-- ===================================================================== -->
+  <script>
+    (function () {
+      const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyyKNFQksKtjONL70AOoIIwg14K6m_-00yQoDO8yIsU4lfutB_wZjLorRg-vqu-N1BhSQ/exec";
 
-  function closeAndSave(e) {
-    if (e) e.preventDefault();
-    var val = input.value.trim();
-    if (val) {
-      nameLabel.textContent = val;
-      try { localStorage.setItem('xmas_custom_name', val); } catch (err) {}
-    }
-    modal.style.display = 'none';
-    if (window.LofiXmas) window.LofiXmas.start();
-  }
+      // --- Phần Modal nhập tên người nhận quà ---
+      const modal = document.getElementById('modal');
+      const form = document.getElementById('name-form');
+      const input = document.getElementById('name-input');
+      const nameLabel = document.getElementById('name');
+      const btn = document.getElementById('save-btn');
 
-  form.addEventListener('submit', closeAndSave);
-  btn.addEventListener('click', closeAndSave);
+      try {
+        const saved = localStorage.getItem('xmas_custom_name');
+        if (saved) {
+          nameLabel.textContent = saved;
+          input.value = saved;
+        }
+      } catch (e) {}
 
-  nameLabel.addEventListener('click', function() {
-    input.value = nameLabel.textContent;
-    modal.style.display = 'flex';
-    setTimeout(function() { input.focus(); }, 50);
-  });
+      function closeAndSave(e) {
+        if (e) e.preventDefault();
+        const val = input.value.trim();
+        if (val) {
+          nameLabel.textContent = val;
+          try {
+            localStorage.setItem('xmas_custom_name', val);
+          } catch (err) {}
+        }
+        modal.style.display = 'none';
+        if (window.LofiXmas) {
+          window.LofiXmas.start();
+        }
+      }
 
-  setTimeout(function() { input.focus(); }, 100);
-})();
-</script>
+      form.addEventListener('submit', closeAndSave);
+      btn.addEventListener('click', closeAndSave);
 
-<script>
-(()=>{
-const $=id=>document.getElementById(id),cv=$('c'),ctx=cv.getContext('2d');
-const PAL=['#0d7a33','#17b848','#35e866','#b4ffbe','#ff3b3b','#ffcf4a','#4aa3ff','#ffffff','#ff7ad9','#8aa0c8','#eaf4ff','#fff1a8','#6b7fa6','#46557c','#52f0ff','#ff9a3c','#8b5a2b','#c4301f'];
-const rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const S={spin:!rm,snow:true,lights:true,garland:true,orn:true,star:true,gifts:true,sparkle:true,aurora:false,fire:false};
-const F={};for(const k in S)F[k]=0;
-const TAU=Math.PI*2,rnd=Math.random,cl=(v,a=0,b=1)=>v<a?a:v>b?b:v;
-const hs=(a,b)=>{let h=(Math.imul(a|0,374761393)+Math.imul(b|0,668265263))|0;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967296};
-const MODES=['Rise','Spiral','Sweep','Bloom'];let MODE=0,bp=-.25,mT=0;
-let W,H,dpr,cw,chh,cols,rows,N,chars,colr,zb,cx,baseY,treeH,groundRow,sky,msg='';
-const buckets=Array.from({length:PAL.length*8},()=>[]);
-function resize(){
- dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;
- const isMobile=W<520;
- cw=Math.max(5.2,Math.min(10,W/76));chh=cw*1.55;cols=Math.ceil(W/cw);rows=Math.ceil(H/chh);N=cols*rows;
- chars=new Array(N);colr=new Int16Array(N);zb=new Float32Array(N);
- treeH=Math.min(H*(isMobile?.46:.55),W*1.25);cx=W/2;baseY=H*(isMobile?.68:.72);groundRow=Math.floor(baseY/chh);
- sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#03061a');sky.addColorStop(.7,'#0a1636');sky.addColorStop(1,'#0d1c42');
- const m='MERRY CHRISTMAS';msg=(m.length*2<cols-4)?m.split('').join(' ').replace(/ {3}/,'   '):m;
-}
-function put(c,r,ch,k,z,a=1){const lv=Math.round(a*8);if(lv<=0||c<0||r<0||c>=cols||r>=rows)return;const i=r*cols+c;if(z>=zb[i]){zb[i]=z;chars[i]=ch;colr[i]=k*8+Math.min(8,lv)-1}}
+      nameLabel.addEventListener('click', function () {
+        input.value = nameLabel.textContent;
+        modal.style.display = 'flex';
+        setTimeout(function () {
+          input.focus();
+        }, 50);
+      });
 
-const Rn=y=>.37*(1-y)*(1-.14*((y*8)%1))+.003;
-const wrap=a=>{a%=TAU;return a>Math.PI?a-TAU:a<-Math.PI?a+TAU:a};
-function U(y,th,xs){return MODE===0?y:MODE===1?y*.7+(((th/TAU)%1+1)%1)*.3:MODE===2?xs*(1-y)*.5+.5:Math.min(1,Math.hypot(xs*(1-y)*.52,y-.45)/.62)}
-const CH='@#%&xWvo*^+-:<>/',CL=CH.length,SC='01+*#%&$@=<>/\\|~^',SCL=SC.length;
-const LC=[5,4,6,11,8,14,15,7],NL=220,LT=[],OR=[];
-for(let k=0;k<NL;k++)LT.push({i:k,f:k/NL,y:.05+.88*(k/NL),th:k/NL*TAU*7,k:LC[k%8],ph:rnd()*TAU,sp:1.5+rnd()*3});
-for(let k=0;k<22;k++)OR.push({i:k,y:.1+.76*((k*.381+.07)%1),th:k*2.7+1,k:[4,6,5,8,15,4][k%6]});
+      setTimeout(function () {
+        input.focus();
+      }, 100);
 
-const spr={};function glow(k){if(spr[k])return spr[k];const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d'),r=g.createRadialGradient(32,32,0,32,32,32);r.addColorStop(0,PAL[k]);r.addColorStop(.25,PAL[k]+'88');r.addColorStop(1,PAL[k]+'00');g.fillStyle=r;g.fillRect(0,0,64,64);return spr[k]=c}
-const BG=[];for(let i=0;i<230;i++)BG.push({fx:rnd(),fy:rnd()*.85,ph:rnd()*TAU,sp:.6+rnd()*2.4});
-const SN=[];const nsn=rm?80:240;for(let i=0;i<nsn;i++)SN.push({f:i/nsn,on:false,fx:rnd(),fy:-1,v:3+rnd()*7,z:rnd()*1.2-.6,ph:rnd()*TAU});
-const PT=[],SPC='.+x**',SCOL=[7,11,5,14,8];
-function spark(c,r,vx,vy,l,k){if(PT.length<900)PT.push({c,r,vx,vy,l,a:0,k})}
-function burst(c,r,n=46,cs=SCOL,sp=20){for(let i=0;i<n;i++){const a=TAU*i/n+rnd()*.3,v=8+rnd()*sp;spark(c,r,Math.cos(a)*v,Math.sin(a)*v*.55,.8+rnd()*.9,cs[i%cs.length])}}
-function box(c0,w,h,rb,k,al){const r0=rb-h+1,B='%#X@';
- for(let y=0;y<h;y++)for(let x=0;x<w;x++){const mid=x===(w>>1)||(y===1&&h>3);if(hs(c0+x,r0+y)>al)continue;put(c0+x,r0+y,mid?'+':B[hs(x,y+9)*4|0],mid?5:k,14,.6+.4*al)}
- for(const dx of[-1,0,1])if(hs(c0+dx,r0)<al)put(c0+(w>>1)+dx,r0-1,dx?(dx<0?'(':')'):'@',5,14,.6+.4*al)}
+      // --- Phần Mailbox Lời Chúc (Google Drive Sheets) ---
+      const mailBtn = document.getElementById('mail-btn');
+      const mailbox = document.getElementById('mailbox');
+      const mbClose = document.getElementById('mb-close');
+      const mbList = document.getElementById('mb-list');
+      const mbForm = document.getElementById('mb-form');
+      const mbInput = document.getElementById('mb-input');
+      const mbSend = document.getElementById('mb-send');
+      const mailCount = document.getElementById('mail-count');
 
-let ang=0,angV=0,t=0,drag=false,lastX=0,lastT=0,moved=0,spawnAcc=0,ss=null,nextSS=2.5,fps=60,hudT=0,litCount=0,fw=2;
+      let wishes = [];
 
-function frame(now){
- requestAnimationFrame(frame);
- const dt=Math.min(.05,(now-(frame.l||now))/1000);frame.l=now;if(!dt)return;
- t+=dt;fps+=(1/dt-fps)*.05;bp=Math.min(1.3,bp+dt/4.8);if(bp>1.1)mT+=dt;
- const T={...S,star:S.star&&bp>.95,gifts:S.gifts&&bp>1.05};
- for(const k in F)F[k]+=((T[k]?1:0)-F[k])*Math.min(1,dt*(k==='lights'||k==='garland'?2:3));
- if(!isFinite(angV))angV=.4;angV=drag?angV*Math.exp(-dt*9):angV+((S.spin?.4:0)+(bp<1.1?.45:0)-angV)*Math.min(1,dt*1.5);
- ang+=angV*dt;colr.fill(-1);zb.fill(-99);
- const glows=[],fr=(t*16)|0,c0=cx/cw|0,wb=Math.round(.37*treeH/cw);
+      // Chống chèn mã HTML độc hại từ nội dung người dùng nhập
+      function escapeHTML(str) {
+        return String(str).replace(/[&<>"']/g, function (m) {
+          return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+          }[m];
+        });
+      }
 
- for(const s of BG){const v=Math.sin(t*s.sp+s.ph);put(s.fx*cols|0,s.fy*rows|0,v>.5?'+':v>-.3?'.':'*',v>.2?7:13,-9)}
- if(F.aurora>.02){const hb=rows*.4|0;for(let c=0;c<cols;c++)for(let r=0;r<hb;r++){const v=(Math.sin(c*.13+t*.6+Math.sin(r*.3+t*.4)*1.6)*.5+.5)*(1-r/hb)*F.aurora;
-  if(v>.3)put(c,r,v>.7?'|':v>.5?':':'.',[2,14,8][(c*.04+t*.15)%3|0],-7)}}
- nextSS-=dt;if(!ss&&nextSS<=0){ss={x:rnd()*cols*.5,y:rnd()*rows*.18,t:0};nextSS=5+rnd()*6}
- if(ss){ss.t+=dt;const hx=ss.x+ss.t*62,hy=ss.y+ss.t*29;for(let j=0;j<13;j++)put((hx-j)|0,(hy-j*.47)|0,j?j<4?'=':j<8?'-':'.':'*',j?j<4?7:j<8?10:9:11,-8);if(hx>cols+14||hy>rows)ss=null}
- for(let r=groundRow;r<rows;r++)for(let c=0;c<cols;c++){const h=hs(c,r*3);if(h<.55&&Math.abs(c-cols/2)/(cols/2)<cl(bp*3+.3))put(c,r,h<.3?'-':'.',h<.1?10:13,-5)}
+      function renderWishes() {
+        mailCount.textContent = wishes.length;
+        if (!wishes.length) {
+          mbList.innerHTML = '<div style="color:var(--dim);text-align:center;padding:16px 0">Chưa có lời chúc nào. Hãy là người đầu tiên!</div>';
+          return;
+        }
+        mbList.innerHTML = wishes.map(function (w) {
+          return (
+            '<div class="mb-item">' +
+              '<div class="mb-meta">' + escapeHTML(w.name) + '<span>' + escapeHTML(w.time || '') + '</span></div>' +
+              '<div>' + escapeHTML(w.msg) + '</div>' +
+            '</div>'
+          );
+        }).join('');
+      }
 
- const rTop=Math.floor((baseY-treeH)/chh)-1,rBot=Math.floor(baseY/chh);
- for(let r=rTop;r<=rBot;r++){const y=(baseY-(r+.5)*chh)/treeH;if(y<0||y>1)continue;const Rp=Rn(y)*treeH,wc=Math.ceil(Rp/cw),ft=(y*8)%1;
-  for(let dc=-wc;dc<=wc;dc++){const X=(c0+dc+.5)*cw-cx;if(Math.abs(X)>Rp)continue;
-   const xs=X/Rp,psi=Math.asin(xs),th=psi-ang,cs=Math.cos(psi),tu=(((Math.round(th/TAU*56))%56)+56)%56,c=c0+dc;
-   const h=hs(tu,r),h2=hs(tu+99,r),h3=hs(tu+7,r+3),rv=bp>=1.2?1:cl((bp-U(y,th,xs))/.12);
-   if(rv<=0){if(h<.4)put(c,r,SC[((h*997|0)+fr)%SCL],h<.1?12:13,0);continue}
-   if(rv<1){put(c,r,SC[((h*997|0)+fr*2)%SCL],rv<.5?7:14,cs*.3+.05);continue}
-   if(h2>.94)continue;
-   const lum=cl((.3+.75*cs*(.75+.25*h2))*(.82+.18*(1-ft)),0,.999),z=cs*.3;
-   const tint=h3<.04?14:h3<.065?7:h3<.082?4:h3<.095?15:h3<.103?6:h3<.108?17:-1;
-   put(c,r,CH[((h*CL+((t*1.5+h2*5)|0)*7)|0)%CL],tint>=0?tint:lum<.4?0:lum<.68?1:lum<.92?2:3,z)}}
+      async function loadWishes() {
+        try {
+          const res = await fetch(SHEET_API_URL);
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            wishes = data;
+            renderWishes();
+          }
+        } catch (err) {
+          renderWishes();
+        }
+      }
 
- for(const o of OR){const psi=wrap(o.th+ang),cs=Math.cos(psi);if(cs<.15)continue;const xs=Math.sin(psi),a=cl(F.orn*1.3-o.i*.012)*cl((bp-U(o.y,o.th,xs))/.12);if(a<=.04)continue;
-  const px=cx+xs*Rn(o.y)*treeH*.97,py=baseY-o.y*treeH,c=px/cw|0,r=py/chh|0,w=o.y<.55?1:0;
-  for(let dy=-1;dy<=1;dy++){const ww=dy===0?w+1:w;for(let dx=-ww;dx<=ww;dx++)if(hs(c+dx*3,r+dy*5)<a)put(c+dx,r+dy,dy===0?'@':'#',o.k,.7+cs*.1,.7+.3*a)}
-  if(hs(c,r)<a)put(c-w,r-1,'*',7,.9,1);glows.push(px,py,o.k,a*.6)}
+      mailBtn.addEventListener('click', function () {
+        mailbox.classList.toggle('open');
+        if (mailbox.classList.contains('open')) {
+          loadWishes();
+        }
+      });
 
- litCount=0;
- for(const l of LT){const s=cl(F.lights*1.4-l.f*.4);if(s<=.02)continue;const psi=wrap(l.th+ang),cs=Math.cos(psi);if(cs<.12)continue;const xs=Math.sin(psi);
-  const rv=cl((bp-U(l.y,l.th,xs))/.12),a=s*rv;if(hs(l.i,3)>a)continue;const v=.5+.5*Math.sin(t*l.sp+l.ph),px=cx+xs*Rn(l.y)*treeH,py=baseY-l.y*treeH,c=px/cw|0,r=py/chh|0;litCount++;
-  put(c,r,v>.55?'@':'O',l.k,1,.55+.45*v);
-  if(v>.75){put(c-1,r,'o',l.k,.95,.8);put(c+1,r,'o',l.k,.95,.8)}
-  glows.push(px,py,l.k,v*a)}
+      mbClose.addEventListener('click', function () {
+        mailbox.classList.remove('open');
+      });
 
- const sA=F.star;if(sA>.03){const Ro=treeH*.06,Ri=Ro*.45,sx=cx,sy=baseY-treeH-Ro*.3,pu=Math.sin(t*3),sc=sx/cw|0,sr=sy/chh|0,RC=Math.ceil(Ro*1.3/cw),RR=Math.ceil(Ro*1.3/chh);
-  for(let dy=-RR;dy<=RR;dy++)for(let dx=-RC;dx<=RC;dx++){const X=dx*cw,Y=dy*chh,rr=Math.hypot(X,Y),th=Math.atan2(Y,X)+Math.PI/2,rb=Ri+(Ro-Ri)*Math.pow(Math.abs(Math.cos(2.5*th)),1.6);
-   if(rr<=rb&&hs(sc+dx,sr+dy)<sA){const q=rr/rb;put(sc+dx,sr+dy,q<.45?'@':q<.8?'#':'%',[11,5,15][((Math.floor(th*1.6+t*4)%3)+3)%3],10)}}
-  const len=Ro*1.1+cw*(3+pu*1.5);
-  for(let d8=0;d8<8;d8++){const an=d8*Math.PI/4,ux=Math.sin(an),uy=-Math.cos(an),ch=d8%4===0?'|':d8%4===2?'-':(d8===1||d8===5)?'/':'\\';
-   for(let d=Ro*1.1;d<(d8%2?len*.7:len);d+=cw*.9)put((sx+ux*d)/cw|0,(sy+uy*d)/chh|0,ch,pu>0?11:5,9,sA*(1-d/len*.6))}
-  glows.push(sx,sy,11,(.9+.2*pu)*sA*1.3)}
+      mbForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const txt = mbInput.value.trim();
+        if (!txt) return;
 
- for(const[o,w,h,k,i]of[[-wb-3,9,5,6,0],[-6,13,3,4,1],[wb-9,9,3,17,2]]){const a=cl(F.gifts*1.4-i*.12);if(a>.03)box(c0+o,w,h,groundRow+2,k,a)}
+        const sender = nameLabel.textContent.trim() || 'Ẩn danh';
+        const d = new Date();
+        const nowStr =
+          String(d.getDate()).padStart(2, '0') + '/' +
+          String(d.getMonth() + 1).padStart(2, '0') + ' ' +
+          String(d.getHours()).padStart(2, '0') + ':' +
+          String(d.getMinutes()).padStart(2, '0');
 
- for(const f of SN){if(!f.on&&f.f<F.snow){f.on=true;f.fy=-rnd()}if(!f.on)continue;f.fy+=f.v*dt/rows;
-  if(f.fy>1){f.fy-=1;f.fx=rnd();if(f.f>=F.snow){f.on=false;continue}}if(f.fy<0)continue;
-  const c=(f.fx*cols+Math.sin(t*.9+f.ph)*2+Math.sin(t*.35)*9*f.fy)|0;put(((c%cols)+cols)%cols,f.fy*rows|0,f.z>.3?'+':f.z>-.2?'*':'.',f.z>.3?7:f.z>-.2?10:9,f.z)}
+        // Hiển thị ngay lập tức trên giao diện cho mượt
+        wishes.unshift({ name: sender, msg: txt, time: nowStr });
+        renderWishes();
+        mbInput.value = '';
 
- spawnAcc+=dt*24*F.sparkle*cl(bp-.6);
- while(spawnAcc>1){spawnAcc--;const y=.08+.85*rnd(),Rp=Rn(y)*treeH;spark((cx+(rnd()*2-1)*Rp*.95)/cw|0,(baseY-y*treeH)/chh|0,0,0,.5+rnd()*.8,SCOL[rnd()*5|0])}
- fw-=dt*F.fire;if(fw<=0){fw=1+rnd()*1.3;burst((cols*(.12+rnd()*.76))|0,(rows*(.08+rnd()*.28))|0,70,[[4,5],[14,7],[8,11],[2,3,5]][rnd()*4|0],26)}
- for(let i=PT.length-1;i>=0;i--){const p=PT[i];p.a+=dt;if(p.a>=p.l){PT[i]=PT[PT.length-1];PT.pop();continue}
-  p.c+=p.vx*dt;p.r+=p.vy*dt;p.vy+=10*dt;p.vx*=1-dt*1.2;put(p.c|0,p.r|0,SPC[Math.min(4,Math.sin(Math.PI*p.a/p.l)*4.99|0)],p.k,12)}
+        // Gửi dữ liệu ngầm lên Google Sheet
+        mbSend.disabled = true;
+        mbSend.textContent = '...';
+        try {
+          await fetch(SHEET_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ name: sender, msg: txt })
+          });
+          setTimeout(loadWishes, 1200);
+        } catch (err) {}
 
- const shown=Math.min(msg.length,(mT*9)|0),mr=groundRow+4;
- if(mr<rows-1){const m0=(cols-msg.length)>>1;for(let i=0;i<shown;i++)if(msg[i]!==' ')put(m0+i,mr,i===shown-1&&shown<msg.length?SC[(i*3+fr)%SCL]:msg[i],[4,5,2][((i>>1)+(t*1.5|0))%3],13)}
+        mbSend.disabled = false;
+        mbSend.textContent = 'Gửi';
+      });
 
- ctx.setTransform(dpr,0,0,dpr,0,0);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
- ctx.globalCompositeOperation='lighter';
- for(let i=0;i<glows.length;i+=4){const s=glows[i+3]*cw*5;ctx.globalAlpha=Math.min(1,glows[i+3]*.4);ctx.drawImage(glow(glows[i+2]),glows[i]-s/2,glows[i+1]-s/2,s,s)}
- ctx.globalCompositeOperation='source-over';
- for(const b of buckets)b.length=0;let cnt=0;for(let i=0;i<N;i++){const k=colr[i];if(k>=0){buckets[k].push(i);cnt++}}
- ctx.font='700 '+(cw/.6).toFixed(1)+'px "JetBrains Mono",ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
- for(let k=0;k<buckets.length;k++){const b=buckets[k];if(!b.length)continue;ctx.fillStyle=PAL[k>>3];ctx.globalAlpha=((k&7)+1)/8;
-  for(let j=0;j<b.length;j++){const i=b[j],r=(i/cols)|0;ctx.fillText(chars[i],((i-r*cols)+.5)*cw,(r+.5)*chh)}}
- ctx.globalAlpha=1;hudT+=dt;if(hudT>.25){hudT=0;$('hr').textContent=(((ang*180/Math.PI)%360+360)%360).toFixed(1);$('hl').textContent=litCount;
-  $('hc').textContent=cnt.toLocaleString('en-US');$('hf').textContent=Math.round(fps);$('tt').textContent='t '+t.toFixed(2).padStart(5,'0')}
-}
+      // Tải sẵn danh sách lời chúc ngay khi mở web
+      loadWishes();
+    })();
+  </script>
 
-cv.addEventListener('pointerdown',e=>{drag=true;moved=0;lastX=e.clientX;lastT=performance.now();cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing'});
-cv.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-lastX,n=performance.now(),d=Math.max(1,n-lastT)/1000;
- moved+=Math.abs(dx);ang+=dx*.01;angV=cl(angV*.5+(dx*.01/d)*.5,-6,6);lastX=e.clientX;lastT=n});
-cv.addEventListener('pointerup',e=>{if(!drag)return;drag=false;cv.style.cursor='grab';if(moved<6)burst(e.clientX/cw|0,e.clientY/chh|0)});
-cv.addEventListener('pointercancel',()=>{drag=false});cv.addEventListener('lostpointercapture',()=>{drag=false;cv.style.cursor='grab'});addEventListener('blur',()=>{drag=false});document.addEventListener('visibilitychange',()=>{drag=false});
-const bar=$('bar');
-function mk(txt,fn,key){const b=document.createElement('button');b.textContent=txt;if(key)b.setAttribute('aria-pressed',S[key]);
- b.onclick=()=>{if(key){S[key]=!S[key];b.setAttribute('aria-pressed',S[key])}fn&&fn(b)};bar.appendChild(b);return b}
+  <!-- ===================================================================== -->
+  <!-- KHỐI 3: ENGINE RENDER CÂY THÔNG NOEL 3D ASCII & HIỆU ỨNG CANVAS       -->
+  <!-- ===================================================================== -->
+  <script>
+    (() => {
+      const $ = id => document.getElementById(id);
+      const cv = $('c');
+      const ctx = cv.getContext('2d');
 
-const musicBtn = mk('Music', () => { if(window.LofiXmas) window.LofiXmas.toggle(); });
-musicBtn.id = 'btn-music';
-musicBtn.setAttribute('aria-pressed', 'false');
+      const PAL = [
+        '#0d7a33', '#17b848', '#35e866', '#b4ffbe',
+        '#ff3b3b', '#ffcf4a', '#4aa3ff', '#ffffff',
+        '#ff7ad9', '#8aa0c8', '#eaf4ff', '#fff1a8',
+        '#6b7fa6', '#46557c', '#52f0ff', '#ff9a3c',
+        '#8b5a2b', '#c4301f'
+      ];
 
-const replay=()=>{bp=-.25;mT=0};
-mk('Replay',replay);
-mk('Style: '+MODES[0],b=>{MODE=(MODE+1)%4;b.textContent='Style: '+MODES[MODE];replay()});
-[['spin','Spin'],['lights','Lights'],['orn','Ornaments'],['star','Star'],['gifts','Gifts'],['snow','Snow'],['sparkle','Sparkles'],['aurora','Aurora'],['fire','Fireworks']].forEach(([k,n])=>mk(n,null,k));
-mk('Burst',()=>{for(let i=0;i<3;i++)burst((cols*(.25+rnd()*.5))|0,(rows*(.2+rnd()*.4))|0)});
-addEventListener('resize',resize);resize();requestAnimationFrame(frame);
-})();
-</script>
+      const rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const S = {
+        spin: !rm,
+        snow: true,
+        lights: true,
+        garland: true,
+        orn: true,
+        star: true,
+        gifts: true,
+        sparkle: true,
+        aurora: false,
+        fire: false
+      };
+
+      const F = {};
+      for (const k in S) F[k] = 0;
+
+      const TAU = Math.PI * 2;
+      const rnd = Math.random;
+      const cl = (v, a = 0, b = 1) => (v < a ? a : v > b ? b : v);
+      const hs = (a, b) => {
+        let h = (Math.imul(a | 0, 374761393) + Math.imul(b | 0, 668265263)) | 0;
+        h = Math.imul(h ^ (h >>> 13), 1274126177);
+        return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+      };
+
+      const MODES = ['Rise', 'Spiral', 'Sweep', 'Bloom'];
+      let MODE = 0;
+      let bp = -0.25;
+      let mT = 0;
+
+      let W, H, dpr, cw, chh, cols, rows, N, chars, colr, zb, cx, baseY, treeH, groundRow, sky, msg = '';
+      const buckets = Array.from({ length: PAL.length * 8 }, () => []);
+
+      function resize() {
+        dpr = Math.min(devicePixelRatio || 1, 2);
+        W = innerWidth;
+        H = innerHeight;
+        cv.width = W * dpr;
+        cv.height = H * dpr;
+
+        const isMobile = W < 520;
+        cw = Math.max(5.2, Math.min(10, W / 76));
+        chh = cw * 1.55;
+        cols = Math.ceil(W / cw);
+        rows = Math.ceil(H / chh);
+        N = cols * rows;
+
+        chars = new Array(N);
+        colr = new Int16Array(N);
+        zb = new Float32Array(N);
+
+        treeH = Math.min(H * (isMobile ? 0.46 : 0.55), W * 1.25);
+        cx = W / 2;
+        baseY = H * (isMobile ? 0.68 : 0.72);
+        groundRow = Math.floor(baseY / chh);
+
+        sky = ctx.createLinearGradient(0, 0, 0, H);
+        sky.addColorStop(0, '#03061a');
+        sky.addColorStop(0.7, '#0a1636');
+        sky.addColorStop(1, '#0d1c42');
+
+        const m = 'MERRY CHRISTMAS';
+        msg = m.length * 2 < cols - 4 ? m.split('').join(' ').replace(/ {3}/, '   ') : m;
+      }
+
+      function put(c, r, ch, k, z, a = 1) {
+        const lv = Math.round(a * 8);
+        if (lv <= 0 || c < 0 || r < 0 || c >= cols || r >= rows) return;
+        const i = r * cols + c;
+        if (z >= zb[i]) {
+          zb[i] = z;
+          chars[i] = ch;
+          colr[i] = k * 8 + Math.min(8, lv) - 1;
+        }
+      }
+
+      const Rn = y => 0.37 * (1 - y) * (1 - 0.14 * ((y * 8) % 1)) + 0.003;
+      const wrap = a => {
+        a %= TAU;
+        return a > Math.PI ? a - TAU : a < -Math.PI ? a + TAU : a;
+      };
+
+      function U(y, th, xs) {
+        if (MODE === 0) return y;
+        if (MODE === 1) return y * 0.7 + (((th / TAU) % 1 + 1) % 1) * 0.3;
+        if (MODE === 2) return xs * (1 - y) * 0.5 + 0.5;
+        return Math.min(1, Math.hypot(xs * (1 - y) * 0.52, y - 0.45) / 0.62);
+      }
+
+      const CH = '@#%&xWvo*^+-:<>/';
+      const CL = CH.length;
+      const SC = '01+*#%&$@=<>/\\|~^';
+      const SCL = SC.length;
+      const LC = [5, 4, 6, 11, 8, 14, 15, 7];
+      const NL = 220;
+      const LT = [];
+      const OR = [];
+
+      for (let k = 0; k < NL; k++) {
+        LT.push({
+          i: k,
+          f: k / NL,
+          y: 0.05 + 0.88 * (k / NL),
+          th: (k / NL) * TAU * 7,
+          k: LC[k % 8],
+          ph: rnd() * TAU,
+          sp: 1.5 + rnd() * 3
+        });
+      }
+
+      for (let k = 0; k < 22; k++) {
+        OR.push({
+          i: k,
+          y: 0.1 + 0.76 * ((k * 0.381 + 0.07) % 1),
+          th: k * 2.7 + 1,
+          k: [4, 6, 5, 8, 15, 4][k % 6]
+        });
+      }
+
+      const spr = {};
+      function glow(k) {
+        if (spr[k]) return spr[k];
+        const c = document.createElement('canvas');
+        c.width = c.height = 64;
+        const g = c.getContext('2d');
+        const r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+        r.addColorStop(0, PAL[k]);
+        r.addColorStop(0.25, PAL[k] + '88');
+        r.addColorStop(1, PAL[k] + '00');
+        g.fillStyle = r;
+        g.fillRect(0, 0, 64, 64);
+        return (spr[k] = c);
+      }
+
+      const BG = [];
+      for (let i = 0; i < 230; i++) {
+        BG.push({ fx: rnd(), fy: rnd() * 0.85, ph: rnd() * TAU, sp: 0.6 + rnd() * 2.4 });
+      }
+
+      const SN = [];
+      const nsn = rm ? 80 : 240;
+      for (let i = 0; i < nsn; i++) {
+        SN.push({ f: i / nsn, on: false, fx: rnd(), fy: -1, v: 3 + rnd() * 7, z: rnd() * 1.2 - 0.6, ph: rnd() * TAU });
+      }
+
+      const PT = [];
+      const SPC = '.+x**';
+      const SCOL = [7, 11, 5, 14, 8];
+
+      function spark(c, r, vx, vy, l, k) {
+        if (PT.length < 900) PT.push({ c, r, vx, vy, l, a: 0, k });
+      }
+
+      function burst(c, r, n = 46, cs = SCOL, sp = 20) {
+        for (let i = 0; i < n; i++) {
+          const a = (TAU * i) / n + rnd() * 0.3;
+          const v = 8 + rnd() * sp;
+          spark(c, r, Math.cos(a) * v, Math.sin(a) * v * 0.55, 0.8 + rnd() * 0.9, cs[i % cs.length]);
+        }
+      }
+
+      function box(c0, w, h, rb, k, al) {
+        const r0 = rb - h + 1;
+        const B = '%#X@';
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            const mid = x === (w >> 1) || (y === 1 && h > 3);
+            if (hs(c0 + x, r0 + y) > al) continue;
+            put(c0 + x, r0 + y, mid ? '+' : B[(hs(x, y + 9) * 4) | 0], mid ? 5 : k, 14, 0.6 + 0.4 * al);
+          }
+        }
+        for (const dx of [-1, 0, 1]) {
+          if (hs(c0 + dx, r0) < al) {
+            put(c0 + (w >> 1) + dx, r0 - 1, dx ? (dx < 0 ? '(' : ')') : '@', 5, 14, 0.6 + 0.4 * al);
+          }
+        }
+      }
+
+      let ang = 0, angV = 0, t = 0, drag = false, lastX = 0, lastT = 0, moved = 0;
+      let spawnAcc = 0, ss = null, nextSS = 2.5, fps = 60, hudT = 0, litCount = 0, fw = 2;
+
+      function frame(now) {
+        requestAnimationFrame(frame);
+        const dt = Math.min(0.05, (now - (frame.l || now)) / 1000);
+        frame.l = now;
+        if (!dt) return;
+
+        t += dt;
+        fps += (1 / dt - fps) * 0.05;
+        bp = Math.min(1.3, bp + dt / 4.8);
+        if (bp > 1.1) mT += dt;
+
+        const T = { ...S, star: S.star && bp > 0.95, gifts: S.gifts && bp > 1.05 };
+        for (const k in F) {
+          F[k] += ((T[k] ? 1 : 0) - F[k]) * Math.min(1, dt * (k === 'lights' || k === 'garland' ? 2 : 3));
+        }
+
+        if (!isFinite(angV)) angV = 0.4;
+        angV = drag
+          ? angV * Math.exp(-dt * 9)
+          : angV + ((S.spin ? 0.4 : 0) + (bp < 1.1 ? 0.45 : 0) - angV) * Math.min(1, dt * 1.5);
+        ang += angV * dt;
+
+        colr.fill(-1);
+        zb.fill(-99);
+
+        const glows = [];
+        const fr = (t * 16) | 0;
+        const c0 = (cx / cw) | 0;
+        const wb = Math.round((0.37 * treeH) / cw);
+
+        // Sao nền
+        for (const s of BG) {
+          const v = Math.sin(t * s.sp + s.ph);
+          put((s.fx * cols) | 0, (s.fy * rows) | 0, v > 0.5 ? '+' : v > -0.3 ? '.' : '*', v > 0.2 ? 7 : 13, -9);
+        }
+
+        // Cực quang (Aurora)
+        if (F.aurora > 0.02) {
+          const hb = (rows * 0.4) | 0;
+          for (let c = 0; c < cols; c++) {
+            for (let r = 0; r < hb; r++) {
+              const v = (Math.sin(c * 0.13 + t * 0.6 + Math.sin(r * 0.3 + t * 0.4) * 1.6) * 0.5 + 0.5) * (1 - r / hb) * F.aurora;
+              if (v > 0.3) {
+                put(c, r, v > 0.7 ? '|' : v > 0.5 ? ':' : '.', [2, 14, 8][((c * 0.04 + t * 0.15) % 3) | 0], -7);
+              }
+            }
+          }
+        }
+
+        // Sao băng
+        nextSS -= dt;
+        if (!ss && nextSS <= 0) {
+          ss = { x: rnd() * cols * 0.5, y: rnd() * rows * 0.18, t: 0 };
+          nextSS = 5 + rnd() * 6;
+        }
+        if (ss) {
+          ss.t += dt;
+          const hx = ss.x + ss.t * 62;
+          const hy = ss.y + ss.t * 29;
+          for (let j = 0; j < 13; j++) {
+            put((hx - j) | 0, (hy - j * 0.47) | 0, j ? (j < 4 ? '=' : j < 8 ? '-' : '.') : '*', j ? (j < 4 ? 7 : j < 8 ? 10 : 9) : 11, -8);
+          }
+          if (hx > cols + 14 || hy > rows) ss = null;
+        }
+
+        // Mặt đất tuyết
+        for (let r = groundRow; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const h = hs(c, r * 3);
+            if (h < 0.55 && Math.abs(c - cols / 2) / (cols / 2) < cl(bp * 3 + 0.3)) {
+              put(c, r, h < 0.3 ? '-' : '.', h < 0.1 ? 10 : 13, -5);
+            }
+          }
+        }
+
+        // Thân cây thông 3D ASCII
+        const rTop = Math.floor((baseY - treeH) / chh) - 1;
+        const rBot = Math.floor(baseY / chh);
+        for (let r = rTop; r <= rBot; r++) {
+          const y = (baseY - (r + 0.5) * chh) / treeH;
+          if (y < 0 || y > 1) continue;
+          const Rp = Rn(y) * treeH;
+          const wc = Math.ceil(Rp / cw);
+          const ft = (y * 8) % 1;
+
+          for (let dc = -wc; dc <= wc; dc++) {
+            const X = (c0 + dc + 0.5) * cw - cx;
+            if (Math.abs(X) > Rp) continue;
+
+            const xs = X / Rp;
+            const psi = Math.asin(xs);
+            const th = psi - ang;
+            const cs = Math.cos(psi);
+            const tu = (((Math.round((th / TAU) * 56)) % 56) + 56) % 56;
+            const c = c0 + dc;
+
+            const h = hs(tu, r);
+            const h2 = hs(tu + 99, r);
+            const h3 = hs(tu + 7, r + 3);
+            const rv = bp >= 1.2 ? 1 : cl((bp - U(y, th, xs)) / 0.12);
+
+            if (rv <= 0) {
+              if (h < 0.4) put(c, r, SC[((h * 997) | 0 + fr) % SCL], h < 0.1 ? 12 : 13, 0);
+              continue;
+            }
+            if (rv < 1) {
+              put(c, r, SC[((h * 997) | 0 + fr * 2) % SCL], rv < 0.5 ? 7 : 14, cs * 0.3 + 0.05);
+              continue;
+            }
+            if (h2 > 0.94) continue;
+
+            const lum = cl((0.3 + 0.75 * cs * (0.75 + 0.25 * h2)) * (0.82 + 0.18 * (1 - ft)), 0, 0.999);
+            const z = cs * 0.3;
+            const tint = h3 < 0.04 ? 14 : h3 < 0.065 ? 7 : h3 < 0.082 ? 4 : h3 < 0.095 ? 15 : h3 < 0.103 ? 6 : h3 < 0.108 ? 17 : -1;
+
+            put(
+              c,
+              r,
+              CH[((h * CL + (((t * 1.5 + h2 * 5) | 0) * 7)) | 0) % CL],
+              tint >= 0 ? tint : lum < 0.4 ? 0 : lum < 0.68 ? 1 : lum < 0.92 ? 2 : 3,
+              z
+            );
+          }
+        }
+
+        // Quả châu (Ornaments)
+        for (const o of OR) {
+          const psi = wrap(o.th + ang);
+          const cs = Math.cos(psi);
+          if (cs < 0.15) continue;
+
+          const xs = Math.sin(psi);
+          const a = cl(F.orn * 1.3 - o.i * 0.012) * cl((bp - U(o.y, o.th, xs)) / 0.12);
+          if (a <= 0.04) continue;
+
+          const px = cx + xs * Rn(o.y) * treeH * 0.97;
+          const py = baseY - o.y * treeH;
+          const c = (px / cw) | 0;
+          const r = (py / chh) | 0;
+          const w = o.y < 0.55 ? 1 : 0;
+
+          for (let dy = -1; dy <= 1; dy++) {
+            const ww = dy === 0 ? w + 1 : w;
+            for (let dx = -ww; dx <= ww; dx++) {
+              if (hs(c + dx * 3, r + dy * 5) < a) {
+                put(c + dx, r + dy, dy === 0 ? '@' : '#', o.k, 0.7 + cs * 0.1, 0.7 + 0.3 * a);
+              }
+            }
+          }
+          if (hs(c, r) < a) put(c - w, r - 1, '*', 7, 0.9, 1);
+          glows.push(px, py, o.k, a * 0.6);
+        }
+
+        // Đèn nhấp nháy (Lights)
+        litCount = 0;
+        for (const l of LT) {
+          const s = cl(F.lights * 1.4 - l.f * 0.4);
+          if (s <= 0.02) continue;
+
+          const psi = wrap(l.th + ang);
+          const cs = Math.cos(psi);
+          if (cs < 0.12) continue;
+
+          const xs = Math.sin(psi);
+          const rv = cl((bp - U(l.y, l.th, xs)) / 0.12);
+          const a = s * rv;
+          if (hs(l.i, 3) > a) continue;
+
+          const v = 0.5 + 0.5 * Math.sin(t * l.sp + l.ph);
+          const px = cx + xs * Rn(l.y) * treeH;
+          const py = baseY - l.y * treeH;
+          const c = (px / cw) | 0;
+          const r = (py / chh) | 0;
+          litCount++;
+
+          put(c, r, v > 0.55 ? '@' : 'O', l.k, 1, 0.55 + 0.45 * v);
+          if (v > 0.75) {
+            put(c - 1, r, 'o', l.k, 0.95, 0.8);
+            put(c + 1, r, 'o', l.k, 0.95, 0.8);
+          }
+          glows.push(px, py, l.k, v * a);
+        }
+
+        // Ngôi sao đỉnh cây
+        const sA = F.star;
+        if (sA > 0.03) {
+          const Ro = treeH * 0.06;
+          const Ri = Ro * 0.45;
+          const sx = cx;
+          const sy = baseY - treeH - Ro * 0.3;
+          const pu = Math.sin(t * 3);
+          const sc = (sx / cw) | 0;
+          const sr = (sy / chh) | 0;
+          const RC = Math.ceil((Ro * 1.3) / cw);
+          const RR = Math.ceil((Ro * 1.3) / chh);
+
+          for (let dy = -RR; dy <= RR; dy++) {
+            for (let dx = -RC; dx <= RC; dx++) {
+              const X = dx * cw;
+              const Y = dy * chh;
+              const rr = Math.hypot(X, Y);
+              const th = Math.atan2(Y, X) + Math.PI / 2;
+              const rb = Ri + (Ro - Ri) * Math.pow(Math.abs(Math.cos(2.5 * th)), 1.6);
+
+              if (rr <= rb && hs(sc + dx, sr + dy) < sA) {
+                const q = rr / rb;
+                put(sc + dx, sr + dy, q < 0.45 ? '@' : q < 0.8 ? '#' : '%', [11, 5, 15][((Math.floor(th * 1.6 + t * 4) % 3) + 3) % 3], 10);
+              }
+            }
+          }
+
+          const len = Ro * 1.1 + cw * (3 + pu * 1.5);
+          for (let d8 = 0; d8 < 8; d8++) {
+            const an = (d8 * Math.PI) / 4;
+            const ux = Math.sin(an);
+            const uy = -Math.cos(an);
+            const ch = d8 % 4 === 0 ? '|' : d8 % 4 === 2 ? '-' : d8 === 1 || d8 === 5 ? '/' : '\\';
+            for (let d = Ro * 1.1; d < (d8 % 2 ? len * 0.7 : len); d += cw * 0.9) {
+              put(((sx + ux * d) / cw) | 0, ((sy + uy * d) / chh) | 0, ch, pu > 0 ? 11 : 5, 9, sA * (1 - (d / len) * 0.6));
+            }
+          }
+          glows.push(sx, sy, 11, (0.9 + 0.2 * pu) * sA * 1.3);
+        }
+
+        // Hộp quà dưới gốc cây
+        for (const [o, w, h, k, i] of [[-wb - 3, 9, 5, 6, 0], [-6, 13, 3, 4, 1], [wb - 9, 9, 3, 17, 2]]) {
+          const a = cl(F.gifts * 1.4 - i * 0.12);
+          if (a > 0.03) box(c0 + o, w, h, groundRow + 2, k, a);
+        }
+
+        // Tuyết rơi
+        for (const f of SN) {
+          if (!f.on && f.f < F.snow) {
+            f.on = true;
+            f.fy = -rnd();
+          }
+          if (!f.on) continue;
+          f.fy += (f.v * dt) / rows;
+          if (f.fy > 1) {
+            f.fy -= 1;
+            f.fx = rnd();
+            if (f.f >= F.snow) {
+              f.on = false;
+              continue;
+            }
+          }
+          if (f.fy < 0) continue;
+          const c = (f.fx * cols + Math.sin(t * 0.9 + f.ph) * 2 + Math.sin(t * 0.35) * 9 * f.fy) | 0;
+          put(((c % cols) + cols) % cols, (f.fy * rows) | 0, f.z > 0.3 ? '+' : f.z > -0.2 ? '*' : '.', f.z > 0.3 ? 7 : f.z > -0.2 ? 10 : 9, f.z);
+        }
+
+        // Hạt lấp lánh & Pháo hoa
+        spawnAcc += dt * 24 * F.sparkle * cl(bp - 0.6);
+        while (spawnAcc > 1) {
+          spawnAcc--;
+          const y = 0.08 + 0.85 * rnd();
+          const Rp = Rn(y) * treeH;
+          spark(((cx + (rnd() * 2 - 1) * Rp * 0.95) / cw) | 0, ((baseY - y * treeH) / chh) | 0, 0, 0, 0.5 + rnd() * 0.8, SCOL[(rnd() * 5) | 0]);
+        }
+
+        fw -= dt * F.fire;
+        if (fw <= 0) {
+          fw = 1 + rnd() * 1.3;
+          burst((cols * (0.12 + rnd() * 0.76)) | 0, (rows * (0.08 + rnd() * 0.28)) | 0, 70, [[4, 5], [14, 7], [8, 11], [2, 3, 5]][(rnd() * 4) | 0], 26);
+        }
+
+        for (let i = PT.length - 1; i >= 0; i--) {
+          const p = PT[i];
+          p.a += dt;
+          if (p.a >= p.l) {
+            PT[i] = PT[PT.length - 1];
+            PT.pop();
+            continue;
+          }
+          p.c += p.vx * dt;
+          p.r += p.vy * dt;
+          p.vy += 10 * dt;
+          p.vx *= 1 - dt * 1.2;
+          put(p.c | 0, p.r | 0, SPC[Math.min(4, (Math.sin((Math.PI * p.a) / p.l) * 4.99) | 0)], p.k, 12);
+        }
+
+        // Dòng chữ MERRY CHRISTMAS chạy dưới gốc
+        const shown = Math.min(msg.length, (mT * 9) | 0);
+        const mr = groundRow + 4;
+        if (mr < rows - 1) {
+          const m0 = (cols - msg.length) >> 1;
+          for (let i = 0; i < shown; i++) {
+            if (msg[i] !== ' ') {
+              put(m0 + i, mr, i === shown - 1 && shown < msg.length ? SC[(i * 3 + fr) % SCL] : msg[i], [4, 5, 2][((i >> 1) + ((t * 1.5) | 0)) % 3], 13);
+            }
+          }
+        }
+
+        // Vẽ toàn bộ lên Canvas
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = 0; i < glows.length; i += 4) {
+          const s = glows[i + 3] * cw * 5;
+          ctx.globalAlpha = Math.min(1, glows[i + 3] * 0.4);
+          ctx.drawImage(glow(glows[i + 2]), glows[i] - s / 2, glows[i + 1] - s / 2, s, s);
+        }
+
+        ctx.globalCompositeOperation = 'source-over';
+        for (const b of buckets) b.length = 0;
+        let cnt = 0;
+        for (let i = 0; i < N; i++) {
+          const k = colr[i];
+          if (k >= 0) {
+            buckets[k].push(i);
+            cnt++;
+          }
+        }
+
+        ctx.font = '700 ' + (cw / 0.6).toFixed(1) + 'px "JetBrains Mono",ui-monospace,Menlo,monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        for (let k = 0; k < buckets.length; k++) {
+          const b = buckets[k];
+          if (!b.length) continue;
+          ctx.fillStyle = PAL[k >> 3];
+          ctx.globalAlpha = ((k & 7) + 1) / 8;
+          for (let j = 0; j < b.length; j++) {
+            const i = b[j];
+            const r = (i / cols) | 0;
+            ctx.fillText(chars[i], (i - r * cols + 0.5) * cw, (r + 0.5) * chh);
+          }
+        }
+
+        // Cập nhật HUD
+        ctx.globalAlpha = 1;
+        hudT += dt;
+        if (hudT > 0.25) {
+          hudT = 0;
+          $('hr').textContent = ((((ang * 180) / Math.PI) % 360 + 360) % 360).toFixed(1);
+          $('hl').textContent = litCount;
+          $('hc').textContent = cnt.toLocaleString('en-US');
+          $('hf').textContent = Math.round(fps);
+          $('tt').textContent = 't ' + t.toFixed(2).padStart(5, '0');
+        }
+      }
+
+      // Tương tác chuột / cảm ứng
+      cv.addEventListener('pointerdown', e => {
+        drag = true;
+        moved = 0;
+        lastX = e.clientX;
+        lastT = performance.now();
+        cv.setPointerCapture(e.pointerId);
+        cv.style.cursor = 'grabbing';
+      });
+
+      cv.addEventListener('pointermove', e => {
+        if (!drag) return;
+        const dx = e.clientX - lastX;
+        const n = performance.now();
+        const d = Math.max(1, n - lastT) / 1000;
+        moved += Math.abs(dx);
+        ang += dx * 0.01;
+        angV = cl(angV * 0.5 + ((dx * 0.01) / d) * 0.5, -6, 6);
+        lastX = e.clientX;
+        lastT = n;
+      });
+
+      cv.addEventListener('pointerup', e => {
+        if (!drag) return;
+        drag = false;
+        cv.style.cursor = 'grab';
+        if (moved < 6) burst((e.clientX / cw) | 0, (e.clientY / chh) | 0);
+      });
+
+      cv.addEventListener('pointercancel', () => { drag = false; });
+      cv.addEventListener('lostpointercapture', () => { drag = false; cv.style.cursor = 'grab'; });
+      addEventListener('blur', () => { drag = false; });
+      document.addEventListener('visibilitychange', () => { drag = false; });
+
+      // Khởi tạo thanh nút bấm điều khiển
+      const bar = $('bar');
+      function mk(txt, fn, key) {
+        const b = document.createElement('button');
+        b.textContent = txt;
+        if (key) b.setAttribute('aria-pressed', S[key]);
+        b.onclick = () => {
+          if (key) {
+            S[key] = !S[key];
+            b.setAttribute('aria-pressed', S[key]);
+          }
+          fn && fn(b);
+        };
+        bar.appendChild(b);
+        return b;
+      }
+
+      const musicBtn = mk('Music', () => {
+        if (window.LofiXmas) window.LofiXmas.toggle();
+      });
+      musicBtn.id = 'btn-music';
+      musicBtn.setAttribute('aria-pressed', 'false');
+
+      const replay = () => { bp = -0.25; mT = 0; };
+      mk('Replay', replay);
+      mk('Style: ' + MODES[0], b => {
+        MODE = (MODE + 1) % 4;
+        b.textContent = 'Style: ' + MODES[MODE];
+        replay();
+      });
+
+      [
+        ['spin', 'Spin'],
+        ['lights', 'Lights'],
+        ['orn', 'Ornaments'],
+        ['star', 'Star'],
+        ['gifts', 'Gifts'],
+        ['snow', 'Snow'],
+        ['sparkle', 'Sparkles'],
+        ['aurora', 'Aurora'],
+        ['fire', 'Fireworks']
+      ].forEach(([k, n]) => mk(n, null, k));
+
+      mk('Burst', () => {
+        for (let i = 0; i < 3; i++) {
+          burst((cols * (0.25 + rnd() * 0.5)) | 0, (rows * (0.2 + rnd() * 0.4)) | 0);
+        }
+      });
+
+      addEventListener('resize', resize);
+      resize();
+      requestAnimationFrame(frame);
+    })();
+  </script>
 </body>
 </html>
