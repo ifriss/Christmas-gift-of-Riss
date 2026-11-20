@@ -187,28 +187,56 @@
       outline-offset: 2px;
     }
 
-    /* Nút mở Mailbox và khung Hộp thư bên phải */
-    #mail-btn {
+    /* Cụm nút chức năng góc trên bên phải: Ngôn ngữ + Đếm ngược + Lời chúc */
+    #top-tools {
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
       top: calc(env(safe-area-inset-top, 0px) + 68px);
       z-index: 30;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .tool-btn {
       background: #101b3ae6;
       border: 1px solid var(--gold);
       color: var(--gold);
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
-      transition: transform 0.15s, background 0.2s;
+      transition: transform 0.15s, background 0.2s, border-color 0.2s;
     }
 
-    #mail-btn:hover {
+    .tool-btn:hover {
       background: #1d2f63;
       transform: translateY(-1px);
+    }
+
+    #lang-btn {
+      border-color: #4ef57b;
+      color: #4ef57b;
+    }
+
+    #cd-btn {
+      border-color: #52f0ff;
+      color: #52f0ff;
+    }
+
+    #cd-btn.active {
+      background: #153459;
+      box-shadow: 0 0 12px rgba(82, 240, 255, 0.35);
+    }
+
+    #mail-btn.active {
+      background: #1d2f63;
+      box-shadow: 0 0 12px rgba(255, 211, 107, 0.35);
     }
 
     #mail-count {
@@ -219,6 +247,79 @@
       border-radius: 99px;
     }
 
+    /* Box Đếm ngược Giáng Sinh */
+    #cd-box {
+      position: fixed;
+      right: max(14px, env(safe-area-inset-right, 0px) + 10px);
+      top: calc(env(safe-area-inset-top, 0px) + 104px);
+      width: min(310px, calc(100vw - 28px));
+      background: rgba(13, 22, 51, 0.94);
+      border: 1px solid #52f0ff88;
+      border-radius: 14px;
+      display: none;
+      flex-direction: column;
+      z-index: 40;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+
+    #cd-box.open {
+      display: flex;
+    }
+
+    .cd-head {
+      padding: 10px 14px;
+      border-bottom: 1px solid #2a3b70;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #52f0ff;
+    }
+
+    .cd-body {
+      padding: 14px 12px 16px;
+      text-align: center;
+    }
+
+    .cd-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .cd-cell {
+      background: #070e24;
+      border: 1px solid #1e2d59;
+      border-radius: 10px;
+      padding: 8px 4px;
+    }
+
+    .cd-num {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--gold);
+      text-shadow: 0 0 8px rgba(255, 211, 107, 0.4);
+      line-height: 1.2;
+    }
+
+    .cd-lbl {
+      font-size: 9.5px;
+      color: var(--dim);
+      margin-top: 3px;
+    }
+
+    #cd-note {
+      font-size: 11px;
+      color: #4ef57b;
+      font-weight: 600;
+    }
+
+    /* Khung Hộp thư bên phải */
     #mailbox {
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
@@ -290,6 +391,7 @@
     .mb-meta {
       display: flex;
       justify-content: space-between;
+      gap: 8px;
       color: var(--gold);
       font-weight: 700;
       font-size: 10px;
@@ -299,6 +401,7 @@
     .mb-meta span {
       color: var(--dim);
       font-weight: 400;
+      white-space: nowrap;
     }
 
     .mb-form {
@@ -356,7 +459,6 @@
         font-size: 9.5px;
         bottom: calc(env(safe-area-inset-bottom, 0px) + 106px);
       }
-      /* Nâng chữ ký Dev cao hơn để không bao giờ chạm vào 2-3 hàng nút trên mobile */
       #dev-credit {
         font-size: 10.5px;
         bottom: calc(env(safe-area-inset-bottom, 0px) + 106px);
@@ -364,14 +466,19 @@
       }
       button {
         font-size: 10px;
-        padding: 5px 9px;
+        padding: 5px 8px;
       }
-      #mail-btn {
+      #top-tools {
         top: calc(env(safe-area-inset-top, 0px) + 58px);
-        padding: 5px 10px;
+        gap: 4px;
+      }
+      .tool-btn {
+        padding: 5px 8px;
+      }
+      #cd-box, #mailbox {
+        top: calc(env(safe-area-inset-top, 0px) + 92px);
       }
       #mailbox {
-        top: calc(env(safe-area-inset-top, 0px) + 90px);
         max-height: calc(100dvh - 245px);
       }
     }
@@ -458,28 +565,63 @@
   <canvas id="c"></canvas>
 
   <div id="name" title="Nhấn để đổi tên">Christmas gift of Riss</div>
-  <div id="hint">Drag to rotate. Tap for sparkles.</div>
+  <div id="hint">Kéo để xoay. Chạm để bắn pháo hoa.</div>
   <div id="tt">t 00.00</div>
 
   <div id="hud">
-    <div>rotation <b id="hr">0</b>&deg;</div>
-    <div>lights <b id="hl">0</b></div>
-    <div>letters <b id="hc">0</b></div>
+    <div><span id="lbl-rot">góc xoay</span> <b id="hr">0</b>&deg;</div>
+    <div><span id="lbl-lights">đèn</span> <b id="hl">0</b></div>
+    <div><span id="lbl-chars">ký tự</span> <b id="hc">0</b></div>
     <div>fps <b id="hf">0</b></div>
   </div>
 
   <div id="dev-credit">
     <span class="dc-role">DEV:</span> <span class="dc-name">RISS - Trương Thành Thông</span><br>
-    <span class="dc-wish">chúc mọi người giáng sinh vui vẻ 🎄</span>
+    <span class="dc-wish" id="dc-wish-text">chúc mọi người giáng sinh vui vẻ 🎄</span>
   </div>
 
   <div id="bar"></div>
 
-  <!-- Nút mở hộp thư và danh sách lời chúc -->
-  <button id="mail-btn" type="button">📩 Lời chúc <span id="mail-count">0</span></button>
+  <!-- Thanh 3 nút góc phải: Đổi ngôn ngữ + Đếm ngược + Lời chúc -->
+  <div id="top-tools">
+    <button id="lang-btn" class="tool-btn" type="button" title="Switch language / Đổi ngôn ngữ">🌐 VI</button>
+    <button id="cd-btn" class="tool-btn" type="button">⏳ <span id="cd-btn-txt">Đếm ngược</span></button>
+    <button id="mail-btn" class="tool-btn" type="button">📩 <span id="mail-btn-txt">Lời chúc</span> <span id="mail-count">0</span></button>
+  </div>
+
+  <!-- Box Đếm ngược Giáng Sinh -->
+  <div id="cd-box">
+    <div class="cd-head">
+      <span id="cd-title">⏳ Đếm ngược Giáng Sinh (GMT+7)</span>
+      <button type="button" class="mb-close" id="cd-close">✕</button>
+    </div>
+    <div class="cd-body">
+      <div class="cd-grid">
+        <div class="cd-cell">
+          <div class="cd-num" id="cd-d">00</div>
+          <div class="cd-lbl" id="cd-lbl-d">Ngày</div>
+        </div>
+        <div class="cd-cell">
+          <div class="cd-num" id="cd-h">00</div>
+          <div class="cd-lbl" id="cd-lbl-h">Giờ</div>
+        </div>
+        <div class="cd-cell">
+          <div class="cd-num" id="cd-m">00</div>
+          <div class="cd-lbl" id="cd-lbl-m">Phút</div>
+        </div>
+        <div class="cd-cell">
+          <div class="cd-num" id="cd-s">00</div>
+          <div class="cd-lbl" id="cd-lbl-s">Giây</div>
+        </div>
+      </div>
+      <div id="cd-note">Đếm ngược tới 25/12 (GMT+7) 🎄</div>
+    </div>
+  </div>
+
+  <!-- Box Hộp thư lời chúc -->
   <div id="mailbox">
     <div class="mb-head">
-      <span>🎄 Hộp thư Giáng Sinh</span>
+      <span id="mb-title">🎄 Hộp thư Giáng Sinh</span>
       <button type="button" class="mb-close" id="mb-close">✕</button>
     </div>
     <div id="mb-list">
@@ -494,8 +636,8 @@
   <!-- Modal nhập tên khi mới vào trang -->
   <div id="modal">
     <form class="modal-box" id="name-form">
-      <h3>MÓN QUÀ GIÁNG SINH TỪ RISS ❤️</h3>
-      <p>Nhập tên của bạn để nhận quà</p>
+      <h3 id="modal-title">MÓN QUÀ GIÁNG SINH TỪ RISS ❤️</h3>
+      <p id="modal-sub">Nhập tên của bạn để nhận quà</p>
       <input type="text" id="name-input" placeholder="Nhập tên của bạn..." autocomplete="off">
       <div>
         <button type="submit" id="save-btn">Xác nhận</button>
@@ -734,13 +876,114 @@
   </script>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 2: XỬ LÝ MODAL NHẬP TÊN & MAILBOX LƯU GOOGLE SHEETS (KÈM IP/DEV) -->
+  <!-- KHỐI 2: ĐA NGÔN NGỮ ANH-VIỆT, ĐẾM NGƯỢC GMT+7 & MAILBOX GOOGLE SHEETS -->
   <!-- ===================================================================== -->
   <script>
     (function () {
       const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxrsc-RtFFOPjfbTAjcTsxFcmlUMXPCkRslxr_ZotyQ0XaXHj0TecatX7oRseX22Zs24A/exec";
 
-      // --- Phần Modal nhập tên người nhận quà ---
+      // --- Từ điển song ngữ Việt - Anh ---
+      const I18N = {
+        vi: {
+          langBadge: '🌐 VI',
+          nameTitle: 'Nhấn để đổi tên',
+          hint: 'Kéo để xoay. Chạm để bắn pháo hoa.',
+          rot: 'góc xoay',
+          lights: 'đèn',
+          chars: 'ký tự',
+          devWish: 'chúc mọi người giáng sinh vui vẻ 🎄',
+          cdBtn: 'Đếm ngược',
+          mailBtn: 'Lời chúc',
+          cdTitle: '⏳ Đếm ngược Giáng Sinh (GMT+7)',
+          cdDays: 'Ngày',
+          cdHours: 'Giờ',
+          cdMins: 'Phút',
+          cdSecs: 'Giây',
+          cdNote: (y) => 'Đếm ngược tới 25/12/' + y + ' (GMT+7) 🎄',
+          cdMerry: '🎅 MERRY CHRISTMAS! CHÚC MỪNG GIÁNG SINH 🎄',
+          mbTitle: '🎄 Hộp thư Giáng Sinh',
+          mbLoading: 'Đang tải lời chúc...',
+          mbEmpty: 'Chưa có lời chúc nào. Hãy là người đầu tiên!',
+          mbPlaceholder: 'Viết thư chúc Giáng Sinh... (Shift+Enter xuống dòng)',
+          mbSend: 'Gửi',
+          modalTitle: 'MÓN QUÀ GIÁNG SINH TỪ RISS ❤️',
+          modalSub: 'Nhập tên của bạn để nhận quà',
+          modalPlaceholder: 'Nhập tên của bạn...',
+          modalBtn: 'Xác nhận',
+          anon: 'Ẩn danh',
+          bar: {
+            music: 'Nhạc',
+            replay: 'Chạy lại',
+            style: 'Kiểu',
+            modes: ['Dâng lên', 'Xoắn ốc', 'Quét ngang', 'Nở hoa'],
+            spin: 'Xoay',
+            lights: 'Đèn',
+            orn: 'Quả châu',
+            star: 'Ngôi sao',
+            gifts: 'Hộp quà',
+            snow: 'Tuyết',
+            sparkle: 'Lấp lánh',
+            aurora: 'Cực quang',
+            fire: 'Pháo hoa',
+            burst: 'Bắn pháo'
+          }
+        },
+        en: {
+          langBadge: '🌐 EN',
+          nameTitle: 'Click to change name',
+          hint: 'Drag to rotate. Tap for sparkles.',
+          rot: 'rotation',
+          lights: 'lights',
+          chars: 'letters',
+          devWish: 'wishes everyone a Merry Christmas 🎄',
+          cdBtn: 'Countdown',
+          mailBtn: 'Wishes',
+          cdTitle: '⏳ Christmas Countdown (GMT+7)',
+          cdDays: 'Days',
+          cdHours: 'Hours',
+          cdMins: 'Mins',
+          cdSecs: 'Secs',
+          cdNote: (y) => 'Counting down to Dec 25, ' + y + ' (GMT+7) 🎄',
+          cdMerry: '🎅 MERRY CHRISTMAS! HAPPY HOLIDAYS 🎄',
+          mbTitle: '🎄 Christmas Mailbox',
+          mbLoading: 'Loading wishes...',
+          mbEmpty: 'No wishes yet. Be the first to send one!',
+          mbPlaceholder: 'Write a Christmas wish... (Shift+Enter for new line)',
+          mbSend: 'Send',
+          modalTitle: 'CHRISTMAS GIFT FROM RISS ❤️',
+          modalSub: 'Enter your name to receive your gift',
+          modalPlaceholder: 'Enter your name...',
+          modalBtn: 'Confirm',
+          anon: 'Anonymous',
+          bar: {
+            music: 'Music',
+            replay: 'Replay',
+            style: 'Style',
+            modes: ['Rise', 'Spiral', 'Sweep', 'Bloom'],
+            spin: 'Spin',
+            lights: 'Lights',
+            orn: 'Ornaments',
+            star: 'Star',
+            gifts: 'Gifts',
+            snow: 'Snow',
+            sparkle: 'Sparkles',
+            aurora: 'Aurora',
+            fire: 'Fireworks',
+            burst: 'Burst'
+          }
+        }
+      };
+
+      let curLang = 'vi';
+      try {
+        const savedLang = localStorage.getItem('cgor_lang');
+        if (savedLang === 'en' || savedLang === 'vi') curLang = savedLang;
+      } catch (e) {}
+
+      window.CGOR_I18N = I18N;
+      window.getCGORLang = () => curLang;
+
+      // --- Modal nhập tên người nhận quà ---
       const modal = document.getElementById('modal');
       const form = document.getElementById('name-form');
       const input = document.getElementById('name-input');
@@ -785,10 +1028,102 @@
         input.focus();
       }, 100);
 
-      // --- Phần Mailbox Lời Chúc (Không giới hạn độ dài & số lượng + ghi IP/Thiết bị) ---
+      // --- Điều khiển đóng/mở độc quyền (Chỉ mở 1 trong 2 box) ---
+      const langBtn = document.getElementById('lang-btn');
+      const cdBtn = document.getElementById('cd-btn');
+      const cdBox = document.getElementById('cd-box');
+      const cdClose = document.getElementById('cd-close');
+
       const mailBtn = document.getElementById('mail-btn');
       const mailbox = document.getElementById('mailbox');
       const mbClose = document.getElementById('mb-close');
+
+      function closeCountdown() {
+        cdBox.classList.remove('open');
+        cdBtn.classList.remove('active');
+      }
+
+      function closeMailbox() {
+        mailbox.classList.remove('open');
+        mailBtn.classList.remove('active');
+      }
+
+      cdBtn.addEventListener('click', function () {
+        const willOpen = !cdBox.classList.contains('open');
+        closeMailbox();
+        if (willOpen) {
+          cdBox.classList.add('open');
+          cdBtn.classList.add('active');
+        } else {
+          closeCountdown();
+        }
+      });
+
+      cdClose.addEventListener('click', closeCountdown);
+
+      mailBtn.addEventListener('click', function () {
+        const willOpen = !mailbox.classList.contains('open');
+        closeCountdown();
+        if (willOpen) {
+          mailbox.classList.add('open');
+          mailBtn.classList.add('active');
+          loadWishes();
+        } else {
+          closeMailbox();
+        }
+      });
+
+      mbClose.addEventListener('click', closeMailbox);
+
+      // --- Đồng hồ đếm ngược Giáng Sinh theo giờ Việt Nam (GMT+7) ---
+      const cdD = document.getElementById('cd-d');
+      const cdH = document.getElementById('cd-h');
+      const cdM = document.getElementById('cd-m');
+      const cdS = document.getElementById('cd-s');
+      const cdNote = document.getElementById('cd-note');
+
+      function getVietnamNow() {
+        // Quy đổi thời gian hiện tại sang múi giờ chuẩn UTC+7 (Việt Nam) bất kể máy ở nước nào
+        const now = new Date();
+        const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+        return new Date(utcMs + 7 * 3600000);
+      }
+
+      function updateCountdown() {
+        const tDict = I18N[curLang];
+        const vnNow = getVietnamNow();
+        const year = vnNow.getFullYear();
+        let xmas = new Date(year, 11, 25, 0, 0, 0);
+
+        if (vnNow.getMonth() === 11 && vnNow.getDate() === 25) {
+          cdD.textContent = '00';
+          cdH.textContent = '00';
+          cdM.textContent = '00';
+          cdS.textContent = '00';
+          cdNote.textContent = tDict.cdMerry;
+          cdNote.style.color = '#ffd36b';
+          return;
+        }
+
+        if (vnNow > xmas) {
+          xmas = new Date(year + 1, 11, 25, 0, 0, 0);
+        }
+
+        const diff = xmas - vnNow;
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const m = Math.floor((diff / 1000 / 60) % 60);
+        const s = Math.floor((diff / 1000) % 60);
+
+        cdD.textContent = String(d).padStart(2, '0');
+        cdH.textContent = String(h).padStart(2, '0');
+        cdM.textContent = String(m).padStart(2, '0');
+        cdS.textContent = String(s).padStart(2, '0');
+        cdNote.textContent = tDict.cdNote(xmas.getFullYear());
+        cdNote.style.color = '#4ef57b';
+      }
+
+      // --- Mailbox Lời Chúc & Chuẩn hóa giờ Việt Nam (GMT+7) ---
       const mbList = document.getElementById('mb-list');
       const mbForm = document.getElementById('mb-form');
       const mbInput = document.getElementById('mb-input');
@@ -796,6 +1131,7 @@
       const mailCount = document.getElementById('mail-count');
 
       let wishes = [];
+      let loadedOnce = false;
 
       function escapeHTML(str) {
         return String(str).replace(/[&<>"']/g, function (m) {
@@ -807,6 +1143,28 @@
             "'": '&#39;'
           }[m];
         });
+      }
+
+      function formatTimeVN(raw) {
+        if (!raw) return '';
+        const str = String(raw).replace(/^'/, '').trim();
+        if (/^\d{4}-\d{2}-\d{2}T/.test(str)) {
+          const d = new Date(str);
+          if (!isNaN(d.getTime())) {
+            const parts = new Intl.DateTimeFormat('en-GB', {
+              timeZone: 'Asia/Ho_Chi_Minh',
+              day: '2-digit',
+              month: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            }).formatToParts(d);
+            const map = {};
+            parts.forEach(p => (map[p.type] = p.value));
+            return map.day + '/' + map.month + ' ' + map.hour + ':' + map.minute + ' (GMT+7)';
+          }
+        }
+        return str.includes('GMT+7') ? str : str + ' (GMT+7)';
       }
 
       function getDeviceInfo() {
@@ -831,15 +1189,18 @@
       }
 
       function renderWishes() {
+        const tDict = I18N[curLang];
         mailCount.textContent = wishes.length;
         if (!wishes.length) {
-          mbList.innerHTML = '<div style="color:var(--dim);text-align:center;padding:16px 0">Chưa có lời chúc nào. Hãy là người đầu tiên!</div>';
+          mbList.innerHTML = '<div style="color:var(--dim);text-align:center;padding:16px 0">' +
+            (loadedOnce ? tDict.mbEmpty : tDict.mbLoading) +
+            '</div>';
           return;
         }
         mbList.innerHTML = wishes.map(function (w) {
           return (
             '<div class="mb-item">' +
-              '<div class="mb-meta">' + escapeHTML(w.name) + '<span>' + escapeHTML(w.time || '') + '</span></div>' +
+              '<div class="mb-meta">' + escapeHTML(w.name) + '<span>' + escapeHTML(formatTimeVN(w.time)) + '</span></div>' +
               '<div class="mb-msg-text">' + escapeHTML(w.msg) + '</div>' +
             '</div>'
           );
@@ -850,24 +1211,59 @@
         try {
           const res = await fetch(SHEET_API_URL);
           const data = await res.json();
+          loadedOnce = true;
           if (Array.isArray(data)) {
             wishes = data;
-            renderWishes();
           }
+          renderWishes();
         } catch (err) {
+          loadedOnce = true;
           renderWishes();
         }
       }
 
-      mailBtn.addEventListener('click', function () {
-        mailbox.classList.toggle('open');
-        if (mailbox.classList.contains('open')) {
-          loadWishes();
-        }
-      });
+      // --- Áp dụng ngôn ngữ toàn trang ---
+      function applyLanguage() {
+        const tDict = I18N[curLang];
+        document.documentElement.lang = curLang;
+        langBtn.textContent = tDict.langBadge;
+        nameLabel.title = tDict.nameTitle;
+        document.getElementById('hint').textContent = tDict.hint;
+        document.getElementById('lbl-rot').textContent = tDict.rot;
+        document.getElementById('lbl-lights').textContent = tDict.lights;
+        document.getElementById('lbl-chars').textContent = tDict.chars;
+        document.getElementById('dc-wish-text').textContent = tDict.devWish;
 
-      mbClose.addEventListener('click', function () {
-        mailbox.classList.remove('open');
+        document.getElementById('cd-btn-txt').textContent = tDict.cdBtn;
+        document.getElementById('mail-btn-txt').textContent = tDict.mailBtn;
+        document.getElementById('cd-title').textContent = tDict.cdTitle;
+        document.getElementById('cd-lbl-d').textContent = tDict.cdDays;
+        document.getElementById('cd-lbl-h').textContent = tDict.cdHours;
+        document.getElementById('cd-lbl-m').textContent = tDict.cdMins;
+        document.getElementById('cd-lbl-s').textContent = tDict.cdSecs;
+
+        document.getElementById('mb-title').textContent = tDict.mbTitle;
+        mbInput.placeholder = tDict.mbPlaceholder;
+        mbSend.textContent = tDict.mbSend;
+
+        document.getElementById('modal-title').textContent = tDict.modalTitle;
+        document.getElementById('modal-sub').textContent = tDict.modalSub;
+        input.placeholder = tDict.modalPlaceholder;
+        btn.textContent = tDict.modalBtn;
+
+        updateCountdown();
+        renderWishes();
+        if (window.updateBarLanguage) {
+          window.updateBarLanguage(curLang);
+        }
+      }
+
+      langBtn.addEventListener('click', function () {
+        curLang = curLang === 'vi' ? 'en' : 'vi';
+        try {
+          localStorage.setItem('cgor_lang', curLang);
+        } catch (e) {}
+        applyLanguage();
       });
 
       // Tự động giãn chiều cao ô nhập khi viết thư dài
@@ -891,21 +1287,14 @@
         const txt = mbInput.value.trim();
         if (!txt) return;
 
-        const sender = nameLabel.textContent.trim() || 'Ẩn danh';
-        const d = new Date();
-        const nowStr =
-          String(d.getDate()).padStart(2, '0') + '/' +
-          String(d.getMonth() + 1).padStart(2, '0') + ' ' +
-          String(d.getHours()).padStart(2, '0') + ':' +
-          String(d.getMinutes()).padStart(2, '0');
+        const sender = nameLabel.textContent.trim() || I18N[curLang].anon;
+        const nowStr = formatTimeVN(new Date().toISOString());
 
-        // Hiển thị ngay lập tức trên giao diện
         wishes.unshift({ name: sender, msg: txt, time: nowStr });
         renderWishes();
         mbInput.value = '';
         autoResizeInput();
 
-        // Lấy IP ngầm & gửi dữ liệu lên Google Sheet
         mbSend.disabled = true;
         mbSend.textContent = '...';
         try {
@@ -931,10 +1320,11 @@
         } catch (err) {}
 
         mbSend.disabled = false;
-        mbSend.textContent = 'Gửi';
+        mbSend.textContent = I18N[curLang].mbSend;
       });
 
-      // Tải sẵn danh sách lời chúc ngay khi mở web
+      applyLanguage();
+      setInterval(updateCountdown, 1000);
       loadWishes();
     })();
   </script>
@@ -982,7 +1372,6 @@
         return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
       };
 
-      const MODES = ['Rise', 'Spiral', 'Sweep', 'Bloom'];
       let MODE = 0;
       let bp = -0.25;
       let mT = 0;
@@ -1519,54 +1908,62 @@
       addEventListener('blur', () => { drag = false; });
       document.addEventListener('visibilitychange', () => { drag = false; });
 
-      // Khởi tạo thanh nút bấm điều khiển
+      // Khởi tạo thanh nút bấm điều khiển (hỗ trợ dịch song ngữ)
       const bar = $('bar');
-      function mk(txt, fn, key) {
+      const barRefs = {};
+
+      function mk(idKey, fn, stateKey) {
         const b = document.createElement('button');
-        b.textContent = txt;
-        if (key) b.setAttribute('aria-pressed', S[key]);
+        if (stateKey) b.setAttribute('aria-pressed', S[stateKey]);
         b.onclick = () => {
-          if (key) {
-            S[key] = !S[key];
-            b.setAttribute('aria-pressed', S[key]);
+          if (stateKey) {
+            S[stateKey] = !S[stateKey];
+            b.setAttribute('aria-pressed', S[stateKey]);
           }
           fn && fn(b);
         };
         bar.appendChild(b);
+        barRefs[idKey] = b;
         return b;
       }
 
-      const musicBtn = mk('Music', () => {
+      const musicBtn = mk('music', () => {
         if (window.LofiXmas) window.LofiXmas.toggle();
       });
       musicBtn.id = 'btn-music';
       musicBtn.setAttribute('aria-pressed', 'false');
 
       const replay = () => { bp = -0.25; mT = 0; };
-      mk('Replay', replay);
-      mk('Style: ' + MODES[0], b => {
+      mk('replay', replay);
+      mk('style', b => {
         MODE = (MODE + 1) % 4;
-        b.textContent = 'Style: ' + MODES[MODE];
+        const bDict = window.CGOR_I18N[window.getCGORLang()].bar;
+        b.textContent = bDict.style + ': ' + bDict.modes[MODE];
         replay();
       });
 
-      [
-        ['spin', 'Spin'],
-        ['lights', 'Lights'],
-        ['orn', 'Ornaments'],
-        ['star', 'Star'],
-        ['gifts', 'Gifts'],
-        ['snow', 'Snow'],
-        ['sparkle', 'Sparkles'],
-        ['aurora', 'Aurora'],
-        ['fire', 'Fireworks']
-      ].forEach(([k, n]) => mk(n, null, k));
+      ['spin', 'lights', 'orn', 'star', 'gifts', 'snow', 'sparkle', 'aurora', 'fire'].forEach(k => {
+        mk(k, null, k);
+      });
 
-      mk('Burst', () => {
+      mk('burst', () => {
         for (let i = 0; i < 3; i++) {
           burst((cols * (0.25 + rnd() * 0.5)) | 0, (rows * (0.2 + rnd() * 0.4)) | 0);
         }
       });
+
+      window.updateBarLanguage = function (lang) {
+        const bDict = window.CGOR_I18N[lang].bar;
+        for (const k in barRefs) {
+          if (k === 'style') {
+            barRefs[k].textContent = bDict.style + ': ' + bDict.modes[MODE];
+          } else {
+            barRefs[k].textContent = bDict[k];
+          }
+        }
+      };
+
+      window.updateBarLanguage(window.getCGORLang());
 
       addEventListener('resize', resize);
       resize();
