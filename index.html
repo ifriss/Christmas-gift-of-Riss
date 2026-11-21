@@ -24,7 +24,7 @@
     }
 
     body {
-      font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+      font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, "PingFang SC", "Microsoft YaHei", monospace;
       color: var(--fg);
     }
 
@@ -796,9 +796,9 @@
 
   <div id="bar"></div>
 
-  <!-- Thanh 3 nút góc phải: Đổi ngôn ngữ + Đếm ngược + Lời chúc -->
+  <!-- Thanh 3 nút góc phải: Đổi ngôn ngữ (VI / EN / 中文) + Đếm ngược + Lời chúc -->
   <div id="top-tools">
-    <button id="lang-btn" class="tool-btn" type="button" title="Switch language / Đổi ngôn ngữ">🌐 VI</button>
+    <button id="lang-btn" class="tool-btn" type="button" title="Switch language / Đổi ngôn ngữ / 切换语言">🌐 VI</button>
     <button id="cd-btn" class="tool-btn" type="button">⏳ <span id="cd-btn-txt">Đếm ngược</span></button>
     <button id="mail-btn" class="tool-btn" type="button">📩 <span id="mail-btn-txt">Lời chúc</span> <span id="mail-count">0</span></button>
   </div>
@@ -1216,13 +1216,13 @@
   </script>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 2: ĐA NGÔN NGỮ ANH-VIỆT, ĐẾM NGƯỢC GMT+7 & MAILBOX REPLY/LIKE    -->
+  <!-- KHỐI 2: ĐA NGÔN NGỮ (VI / EN / 中文), ĐẾM NGƯỢC GMT+7 & MAILBOX REPLY   -->
   <!-- ===================================================================== -->
   <script>
     (function () {
       const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxrsc-RtFFOPjfbTAjcTsxFcmlUMXPCkRslxr_ZotyQ0XaXHj0TecatX7oRseX22Zs24A/exec";
 
-      // --- Từ điển song ngữ Việt - Anh (Sóng Gió đứng ở vị trí 4) ---
+      // --- Từ điển 3 ngôn ngữ: Tiếng Việt (vi), Tiếng Anh (en), Tiếng Trung Giản thể (zh) ---
       const I18N = {
         vi: {
           langBadge: '🌐 VI',
@@ -1335,13 +1335,70 @@
             fire: 'Fireworks',
             burst: 'Burst'
           }
+        },
+        zh: {
+          langBadge: '🌐 中文',
+          nameTitle: '点击修改名字',
+          hint: '拖动旋转，点击绽放烟花。',
+          rot: '旋转角度',
+          lights: '彩灯',
+          chars: '字符数',
+          devWish: '祝大家圣诞快乐 🎄',
+          cdBtn: '倒计时',
+          mailBtn: '祝福墙',
+          cdTitle: '⏳ 圣诞节倒计时 (GMT+7)',
+          cdDays: '天',
+          cdHours: '时',
+          cdMins: '分',
+          cdSecs: '秒',
+          cdNote: (y) => '距离 ' + y + ' 年 12 月 25 日 (GMT+7) 还有 🎄',
+          cdMerry: '🎅 圣诞快乐！MERRY CHRISTMAS 🎄',
+          mbTitle: '🎄 圣诞祝福信箱',
+          mbLoading: '正在加载祝福...',
+          mbEmpty: '暂无祝福，快来抢沙发吧！',
+          mbPlaceholder: '写下你的圣诞祝福... (Shift+Enter 换行)',
+          repPlaceholder: (n) => '回复 ' + n + '...',
+          replyingTo: (n) => '↳ 正在回复：' + n,
+          repEmpty: '暂无回复。',
+          repWriteBtn: '+ 写回复',
+          mbSend: '发送',
+          pinLabel: '📌 置顶',
+          tags: {
+            wish: '🎅 圣诞祝福',
+            gift: '🎁 向 Riss 讨礼物',
+            story: '❄️ 悄悄话'
+          },
+          modalTitle: '来自 RISS 的圣诞礼物 ❤️',
+          modalSub: '输入你的名字以领取礼物',
+          modalPlaceholder: '请输入你的名字...',
+          modalBtn: '确认',
+          anon: '匿名',
+          bar: {
+            music: '音乐',
+            song: '曲目',
+            songs: ['Jingle Bells', 'We Wish You', 'Silent Night', 'Sóng Gió'],
+            replay: '重播动画',
+            style: '出场',
+            modes: ['升起', '螺旋', '横扫', '绽放'],
+            spin: '旋转',
+            lights: '彩灯',
+            orn: '圣诞球',
+            star: '星星',
+            gifts: '礼盒',
+            snow: '飘雪',
+            sparkle: '星光',
+            aurora: '极光',
+            fire: '烟花',
+            burst: '放烟花'
+          }
         }
       };
 
+      const LANG_ORDER = ['vi', 'en', 'zh'];
       let curLang = 'vi';
       try {
         const savedLang = localStorage.getItem('cgor_lang');
-        if (savedLang === 'en' || savedLang === 'vi') curLang = savedLang;
+        if (LANG_ORDER.includes(savedLang)) curLang = savedLang;
       } catch (e) {}
 
       window.CGOR_I18N = I18N;
@@ -1743,7 +1800,7 @@
       // --- Áp dụng ngôn ngữ toàn trang ---
       function applyLanguage() {
         const tDict = I18N[curLang];
-        document.documentElement.lang = curLang;
+        document.documentElement.lang = curLang === 'zh' ? 'zh-CN' : curLang;
         langBtn.textContent = tDict.langBadge;
         nameLabel.title = tDict.nameTitle;
         document.getElementById('hint').textContent = tDict.hint;
@@ -1786,7 +1843,8 @@
       }
 
       langBtn.addEventListener('click', function () {
-        curLang = curLang === 'vi' ? 'en' : 'vi';
+        const nextIdx = (LANG_ORDER.indexOf(curLang) + 1) % LANG_ORDER.length;
+        curLang = LANG_ORDER[nextIdx];
         try {
           localStorage.setItem('cgor_lang', curLang);
         } catch (e) {}
@@ -2487,7 +2545,7 @@
       addEventListener('blur', () => { drag = false; });
       document.addEventListener('visibilitychange', () => { drag = false; });
 
-      // Khởi tạo thanh nút bấm điều khiển (hỗ trợ dịch song ngữ + đổi bài nhạc)
+      // Khởi tạo thanh nút bấm điều khiển (hỗ trợ dịch 3 ngôn ngữ + đổi bài nhạc)
       const bar = $('bar');
       const barRefs = {};
 
