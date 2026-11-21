@@ -1092,7 +1092,7 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 1: HỘP NHẠC LAI (3 BÀI NOEL WEB AUDIO + BÀI 4 SÓNG GIÓ YOUTUBE)   -->
+  <!-- KHỐI 1: HỘP NHẠC LAI + GIỌNG "HO HO HO!" CỦA ÔNG GIÀ NOEL             -->
   <!-- ===================================================================== -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
@@ -1105,7 +1105,6 @@
       let step = 0;
       let songIdx = 0;
 
-      // Danh sách ID dự phòng cho bài Sóng Gió (tự chuyển nếu video đầu bị YouTube chặn nhúng 101/150)
       const YT_IDS = ['SEsMhb74jTI', 'j8U06veqxdU', '6t-MjBZspmA'];
       let ytIdIdx = 0;
       let ytPlayer = null;
@@ -1115,26 +1114,22 @@
       function createYTPlayer() {
         if (ytPlayer || !window.YT || !window.YT.Player) return;
         const vid = YT_IDS[ytIdIdx];
-        const playerVars = {
-          autoplay: 0,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          iv_load_policy: 3,
-          loop: 1,
-          playlist: vid,
-          modestbranding: 1,
-          playsinline: 1
-        };
-        if (window.location.protocol && window.location.protocol.startsWith('http')) {
-          playerVars.origin = window.location.origin;
-        }
-
         ytPlayer = new YT.Player('yt-player', {
           height: '220',
           width: '220',
           videoId: vid,
-          playerVars: playerVars,
+          playerVars: {
+            autoplay: 0,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            iv_load_policy: 3,
+            loop: 1,
+            playlist: vid,
+            modestbranding: 1,
+            playsinline: 1,
+            origin: window.location.origin
+          },
           events: {
             onReady: function () {
               ytReady = true;
@@ -1459,10 +1454,61 @@
         if (b) b.setAttribute('aria-pressed', playing ? 'true' : 'false');
       }
 
+      // Tổng hợp âm thanh trầm ấm "Ho! Ho! Ho!" khi chạm vào ông già Noel
+      function playHoHoHo() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const vCtx = new AudioCtx();
+        const now = vCtx.currentTime;
+
+        const pitches = [138, 126, 112];
+        pitches.forEach((baseF, idx) => {
+          const t0 = now + idx * 0.34;
+          const dur = 0.24;
+
+          const osc = vCtx.createOscillator();
+          const sub = vCtx.createOscillator();
+          osc.type = 'sawtooth';
+          sub.type = 'triangle';
+
+          osc.frequency.setValueAtTime(baseF * 0.92, t0);
+          osc.frequency.exponentialRampToValueAtTime(baseF * 1.12, t0 + 0.06);
+          osc.frequency.exponentialRampToValueAtTime(baseF * 0.85, t0 + dur);
+
+          sub.frequency.setValueAtTime(baseF * 0.5, t0);
+          sub.frequency.exponentialRampToValueAtTime(baseF * 0.44, t0 + dur);
+
+          const formant = vCtx.createBiquadFilter();
+          formant.type = 'bandpass';
+          formant.frequency.setValueAtTime(420, t0);
+          formant.Q.value = 2.4;
+
+          const g = vCtx.createGain();
+          g.gain.setValueAtTime(0.001, t0);
+          g.gain.linearRampToValueAtTime(0.32, t0 + 0.04);
+          g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+
+          osc.connect(formant);
+          sub.connect(formant);
+          formant.connect(g);
+          g.connect(vCtx.destination);
+
+          osc.start(t0);
+          sub.start(t0);
+          osc.stop(t0 + dur + 0.02);
+          sub.stop(t0 + dur + 0.02);
+        });
+
+        setTimeout(() => {
+          if (vCtx && vCtx.state !== 'closed') vCtx.close();
+        }, 1400);
+      }
+
       return {
         start,
         stop,
         nextSong,
+        playHoHoHo,
         getSongIdx: () => songIdx,
         toggle: () => (playing ? stop() : start())
       };
@@ -1470,7 +1516,7 @@
   </script>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 2: ĐA NGÔN NGỮ (VI/EN/中文), AUTH 3 TÙY CHỌN, NHẬN LỜI CHÚC CŨ   -->
+  <!-- KHỐI 2: ĐA NGÔN NGỮ (VI/EN/中文), AUTH 3 TÙY CHỌN, MAILBOX & REPLY    -->
   <!-- ===================================================================== -->
   <script>
     (function () {
@@ -1554,6 +1600,7 @@
             orn: 'Quả châu',
             star: 'Ngôi sao',
             gifts: 'Hộp quà',
+            santa: 'Ông già Noel',
             snow: 'Tuyết',
             sparkle: 'Lấp lánh',
             aurora: 'Cực quang',
@@ -1638,6 +1685,7 @@
             orn: 'Ornaments',
             star: 'Star',
             gifts: 'Gifts',
+            santa: 'Santa',
             snow: 'Snow',
             sparkle: 'Sparkles',
             aurora: 'Aurora',
@@ -1722,6 +1770,7 @@
             orn: '圣诞球',
             star: '星星',
             gifts: '礼盒',
+            santa: '圣诞老人',
             snow: '飘雪',
             sparkle: '星光',
             aurora: '极光',
@@ -2009,10 +2058,6 @@
           if (data && data.ok && data.user) {
             saveCurrentUser(data.user);
             modal.style.display = 'none';
-            await loadWishes();
-          } else if (data && data.error === 'UNAUTHORIZED') {
-            saveCurrentUser(null);
-            switchAuthTab('login');
           }
         } catch (err) {}
         btnSave.disabled = false;
@@ -2351,12 +2396,7 @@
           const rowNum = parseInt(btnRepWrite.getAttribute('data-row'), 10);
           const idx = parseInt(btnRepWrite.getAttribute('data-idx'), 10);
           if (!rowNum || isNaN(idx) || !wishes[idx]) return;
-          setReplyTarget({
-            row: rowNum,
-            idx: idx,
-            name: wishes[idx].name,
-            msg: wishes[idx].msg
-          });
+          setReplyTarget({ row: rowNum, idx: idx, name: wishes[idx].name });
           return;
         }
 
@@ -2371,7 +2411,6 @@
         const idx = parseInt(btnLike.getAttribute('data-idx'), 10);
         if (!rowNum || isNaN(idx) || !wishes[idx]) return;
 
-        const targetWish = wishes[idx];
         const rowKey = String(rowNum);
         const alreadyLiked = likedSet.has(rowKey);
         const delta = alreadyLiked ? -1 : 1;
@@ -2380,30 +2419,21 @@
         else likedSet.add(rowKey);
         saveLikedSet();
 
-        targetWish.likes = Math.max(0, (parseInt(targetWish.likes, 10) || 0) + delta);
+        wishes[idx].likes = Math.max(0, (parseInt(wishes[idx].likes, 10) || 0) + delta);
         renderWishes();
 
         try {
-          const res = await fetch(SHEET_API_URL, {
+          await fetch(SHEET_API_URL, {
             method: 'POST',
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
               action: 'like',
               token: currentUser.token,
               row: rowNum,
-              targetName: targetWish.name,
-              targetMsg: targetWish.msg,
               delta: delta
             })
           });
-          const data = await res.json();
-          if (data && data.ok && typeof data.likes === 'number') {
-            targetWish.likes = data.likes;
-            renderWishes();
-          } else if (data && data.error === 'UNAUTHORIZED') {
-            saveCurrentUser(null);
-            openAuthModal('login');
-          }
         } catch (err) {}
       });
 
@@ -2552,19 +2582,18 @@
                 action: 'reply',
                 token: currentUser.token,
                 row: target.row,
-                targetName: target.name,
-                targetMsg: target.msg,
                 msg: rawTxt
               })
             });
             const data = await res.json();
             if (data && data.ok) {
               await loadWishes();
-            } else if (data && data.error === 'UNAUTHORIZED') {
-              saveCurrentUser(null);
-              openAuthModal('login');
+            } else {
+              alert('Không lưu được trả lời lên Sheet: ' + ((data && data.error) || 'Chưa cập nhật Code.gs'));
             }
-          } catch (err) {}
+          } catch (err) {
+            setTimeout(loadWishes, 2500);
+          }
 
           mbSend.disabled = false;
           mbSend.textContent = I18N[curLang].mbSend;
@@ -2595,8 +2624,9 @@
         mbSend.disabled = true;
         mbSend.textContent = '...';
         try {
-          const res = await fetch(SHEET_API_URL, {
+          await fetch(SHEET_API_URL, {
             method: 'POST',
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
               action: 'wish',
@@ -2606,13 +2636,7 @@
               device: getDeviceInfo()
             })
           });
-          const data = await res.json();
-          if (data && data.ok) {
-            await loadWishes();
-          } else if (data && data.error === 'UNAUTHORIZED') {
-            saveCurrentUser(null);
-            openAuthModal('login');
-          }
+          setTimeout(loadWishes, 1500);
         } catch (err) {}
 
         mbSend.disabled = false;
@@ -2628,7 +2652,7 @@
   </script>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 3: ENGINE RENDER CÂY THÔNG NOEL 3D ASCII & HIỆU ỨNG CANVAS       -->
+  <!-- KHỐI 3: ENGINE RENDER CÂY THÔNG NOEL 3D ASCII & ÔNG GIÀ NOEL          -->
   <!-- ===================================================================== -->
   <script>
     (() => {
@@ -2653,6 +2677,7 @@
         orn: true,
         star: true,
         gifts: true,
+        santa: true,
         sparkle: true,
         aurora: false,
         fire: false
@@ -2805,6 +2830,89 @@
         }
       }
 
+      let santaZone = null;
+      let hohoTimer = 0;
+      let glowsRef = null;
+
+      function drawSanta(sc, rb, al) {
+        const rTop = rb - 9;
+        santaZone = { c1: sc - 5, c2: sc + 5, r1: rTop - 2, r2: rb + 1 };
+
+        const wavePhase = Math.sin(t * 5.2);
+        const pomShift = Math.sin(t * 2.4) > 0.25 ? 1 : 0;
+        const bob = Math.sin(t * 3.2) > 0.65 ? -1 : 0;
+        const r0 = rTop + bob;
+
+        const sp = (dc, dr, ch, k, z = 15) => {
+          if (hs(sc + dc * 3, r0 + dr * 5) <= al) {
+            put(sc + dc, r0 + dr, ch, k, z, 0.7 + 0.3 * al);
+          }
+        };
+
+        // Chỏm mũ len trắng lắc nhẹ & thân mũ đỏ
+        sp(2 + pomShift, 0, '@', 7, 16);
+        sp(0, 1, '/', 4); sp(1, 1, '#', 4); sp(2, 1, '\\', 4);
+        sp(-1, 2, '/', 4); sp(0, 2, '#', 4); sp(1, 2, '#', 4); sp(2, 2, '\\', 4);
+        // Viền lông mũ trắng
+        for (let dx = -2; dx <= 2; dx++) sp(dx, 3, '=', 7);
+
+        // Khuôn mặt & mắt
+        sp(-2, 4, '(', 15); sp(-1, 4, '^', 7); sp(0, 4, '_', 15); sp(1, 4, '^', 7); sp(2, 4, ')', 15);
+
+        // Bộ râu trắng xốp
+        for (let dx = -2; dx <= 2; dx++) sp(dx, 5, dx === 0 ? 'w' : '~', 10);
+        for (let dx = -1; dx <= 1; dx++) sp(dx, 6, '~', 10);
+
+        // Thân áo đỏ + viền trắng + cánh tay phải vẫy chào
+        sp(-2, 7, '/', 4); sp(-1, 7, '#', 4); sp(0, 7, '|', 7); sp(1, 7, '#', 4); sp(2, 7, '\\', 4);
+        sp(-2, 8, '|', 4); sp(-1, 8, '#', 4); sp(0, 8, '@', 5); sp(1, 8, '#', 4);
+
+        // Cánh tay vẫy chào hướng về phía người xem / cây thông
+        if (wavePhase > 0.35) {
+          sp(3, 6, '/', 4);
+          sp(4, 5, 'o', 15);
+          sp(5, 4, '*', 11);
+        } else if (wavePhase > -0.35) {
+          sp(3, 7, '-', 4);
+          sp(4, 6, 'o', 15);
+          sp(5, 6, '+', 7);
+        } else {
+          sp(3, 7, '\\', 4);
+          sp(4, 7, 'o', 15);
+        }
+
+        // Thắt lưng vàng & khóa vuông
+        sp(-2, 9, '=', 13); sp(-1, 9, '=', 13); sp(0, 9, '#', 5); sp(1, 9, '=', 13); sp(2, 9, '=', 13);
+
+        // Ủng đứng trên mặt đất (không nhún theo thân)
+        if (hs(sc - 1, rb) <= al) {
+          put(sc - 2, rb, '[', 13, 15); put(sc - 1, rb, '#', 13, 15);
+          put(sc + 1, rb, '#', 13, 15); put(sc + 2, rb, ']', 13, 15);
+        }
+
+        // Túi quà nhỏ bên cạnh chân trái
+        if (hs(sc - 4, rb) <= al) {
+          put(sc - 4, rb - 1, '@', 5, 14);
+          put(sc - 5, rb, '(', 6, 14); put(sc - 4, rb, '#', 6, 14); put(sc - 3, rb, ')', 6, 14);
+        }
+
+        // Hào quang ấm áp quanh ông già Noel
+        if (glowsRef) glowsRef.push((sc + 0.5) * cw, (r0 + 5) * chh, 4, al * 0.55);
+
+        // Dòng chữ HO HO HO! bay lên khi chạm vào ông già Noel
+        if (hohoTimer > 0) {
+          const txt = 'HO HO HO!';
+          const lift = Math.floor((2.2 - hohoTimer) * 2.2);
+          const tr = r0 - 2 - lift;
+          const tc0 = Math.max(1, sc - 4);
+          for (let i = 0; i < txt.length; i++) {
+            if (txt[i] !== ' ') {
+              put(tc0 + i, tr, txt[i], i % 2 === 0 ? 5 : 7, 18);
+            }
+          }
+        }
+      }
+
       function box(c0, w, h, rb, k, al) {
         const r0 = rb - h + 1;
         const B = '%#X@';
@@ -2836,7 +2944,9 @@
         bp = Math.min(1.3, bp + dt / 4.8);
         if (bp > 1.1) mT += dt;
 
-        const T = { ...S, star: S.star && bp > 0.95, gifts: S.gifts && bp > 1.05 };
+        const T = { ...S, star: S.star && bp > 0.95, gifts: S.gifts && bp > 1.05, santa: S.santa && bp > 1.02 };
+        if (hohoTimer > 0) hohoTimer = Math.max(0, hohoTimer - dt);
+
         for (const k in F) {
           F[k] += ((T[k] ? 1 : 0) - F[k]) * Math.min(1, dt * (k === 'lights' || k === 'garland' ? 2 : 3));
         }
@@ -2851,6 +2961,7 @@
         zb.fill(-99);
 
         const glows = [];
+        glowsRef = glows;
         const fr = (t * 16) | 0;
         const c0 = (cx / cw) | 0;
         const wb = Math.round((0.37 * treeH) / cw);
@@ -3041,9 +3152,17 @@
           glows.push(sx, sy, 11, (0.9 + 0.2 * pu) * sA * 1.3);
         }
 
-        for (const [o, w, h, k, i] of [[-wb - 3, 9, 5, 6, 0], [-6, 13, 3, 4, 1], [wb - 9, 9, 3, 17, 2]]) {
+        for (const [o, w, h, k, i] of [[-wb - 1, 9, 5, 6, 0], [-6, 13, 3, 4, 1], [wb - 9, 9, 3, 17, 2]]) {
           const a = cl(F.gifts * 1.4 - i * 0.12);
           if (a > 0.03) box(c0 + o, w, h, groundRow + 2, k, a);
+        }
+
+        if (F.santa > 0.03) {
+          const santaOffset = W < 640 ? wb + 9 : wb + 12;
+          const santaCol = Math.max(6, c0 - santaOffset);
+          drawSanta(santaCol, groundRow + 2, F.santa);
+        } else {
+          santaZone = null;
         }
 
         for (const f of SN) {
@@ -3183,7 +3302,23 @@
         if (!drag) return;
         drag = false;
         cv.style.cursor = 'grab';
-        if (moved < 6) burst((e.clientX / cw) | 0, (e.clientY / chh) | 0);
+        if (moved < 6) {
+          const clickC = (e.clientX / cw) | 0;
+          const clickR = (e.clientY / chh) | 0;
+          if (
+            santaZone &&
+            clickC >= santaZone.c1 &&
+            clickC <= santaZone.c2 &&
+            clickR >= santaZone.r1 &&
+            clickR <= santaZone.r2
+          ) {
+            hohoTimer = 2.2;
+            if (window.LofiXmas) window.LofiXmas.playHoHoHo();
+            burst((santaZone.c1 + santaZone.c2) >> 1, santaZone.r1 - 1, 55, [4, 7, 5, 11], 22);
+          } else {
+            burst(clickC, clickR);
+          }
+        }
       });
 
       cv.addEventListener('pointercancel', () => { drag = false; });
@@ -3232,7 +3367,7 @@
         replay();
       });
 
-      ['spin', 'lights', 'orn', 'star', 'gifts', 'snow', 'sparkle', 'aurora', 'fire'].forEach(k => {
+      ['spin', 'lights', 'orn', 'star', 'gifts', 'santa', 'snow', 'sparkle', 'aurora', 'fire'].forEach(k => {
         mk(k, null, k);
       });
 
