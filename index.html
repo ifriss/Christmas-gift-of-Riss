@@ -41,15 +41,16 @@
       user-select: none;
     }
 
-    /* Trình phát YouTube ẩn chạy nền */
+    /* Trình phát YouTube ẩn hợp lệ theo chuẩn chống chặn của trình duyệt (>= 200x200px) */
     #yt-hidden-wrap {
       position: fixed;
-      width: 1px;
-      height: 1px;
-      left: -9999px;
-      top: -9999px;
+      width: 220px;
+      height: 220px;
+      left: 0;
+      bottom: 0;
       opacity: 0.001;
       pointer-events: none;
+      z-index: -1;
       overflow: hidden;
     }
 
@@ -131,7 +132,7 @@
       font-weight: 400;
     }
 
-    /* Chữ ký Dev góc phải dưới (3 màu tách biệt) */
+    /* Chữ ký Dev góc phải dưới */
     #dev-credit {
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 12px);
@@ -199,7 +200,7 @@
       outline-offset: 2px;
     }
 
-    /* Cụm nút chức năng góc trên bên phải: Ngôn ngữ + Đếm ngược + Lời chúc */
+    /* Cụm nút chức năng góc trên bên phải */
     #top-tools {
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
@@ -387,7 +388,6 @@
       font-size: 11.5px;
     }
 
-    /* Các kiểu thẻ lời chúc: mặc định, ghim, hoặc theo nhãn cảm xúc */
     .mb-item {
       background: #070e24;
       border: 1px solid #1e2d59;
@@ -404,21 +404,11 @@
       box-shadow: 0 0 12px rgba(255, 211, 107, 0.16);
     }
 
-    .mb-item.tag-gift {
-      border-left: 3px solid #ff7ad9;
-    }
+    .mb-item.tag-gift { border-left: 3px solid #ff7ad9; }
+    .mb-item.tag-story { border-left: 3px solid #52f0ff; }
+    .mb-item.tag-wish { border-left: 3px solid #4ef57b; }
 
-    .mb-item.tag-story {
-      border-left: 3px solid #52f0ff;
-    }
-
-    .mb-item.tag-wish {
-      border-left: 3px solid #4ef57b;
-    }
-
-    .mb-msg-text {
-      white-space: pre-wrap;
-    }
+    .mb-msg-text { white-space: pre-wrap; }
 
     .mb-meta {
       display: flex;
@@ -436,6 +426,23 @@
       align-items: center;
       gap: 5px;
       flex-wrap: wrap;
+    }
+
+    /* Huy hiệu danh hiệu tùy chỉnh (VD: DEV🎄) */
+    .user-badge {
+      background: linear-gradient(135deg, rgba(255, 211, 107, 0.22), rgba(82, 240, 255, 0.18));
+      border: 1px solid #ffd36baa;
+      color: #ffd36b;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 0 5px;
+      border-radius: 5px;
+      text-shadow: 0 0 6px rgba(255, 211, 107, 0.45);
+    }
+
+    .verified-tick {
+      color: #4ef57b;
+      font-size: 9.5px;
     }
 
     .pin-badge {
@@ -475,26 +482,15 @@
       transition: transform 0.12s, border-color 0.2s, color 0.2s;
     }
 
-    .like-btn:hover {
-      border-color: #ff6b8b;
-      color: #ff8fa8;
-    }
-
+    .like-btn:hover { border-color: #ff6b8b; color: #ff8fa8; }
     .like-btn.liked {
       background: rgba(255, 59, 92, 0.18);
       border-color: #ff5c7c;
       color: #ff8fa8;
       font-weight: 700;
     }
-
-    .rep-toggle-btn:hover, .rep-toggle-btn.open {
-      border-color: #52f0ff;
-      color: #52f0ff;
-    }
-
-    .like-btn:active, .rep-toggle-btn:active {
-      transform: scale(0.92);
-    }
+    .rep-toggle-btn:hover, .rep-toggle-btn.open { border-color: #52f0ff; color: #52f0ff; }
+    .like-btn:active, .rep-toggle-btn:active { transform: scale(0.92); }
 
     /* Khu vực danh sách phản hồi (Reply) sổ xuống */
     .rep-list {
@@ -508,9 +504,7 @@
       gap: 6px;
     }
 
-    .rep-list.open {
-      display: flex;
-    }
+    .rep-list.open { display: flex; }
 
     .rep-item {
       background: rgba(12, 22, 52, 0.85);
@@ -532,7 +526,14 @@
       margin-bottom: 2px;
     }
 
-    .rep-meta span {
+    .rep-meta-left {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .rep-meta span.rep-time {
       color: var(--dim);
       font-weight: 400;
       font-size: 9px;
@@ -556,9 +557,7 @@
       margin-top: 2px;
     }
 
-    .rep-write-link:hover {
-      background: rgba(82, 240, 255, 0.12);
-    }
+    .rep-write-link:hover { background: rgba(82, 240, 255, 0.12); }
 
     /* Thanh báo trạng thái đang trả lời tin nhắn */
     #reply-banner {
@@ -573,9 +572,7 @@
       font-size: 10.5px;
     }
 
-    #reply-banner.active {
-      display: flex;
-    }
+    #reply-banner.active { display: flex; }
 
     #reply-cancel {
       background: none;
@@ -583,6 +580,30 @@
       color: #ff8a8a;
       font-size: 12px;
       padding: 0 4px;
+    }
+
+    /* Thanh khóa gửi thư dành cho Khách */
+    #mb-guest-lock {
+      display: none;
+      padding: 10px 12px;
+      border-top: 1px solid #2a3b70;
+      background: #09112b;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 10.5px;
+      color: var(--dim);
+    }
+
+    #mb-guest-lock.active { display: flex; }
+
+    #mb-guest-login-btn {
+      background: #1d2f63;
+      border-color: var(--gold);
+      color: var(--gold);
+      font-weight: 700;
+      white-space: nowrap;
+      padding: 6px 11px;
     }
 
     /* Thanh chọn nhãn cảm xúc & ô nhập thư */
@@ -643,9 +664,7 @@
       box-sizing: border-box;
     }
 
-    #mb-input:focus {
-      border-color: var(--gold);
-    }
+    #mb-input:focus { border-color: var(--gold); }
 
     #mb-send {
       background: #1d2f63;
@@ -657,44 +676,22 @@
       height: 34px;
     }
 
-    /* Tối ưu giao diện trên màn hình điện thoại & tablet nhỏ */
+    /* Tối ưu giao diện trên màn hình điện thoại */
     @media (max-width: 640px) {
-      #hint, #tt {
-        font-size: 10px;
-        top: calc(env(safe-area-inset-top, 0px) + 8px);
-      }
-      #name {
-        top: calc(env(safe-area-inset-top, 0px) + 26px);
-      }
-      #hud {
-        font-size: 9.5px;
-        bottom: calc(env(safe-area-inset-bottom, 0px) + 106px);
-      }
-      #dev-credit {
-        font-size: 10.5px;
-        bottom: calc(env(safe-area-inset-bottom, 0px) + 106px);
-        max-width: 225px;
-      }
-      button {
-        font-size: 10px;
-        padding: 5px 8px;
-      }
-      #top-tools {
-        top: calc(env(safe-area-inset-top, 0px) + 58px);
-        gap: 4px;
-      }
-      .tool-btn {
-        padding: 5px 8px;
-      }
-      #cd-box, #mailbox {
-        top: calc(env(safe-area-inset-top, 0px) + 92px);
-      }
-      #mailbox {
-        max-height: calc(100dvh - 245px);
-      }
+      #hint, #tt { font-size: 10px; top: calc(env(safe-area-inset-top, 0px) + 8px); }
+      #name { top: calc(env(safe-area-inset-top, 0px) + 26px); }
+      #hud { font-size: 9.5px; bottom: calc(env(safe-area-inset-bottom, 0px) + 106px); }
+      #dev-credit { font-size: 10.5px; bottom: calc(env(safe-area-inset-bottom, 0px) + 106px); max-width: 225px; }
+      button { font-size: 10px; padding: 5px 8px; }
+      #top-tools { top: calc(env(safe-area-inset-top, 0px) + 58px); gap: 4px; }
+      .tool-btn { padding: 5px 8px; }
+      #cd-box, #mailbox { top: calc(env(safe-area-inset-top, 0px) + 92px); }
+      #mailbox { max-height: calc(100dvh - 245px); }
     }
 
-    /* Hộp thoại nhập tên ban đầu */
+    /* ===================================================================== */
+    /* MODAL 3 TÙY CHỌN (KHÁCH TRUY CẬP / ĐĂNG NHẬP / ĐĂNG KÝ) + HỒ SƠ USER  */
+    /* ===================================================================== */
     #modal {
       position: fixed;
       inset: 0;
@@ -712,63 +709,211 @@
       background: #0d1633;
       border: 1px solid #2a3b70;
       border-radius: 16px;
-      padding: 24px 20px;
+      padding: 20px 18px;
       width: 100%;
-      max-width: 360px;
+      max-width: 390px;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.7);
+      position: relative;
     }
 
     .modal-box h3 {
-      margin: 0 0 8px;
+      margin: 0 0 12px;
       color: var(--gold);
       font-size: 14px;
       letter-spacing: 0.03em;
       line-height: 1.4;
     }
 
-    .modal-box p {
-      margin: 0 0 16px;
-      color: var(--dim);
-      font-size: 12px;
+    /* Thanh 3 Tab chuyển chế độ */
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      background: #050a1a;
+      border: 1px solid #1e2d59;
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 14px;
     }
 
-    #name-input {
+    .auth-tab {
+      background: transparent;
+      border: none;
+      border-radius: 7px;
+      color: var(--dim);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 7px 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .auth-tab.active {
+      background: #1d2f63;
+      color: var(--gold);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    .auth-pane {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .auth-pane.active {
+      display: flex;
+    }
+
+    .auth-desc {
+      margin: 0;
+      color: var(--dim);
+      font-size: 11.5px;
+      line-height: 1.45;
+    }
+
+    .auth-field {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      gap: 4px;
+    }
+
+    .auth-field label {
+      font-size: 10.5px;
+      color: #8aa0c8;
+      padding-left: 2px;
+    }
+
+    .auth-input {
       width: 100%;
       box-sizing: border-box;
       background: #050a1a;
       border: 1px solid #2a3b70;
       border-radius: 8px;
-      padding: 12px;
+      padding: 10px 12px;
       color: var(--fg);
       font: inherit;
-      font-size: 16px;
-      text-align: center;
-      margin-bottom: 16px;
+      font-size: 13.5px;
       outline: none;
     }
 
-    #name-input:focus {
+    .auth-input:focus {
       border-color: var(--gold);
-      box-shadow: 0 0 10px #ffd36b33;
+      box-shadow: 0 0 10px #ffd36b28;
     }
 
-    #save-btn {
+    /* Hộp gợi ý tên cũ theo IP */
+    #ip-suggest-box {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: rgba(82, 240, 255, 0.06);
+      border: 1px dashed #52f0ff66;
+      border-radius: 8px;
+      padding: 7px 9px;
+      text-align: left;
+    }
+
+    #ip-suggest-box.active {
+      display: flex;
+    }
+
+    .ip-suggest-title {
+      font-size: 10px;
+      color: #52f0ff;
+      font-weight: 700;
+    }
+
+    .ip-suggest-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .ip-chip {
+      background: #101b3a;
+      border: 1px solid #52f0ff88;
+      color: #eaf4ff;
+      font-size: 10.5px;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .ip-chip:hover {
+      background: #1d2f63;
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .auth-error {
+      display: none;
+      color: #ff7a8a;
+      background: rgba(255, 59, 92, 0.12);
+      border: 1px solid #ff5c7c66;
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .auth-error.active {
+      display: block;
+    }
+
+    .auth-submit {
       background: #1d2f63;
       border: 1px solid var(--gold);
       color: var(--gold);
       font-weight: 700;
       font-size: 13px;
-      padding: 10px 26px;
+      padding: 10px 20px;
+      margin-top: 2px;
       cursor: pointer;
     }
 
-    #save-btn:hover {
-      background: #263d80;
+    .auth-submit:hover { background: #263d80; }
+    .auth-submit:disabled { opacity: 0.6; cursor: wait; }
+
+    /* Giao diện Quản lý hồ sơ khi đã đăng nhập */
+    #profile-pane {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    #save-btn:active {
-      transform: scale(0.96);
+    #profile-pane.active {
+      display: flex;
+    }
+
+    .profile-card {
+      background: #070e24;
+      border: 1px solid #1e2d59;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 11.5px;
+      line-height: 1.6;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    .btn-danger {
+      background: rgba(255, 59, 92, 0.16);
+      border-color: #ff5c7c;
+      color: #ff8fa8;
+      font-weight: 700;
+      padding: 9px 14px;
+    }
+
+    .btn-ghost {
+      background: #101b3a;
+      border-color: #2a3b70;
+      color: var(--dim);
+      padding: 9px 14px;
     }
   </style>
 </head>
@@ -778,7 +923,7 @@
   <!-- Container ẩn cho YouTube IFrame API -->
   <div id="yt-hidden-wrap"><div id="yt-player"></div></div>
 
-  <div id="name" title="Nhấn để đổi tên">Christmas gift of Riss</div>
+  <div id="name" title="Nhấn để quản lý tài khoản / đổi tên">Christmas gift of Riss</div>
   <div id="hint">Kéo để xoay. Chạm để bắn pháo hoa.</div>
   <div id="tt">t 00.00</div>
 
@@ -796,7 +941,7 @@
 
   <div id="bar"></div>
 
-  <!-- Thanh 3 nút góc phải: Đổi ngôn ngữ (VI / EN / 中文) + Đếm ngược + Lời chúc -->
+  <!-- Thanh 3 nút góc phải -->
   <div id="top-tools">
     <button id="lang-btn" class="tool-btn" type="button" title="Switch language / Đổi ngôn ngữ / 切换语言">🌐 VI</button>
     <button id="cd-btn" class="tool-btn" type="button">⏳ <span id="cd-btn-txt">Đếm ngược</span></button>
@@ -841,7 +986,15 @@
     <div id="mb-list">
       <div style="color:var(--dim);text-align:center;padding:16px 0">Đang tải lời chúc...</div>
     </div>
-    <div class="mb-compose">
+
+    <!-- Thanh khóa dành cho Khách truy cập -->
+    <div id="mb-guest-lock">
+      <span id="mb-lock-text">🔒 Chỉ thành viên đăng nhập mới gửi được lời chúc & thả tim.</span>
+      <button type="button" id="mb-guest-login-btn">Đăng nhập</button>
+    </div>
+
+    <!-- Khung soạn thảo dành cho Thành viên đã đăng nhập -->
+    <div class="mb-compose" id="mb-compose">
       <div id="reply-banner">
         <span id="reply-banner-text">↳ Đang trả lời...</span>
         <button type="button" id="reply-cancel" title="Hủy trả lời">✕</button>
@@ -858,16 +1011,78 @@
     </div>
   </div>
 
-  <!-- Modal nhập tên khi mới vào trang -->
+  <!-- Modal 3 Tùy chọn: Khách truy cập / Đăng nhập / Đăng ký + Hồ sơ -->
   <div id="modal">
-    <form class="modal-box" id="name-form">
+    <div class="modal-box">
       <h3 id="modal-title">MÓN QUÀ GIÁNG SINH TỪ RISS ❤️</h3>
-      <p id="modal-sub">Nhập tên của bạn để nhận quà</p>
-      <input type="text" id="name-input" placeholder="Nhập tên của bạn..." autocomplete="off">
-      <div>
-        <button type="submit" id="save-btn">Xác nhận</button>
+
+      <!-- Thanh 3 Tab khi chưa đăng nhập -->
+      <div class="auth-tabs" id="auth-tabs">
+        <button type="button" class="auth-tab active" data-tab="guest" id="tab-guest">Khách</button>
+        <button type="button" class="auth-tab" data-tab="login" id="tab-login">Đăng nhập</button>
+        <button type="button" class="auth-tab" data-tab="register" id="tab-register">Đăng ký</button>
       </div>
-    </form>
+
+      <div class="auth-error" id="auth-error"></div>
+
+      <!-- TAB 1: KHÁCH TRUY CẬP -->
+      <form class="auth-pane active" id="pane-guest">
+        <p class="auth-desc" id="guest-desc">Xem cây thông & nghe nhạc ngay (chỉ thành viên đăng nhập mới gửi được lời chúc).</p>
+        <div class="auth-field">
+          <label for="guest-name-input" id="lbl-guest-name">Tên hiển thị trên cây thông (tùy chọn)</label>
+          <input type="text" class="auth-input" id="guest-name-input" placeholder="Christmas gift of Riss" autocomplete="off">
+        </div>
+        <button type="submit" class="auth-submit" id="btn-guest-go">Vào xem ngay 🎄</button>
+      </form>
+
+      <!-- TAB 2: ĐĂNG NHẬP -->
+      <form class="auth-pane" id="pane-login">
+        <div class="auth-field">
+          <label for="login-user" id="lbl-login-user">Tên tài khoản</label>
+          <input type="text" class="auth-input" id="login-user" placeholder="vd: riss" autocomplete="username">
+        </div>
+        <div class="auth-field">
+          <label for="login-pass" id="lbl-login-pass">Mật khẩu</label>
+          <input type="password" class="auth-input" id="login-pass" placeholder="••••••" autocomplete="current-password">
+        </div>
+        <button type="submit" class="auth-submit" id="btn-login-go">Đăng nhập</button>
+      </form>
+
+      <!-- TAB 3: ĐĂNG KÝ + NHẬN LẠI LỜI CHÚC CŨ -->
+      <form class="auth-pane" id="pane-register">
+        <div id="ip-suggest-box">
+          <div class="ip-suggest-title" id="ip-suggest-title">✨ Tìm thấy lời chúc cũ từ mạng của bạn (chạm để nhận lại):</div>
+          <div class="ip-suggest-chips" id="ip-suggest-chips"></div>
+        </div>
+        <div class="auth-field">
+          <label for="reg-display" id="lbl-reg-display">Tên hiển thị (có thể có dấu & emoji)</label>
+          <input type="text" class="auth-input" id="reg-display" placeholder="vd: Trương Thành Thông" maxlength="32">
+        </div>
+        <div class="auth-field">
+          <label for="reg-user" id="lbl-reg-user">Tên tài khoản (viết liền không dấu, 3-20 ký tự)</label>
+          <input type="text" class="auth-input" id="reg-user" placeholder="vd: truongthanhthong" maxlength="20" autocomplete="username">
+        </div>
+        <div class="auth-field">
+          <label for="reg-pass" id="lbl-reg-pass">Mật khẩu (tối thiểu 4 ký tự)</label>
+          <input type="password" class="auth-input" id="reg-pass" placeholder="••••••" autocomplete="new-password">
+        </div>
+        <button type="submit" class="auth-submit" id="btn-register-go">Tạo tài khoản & Nhận quà</button>
+      </form>
+
+      <!-- HỒ SƠ KHI ĐÃ ĐĂNG NHẬP -->
+      <form id="profile-pane">
+        <div class="profile-card" id="profile-info"></div>
+        <div class="auth-field">
+          <label for="prof-display-input" id="lbl-prof-display">Đổi tên hiển thị mới</label>
+          <input type="text" class="auth-input" id="prof-display-input" maxlength="32">
+        </div>
+        <div class="profile-actions">
+          <button type="submit" class="auth-submit" id="btn-prof-save">Lưu tên</button>
+          <button type="button" class="btn-danger" id="btn-logout">Đăng xuất</button>
+          <button type="button" class="btn-ghost" id="btn-prof-close">Đóng</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- ===================================================================== -->
@@ -882,19 +1097,22 @@
       let playing = false;
       let timer = null;
       let step = 0;
-      let songIdx = 0; // Mặc định bắt đầu ở bài 1 (Jingle Bells)
+      let songIdx = 0;
 
-      // Trình phát YouTube IFrame API ẩn (Bài 4: Sóng Gió - ID SEsMhb74jTI)
-      const YT_VIDEO_ID = 'SEsMhb74jTI';
+      // Danh sách ID dự phòng cho bài Sóng Gió (tự chuyển nếu video đầu bị YouTube chặn nhúng 101/150)
+      const YT_IDS = ['SEsMhb74jTI', 'j8U06veqxdU', '6t-MjBZspmA'];
+      let ytIdIdx = 0;
       let ytPlayer = null;
       let ytReady = false;
       let wantYtPlay = false;
 
-      window.onYouTubeIframeAPIReady = function () {
+      function createYTPlayer() {
+        if (ytPlayer || !window.YT || !window.YT.Player) return;
+        const vid = YT_IDS[ytIdIdx];
         ytPlayer = new YT.Player('yt-player', {
-          height: '1',
-          width: '1',
-          videoId: YT_VIDEO_ID,
+          height: '220',
+          width: '220',
+          videoId: vid,
           playerVars: {
             autoplay: 0,
             controls: 0,
@@ -902,14 +1120,16 @@
             fs: 0,
             iv_load_policy: 3,
             loop: 1,
-            playlist: YT_VIDEO_ID,
+            playlist: vid,
             modestbranding: 1,
-            playsinline: 1
+            playsinline: 1,
+            origin: window.location.origin
           },
           events: {
             onReady: function () {
               ytReady = true;
-              ytPlayer.setVolume(75);
+              ytPlayer.unMute();
+              ytPlayer.setVolume(80);
               if (wantYtPlay && SONGS[songIdx].type === 'youtube') {
                 ytPlayer.playVideo();
               }
@@ -917,6 +1137,10 @@
             onStateChange: function (e) {
               if (SONGS[songIdx].type !== 'youtube') return;
               if (e.data === YT.PlayerState.PLAYING) {
+                if (ytPlayer.isMuted && ytPlayer.isMuted()) {
+                  ytPlayer.unMute();
+                }
+                ytPlayer.setVolume(80);
                 playing = true;
                 syncBtn();
               } else if (e.data === YT.PlayerState.PAUSED) {
@@ -925,12 +1149,29 @@
               } else if (e.data === YT.PlayerState.ENDED) {
                 ytPlayer.playVideo();
               }
+            },
+            onError: function (e) {
+              if ((e.data === 101 || e.data === 150 || e.data === 100) && ytIdIdx + 1 < YT_IDS.length) {
+                ytIdIdx++;
+                const nextVid = YT_IDS[ytIdIdx];
+                ytPlayer.loadVideoById({ videoId: nextVid });
+                if (wantYtPlay && SONGS[songIdx].type === 'youtube') {
+                  ytPlayer.playVideo();
+                }
+              }
             }
           }
         });
+      }
+
+      window.onYouTubeIframeAPIReady = function () {
+        createYTPlayer();
       };
 
-      // Danh sách 4 bài: 3 bài Noel Web Audio gốc (0, 1, 2) + Sóng Gió YouTube ở vị trí 4 (index 3)
+      if (window.YT && window.YT.Player) {
+        createYTPlayer();
+      }
+
       const SONGS = [
         {
           id: 'jingle',
@@ -1164,7 +1405,10 @@
         if (song.type === 'youtube') {
           if (ctx && ctx.state === 'running') ctx.suspend();
           wantYtPlay = true;
+          createYTPlayer();
           if (ytReady && ytPlayer && typeof ytPlayer.playVideo === 'function') {
+            ytPlayer.unMute();
+            ytPlayer.setVolume(80);
             ytPlayer.playVideo();
           }
           playing = true;
@@ -1216,17 +1460,16 @@
   </script>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 2: ĐA NGÔN NGỮ (VI / EN / 中文), ĐẾM NGƯỢC GMT+7 & MAILBOX REPLY   -->
+  <!-- KHỐI 2: ĐA NGÔN NGỮ (VI/EN/中文), AUTH 3 TÙY CHỌN, NHẬN LỜI CHÚC CŨ   -->
   <!-- ===================================================================== -->
   <script>
     (function () {
       const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxrsc-RtFFOPjfbTAjcTsxFcmlUMXPCkRslxr_ZotyQ0XaXHj0TecatX7oRseX22Zs24A/exec";
 
-      // --- Từ điển 3 ngôn ngữ: Tiếng Việt (vi), Tiếng Anh (en), Tiếng Trung Giản thể (zh) ---
       const I18N = {
         vi: {
           langBadge: '🌐 VI',
-          nameTitle: 'Nhấn để đổi tên',
+          nameTitle: 'Nhấn để quản lý tài khoản / đổi tên',
           hint: 'Kéo để xoay. Chạm để bắn pháo hoa.',
           rot: 'góc xoay',
           lights: 'đèn',
@@ -1251,16 +1494,44 @@
           repWriteBtn: '+ Viết trả lời',
           mbSend: 'Gửi',
           pinLabel: '📌 Đã ghim',
+          lockText: '🔒 Đăng nhập để gửi lời chúc, phản hồi & thả tim.',
+          lockBtn: 'Đăng nhập',
           tags: {
             wish: '🎅 Lời chúc',
             gift: '🎁 Đòi quà Riss',
             story: '❄️ Tâm sự'
           },
           modalTitle: 'MÓN QUÀ GIÁNG SINH TỪ RISS ❤️',
-          modalSub: 'Nhập tên của bạn để nhận quà',
-          modalPlaceholder: 'Nhập tên của bạn...',
-          modalBtn: 'Xác nhận',
-          anon: 'Ẩn danh',
+          tabs: { guest: 'Khách', login: 'Đăng nhập', register: 'Đăng ký' },
+          guestDesc: 'Xem cây thông & nghe nhạc ngay (chỉ thành viên đăng nhập mới gửi được lời chúc).',
+          lblGuestName: 'Tên hiển thị trên cây thông (tùy chọn)',
+          btnGuestGo: 'Vào xem ngay 🎄',
+          lblLoginUser: 'Tên tài khoản',
+          lblLoginPass: 'Mật khẩu',
+          btnLoginGo: 'Đăng nhập',
+          ipSuggestTitle: '✨ Tìm thấy lời chúc cũ từ mạng của bạn (chạm để nhận lại):',
+          ipChipCount: (n) => n + ' lời chúc',
+          lblRegDisplay: 'Tên hiển thị (có thể có dấu & emoji)',
+          lblRegUser: 'Tên tài khoản (viết liền không dấu, 3-20 ký tự)',
+          lblRegPass: 'Mật khẩu (tối thiểu 4 ký tự)',
+          btnRegGo: 'Tạo tài khoản & Nhận quà',
+          lblProfDisplay: 'Đổi tên hiển thị mới',
+          btnProfSave: 'Lưu tên',
+          btnLogout: 'Đăng xuất',
+          btnProfClose: 'Đóng',
+          profAccount: 'Tài khoản',
+          profBadge: 'Danh hiệu',
+          profNoBadge: 'Thành viên',
+          claimedAlert: (n) => '🎉 Đã tự động nhận lại ' + n + ' lời chúc cũ của bạn!',
+          errors: {
+            INVALID_USERNAME: 'Tên tài khoản phải dài 3-20 ký tự, chỉ gồm chữ thường a-z, số 0-9, dấu . hoặc _',
+            INVALID_DISPLAY_NAME: 'Vui lòng nhập tên hiển thị hợp lệ (1-32 ký tự).',
+            WEAK_PASSWORD: 'Mật khẩu phải có ít nhất 4 ký tự.',
+            USERNAME_TAKEN: 'Tên tài khoản này đã có người dùng, vui lòng chọn tên khác.',
+            WRONG_PASSWORD: 'Mật khẩu không chính xác.',
+            USER_NOT_FOUND: 'Không tìm thấy tên tài khoản này.',
+            NETWORK: 'Lỗi kết nối máy chủ, vui lòng thử lại.'
+          },
           bar: {
             music: 'Nhạc',
             song: 'Bài',
@@ -1282,7 +1553,7 @@
         },
         en: {
           langBadge: '🌐 EN',
-          nameTitle: 'Click to change name',
+          nameTitle: 'Click to manage account / change name',
           hint: 'Drag to rotate. Tap for sparkles.',
           rot: 'rotation',
           lights: 'lights',
@@ -1307,16 +1578,44 @@
           repWriteBtn: '+ Write a reply',
           mbSend: 'Send',
           pinLabel: '📌 Pinned',
+          lockText: '🔒 Log in to send wishes, reply & like.',
+          lockBtn: 'Log In',
           tags: {
             wish: '🎅 Wish',
             gift: '🎁 Gift Request',
             story: '❄️ Holiday Note'
           },
           modalTitle: 'CHRISTMAS GIFT FROM RISS ❤️',
-          modalSub: 'Enter your name to receive your gift',
-          modalPlaceholder: 'Enter your name...',
-          modalBtn: 'Confirm',
-          anon: 'Anonymous',
+          tabs: { guest: 'Guest', login: 'Log In', register: 'Sign Up' },
+          guestDesc: 'View the tree & listen to music now (only logged-in users can send wishes).',
+          lblGuestName: 'Display name on tree (optional)',
+          btnGuestGo: 'Enter as Guest 🎄',
+          lblLoginUser: 'Username',
+          lblLoginPass: 'Password',
+          btnLoginGo: 'Log In',
+          ipSuggestTitle: '✨ Found past wishes from your network (tap to claim):',
+          ipChipCount: (n) => n + ' wishes',
+          lblRegDisplay: 'Display Name (spaces & emojis allowed)',
+          lblRegUser: 'Username (lowercase a-z, 0-9, 3-20 chars)',
+          lblRegPass: 'Password (min 4 characters)',
+          btnRegGo: 'Create Account & Claim',
+          lblProfDisplay: 'Change display name',
+          btnProfSave: 'Save',
+          btnLogout: 'Log Out',
+          btnProfClose: 'Close',
+          profAccount: 'Account',
+          profBadge: 'Badge',
+          profNoBadge: 'Member',
+          claimedAlert: (n) => '🎉 Automatically claimed ' + n + ' of your past wishes!',
+          errors: {
+            INVALID_USERNAME: 'Username must be 3-20 chars (a-z, 0-9, . or _).',
+            INVALID_DISPLAY_NAME: 'Please enter a valid display name (1-32 chars).',
+            WEAK_PASSWORD: 'Password must be at least 4 characters.',
+            USERNAME_TAKEN: 'This username is already taken.',
+            WRONG_PASSWORD: 'Incorrect password.',
+            USER_NOT_FOUND: 'Username not found.',
+            NETWORK: 'Server connection error, please try again.'
+          },
           bar: {
             music: 'Music',
             song: 'Song',
@@ -1338,7 +1637,7 @@
         },
         zh: {
           langBadge: '🌐 中文',
-          nameTitle: '点击修改名字',
+          nameTitle: '点击管理账号 / 修改名字',
           hint: '拖动旋转，点击绽放烟花。',
           rot: '旋转角度',
           lights: '彩灯',
@@ -1363,16 +1662,44 @@
           repWriteBtn: '+ 写回复',
           mbSend: '发送',
           pinLabel: '📌 置顶',
+          lockText: '🔒 登录后即可发送祝福、回复和点赞。',
+          lockBtn: '登录',
           tags: {
             wish: '🎅 圣诞祝福',
             gift: '🎁 向 Riss 讨礼物',
             story: '❄️ 悄悄话'
           },
           modalTitle: '来自 RISS 的圣诞礼物 ❤️',
-          modalSub: '输入你的名字以领取礼物',
-          modalPlaceholder: '请输入你的名字...',
-          modalBtn: '确认',
-          anon: '匿名',
+          tabs: { guest: '游客访问', login: '登录', register: '注册' },
+          guestDesc: '立即观赏圣诞树与音乐（仅登录用户可发送祝福与点赞）。',
+          lblGuestName: '圣诞树上的显示名称（选填）',
+          btnGuestGo: '立即进入 🎄',
+          lblLoginUser: '账号名',
+          lblLoginPass: '密码',
+          btnLoginGo: '登录',
+          ipSuggestTitle: '✨ 检测到你此前发过的祝福（点击认领）：',
+          ipChipCount: (n) => n + ' 条祝福',
+          lblRegDisplay: '显示名称（支持中文与表情符号）',
+          lblRegUser: '账号名（仅限小写字母、数字，3-20位）',
+          lblRegPass: '密码（至少4位）',
+          btnRegGo: '创建账号并领取礼物',
+          lblProfDisplay: '修改显示名称',
+          btnProfSave: '保存',
+          btnLogout: '退出登录',
+          btnProfClose: '关闭',
+          profAccount: '账号',
+          profBadge: '头衔徽章',
+          profNoBadge: '正式成员',
+          claimedAlert: (n) => '🎉 已自动认领你之前的 ' + n + ' 条圣诞祝福！',
+          errors: {
+            INVALID_USERNAME: '账号名需为3-20位小写字母、数字、点或下划线。',
+            INVALID_DISPLAY_NAME: '请输入有效的显示名称（1-32个字符）。',
+            WEAK_PASSWORD: '密码至少需要4个字符。',
+            USERNAME_TAKEN: '该账号名已被注册，请换一个。',
+            WRONG_PASSWORD: '密码错误。',
+            USER_NOT_FOUND: '未找到该账号。',
+            NETWORK: '网络错误，请稍后重试。'
+          },
           bar: {
             music: '音乐',
             song: '曲目',
@@ -1404,52 +1731,301 @@
       window.CGOR_I18N = I18N;
       window.getCGORLang = () => curLang;
 
-      // --- Modal nhập tên người nhận quà ---
-      const modal = document.getElementById('modal');
-      const form = document.getElementById('name-form');
-      const input = document.getElementById('name-input');
-      const nameLabel = document.getElementById('name');
-      const btn = document.getElementById('save-btn');
+      let currentUser = null;
+      let cachedUserIP = '';
 
       try {
-        const saved = localStorage.getItem('xmas_custom_name');
-        if (saved) {
-          nameLabel.textContent = saved;
-          input.value = saved;
+        const savedUser = JSON.parse(localStorage.getItem('cgor_auth_user') || 'null');
+        if (savedUser && savedUser.token && savedUser.username) {
+          currentUser = savedUser;
         }
       } catch (e) {}
 
-      function closeAndSave(e) {
-        if (e) e.preventDefault();
-        const val = input.value.trim();
-        if (val) {
-          nameLabel.textContent = val;
-          try {
-            localStorage.setItem('xmas_custom_name', val);
-          } catch (err) {}
+      function saveCurrentUser(u) {
+        currentUser = u;
+        try {
+          if (u) localStorage.setItem('cgor_auth_user', JSON.stringify(u));
+          else localStorage.removeItem('cgor_auth_user');
+        } catch (e) {}
+        syncAuthUI();
+      }
+
+      const modal = document.getElementById('modal');
+      const nameLabel = document.getElementById('name');
+      const authTabsWrap = document.getElementById('auth-tabs');
+      const authTabBtns = document.querySelectorAll('.auth-tab');
+      const authError = document.getElementById('auth-error');
+
+      const paneGuest = document.getElementById('pane-guest');
+      const paneLogin = document.getElementById('pane-login');
+      const paneRegister = document.getElementById('pane-register');
+      const profilePane = document.getElementById('profile-pane');
+
+      const guestNameInput = document.getElementById('guest-name-input');
+      const loginUserInput = document.getElementById('login-user');
+      const loginPassInput = document.getElementById('login-pass');
+
+      const regDisplayInput = document.getElementById('reg-display');
+      const regUserInput = document.getElementById('reg-user');
+      const regPassInput = document.getElementById('reg-pass');
+      const ipSuggestBox = document.getElementById('ip-suggest-box');
+      const ipSuggestChips = document.getElementById('ip-suggest-chips');
+
+      const profileInfo = document.getElementById('profile-info');
+      const profDisplayInput = document.getElementById('prof-display-input');
+
+      const mbGuestLock = document.getElementById('mb-guest-lock');
+      const mbGuestLoginBtn = document.getElementById('mb-guest-login-btn');
+      const mbCompose = document.getElementById('mb-compose');
+
+      function showError(codeOrText) {
+        if (!codeOrText) {
+          authError.classList.remove('active');
+          authError.textContent = '';
+          return;
         }
-        modal.style.display = 'none';
-        if (window.LofiXmas) {
-          window.LofiXmas.start();
+        const tDict = I18N[curLang];
+        authError.textContent = (tDict.errors && tDict.errors[codeOrText]) ? tDict.errors[codeOrText] : codeOrText;
+        authError.classList.add('active');
+      }
+
+      function switchAuthTab(tabName) {
+        showError('');
+        profilePane.classList.remove('active');
+        authTabsWrap.style.display = 'grid';
+
+        authTabBtns.forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-tab') === tabName);
+        });
+        paneGuest.classList.toggle('active', tabName === 'guest');
+        paneLogin.classList.toggle('active', tabName === 'login');
+        paneRegister.classList.toggle('active', tabName === 'register');
+      }
+
+      authTabBtns.forEach(b => {
+        b.addEventListener('click', () => switchAuthTab(b.getAttribute('data-tab')));
+      });
+
+      function openAuthModal(defaultTab) {
+        showError('');
+        if (currentUser) {
+          const tDict = I18N[curLang];
+          authTabsWrap.style.display = 'none';
+          paneGuest.classList.remove('active');
+          paneLogin.classList.remove('active');
+          paneRegister.classList.remove('active');
+          profilePane.classList.add('active');
+
+          const badgeText = currentUser.badge
+            ? '<span class="user-badge">' + escapeHTML(currentUser.badge) + '</span>'
+            : '<span style="color:var(--dim)">' + tDict.profNoBadge + '</span>';
+
+          profileInfo.innerHTML =
+            '<div><b>' + tDict.profAccount + ':</b> @' + escapeHTML(currentUser.username) + '</div>' +
+            '<div><b>' + tDict.profBadge + ':</b> ' + badgeText + '</div>';
+          profDisplayInput.value = currentUser.displayName;
+        } else {
+          switchAuthTab(defaultTab || 'guest');
+        }
+        modal.style.display = 'flex';
+      }
+
+      function syncAuthUI() {
+        if (currentUser) {
+          const badgeStr = currentUser.badge ? ' [' + currentUser.badge + ']' : '';
+          nameLabel.textContent = currentUser.displayName + badgeStr;
+          mbGuestLock.classList.remove('active');
+          mbCompose.style.display = 'flex';
+        } else {
+          let guestSaved = '';
+          try { guestSaved = localStorage.getItem('xmas_custom_name') || ''; } catch (e) {}
+          nameLabel.textContent = guestSaved || 'Christmas gift of Riss';
+          guestNameInput.value = guestSaved;
+          mbGuestLock.classList.add('active');
+          mbCompose.style.display = 'none';
         }
       }
 
-      form.addEventListener('submit', closeAndSave);
-      btn.addEventListener('click', closeAndSave);
+      function slugifyUsername(str) {
+        return String(str || '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/đ/g, 'd')
+          .replace(/Đ/g, 'D')
+          .toLowerCase()
+          .replace(/[^a-z0-9_.]/g, '')
+          .slice(0, 20);
+      }
 
-      nameLabel.addEventListener('click', function () {
-        input.value = nameLabel.textContent;
-        modal.style.display = 'flex';
-        setTimeout(function () {
-          input.focus();
-        }, 50);
+      async function fetchIpAndSuggestions() {
+        try {
+          const ipRes = await fetch('https://api.ipify.org?format=json');
+          const ipData = await ipRes.json();
+          cachedUserIP = ipData.ip || '';
+          if (!cachedUserIP) return;
+
+          const sugRes = await fetch(SHEET_API_URL + '?action=suggest_names&ip=' + encodeURIComponent(cachedUserIP));
+          const sugData = await sugRes.json();
+          if (sugData && Array.isArray(sugData.suggestions) && sugData.suggestions.length > 0) {
+            const tDict = I18N[curLang];
+            ipSuggestChips.innerHTML = sugData.suggestions.map(s => {
+              return '<button type="button" class="ip-chip" data-name="' + escapeHTML(s.name) + '">' +
+                escapeHTML(s.name) + ' (' + tDict.ipChipCount(s.count) + ')' +
+              '</button>';
+            }).join('');
+            ipSuggestBox.classList.add('active');
+          }
+        } catch (e) {}
+      }
+
+      ipSuggestChips.addEventListener('click', function (e) {
+        const chip = e.target.closest('.ip-chip');
+        if (!chip) return;
+        const pickedName = chip.getAttribute('data-name') || '';
+        regDisplayInput.value = pickedName;
+        if (!regUserInput.value.trim()) {
+          regUserInput.value = slugifyUsername(pickedName);
+        }
+        regPassInput.focus();
       });
 
-      setTimeout(function () {
-        input.focus();
-      }, 100);
+      paneGuest.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const val = guestNameInput.value.trim();
+        try {
+          if (val) localStorage.setItem('xmas_custom_name', val);
+          else localStorage.removeItem('xmas_custom_name');
+        } catch (err) {}
+        syncAuthUI();
+        modal.style.display = 'none';
+        if (window.LofiXmas) window.LofiXmas.start();
+      });
 
-      // --- Điều khiển đóng/mở độc quyền (Chỉ mở 1 trong 2 box) ---
+      paneLogin.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        showError('');
+        const username = loginUserInput.value.trim().toLowerCase();
+        const password = loginPassInput.value;
+        if (!username || !password) return;
+
+        const btnLogin = document.getElementById('btn-login-go');
+        btnLogin.disabled = true;
+        try {
+          const res = await fetch(SHEET_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+              action: 'login',
+              username: username,
+              password: password,
+              ip: cachedUserIP
+            })
+          });
+          const data = await res.json();
+          if (data && data.ok && data.user) {
+            saveCurrentUser(data.user);
+            loginPassInput.value = '';
+            modal.style.display = 'none';
+            if (window.LofiXmas) window.LofiXmas.start();
+            loadWishes();
+          } else {
+            showError((data && data.error) || 'NETWORK');
+          }
+        } catch (err) {
+          showError('NETWORK');
+        }
+        btnLogin.disabled = false;
+      });
+
+      paneRegister.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        showError('');
+        const displayName = regDisplayInput.value.trim();
+        const username = regUserInput.value.trim().toLowerCase();
+        const password = regPassInput.value;
+
+        const btnReg = document.getElementById('btn-register-go');
+        btnReg.disabled = true;
+        try {
+          const res = await fetch(SHEET_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+              action: 'register',
+              username: username,
+              displayName: displayName,
+              password: password,
+              ip: cachedUserIP
+            })
+          });
+          const data = await res.json();
+          if (data && data.ok && data.user) {
+            saveCurrentUser(data.user);
+            regPassInput.value = '';
+            modal.style.display = 'none';
+            if (window.LofiXmas) window.LofiXmas.start();
+            if (data.claimedCount > 0) {
+              alert(I18N[curLang].claimedAlert(data.claimedCount));
+            }
+            loadWishes();
+          } else {
+            showError((data && data.error) || 'NETWORK');
+          }
+        } catch (err) {
+          showError('NETWORK');
+        }
+        btnReg.disabled = false;
+      });
+
+      profilePane.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        if (!currentUser) return;
+        const newDisp = profDisplayInput.value.trim();
+        if (!newDisp) return;
+
+        const btnSave = document.getElementById('btn-prof-save');
+        btnSave.disabled = true;
+        try {
+          const res = await fetch(SHEET_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+              action: 'update_profile',
+              token: currentUser.token,
+              displayName: newDisp
+            })
+          });
+          const data = await res.json();
+          if (data && data.ok && data.user) {
+            saveCurrentUser(data.user);
+            modal.style.display = 'none';
+          }
+        } catch (err) {}
+        btnSave.disabled = false;
+      });
+
+      document.getElementById('btn-logout').addEventListener('click', function () {
+        saveCurrentUser(null);
+        switchAuthTab('guest');
+      });
+
+      document.getElementById('btn-prof-close').addEventListener('click', function () {
+        modal.style.display = 'none';
+      });
+
+      nameLabel.addEventListener('click', function () {
+        openAuthModal('guest');
+      });
+
+      mbGuestLoginBtn.addEventListener('click', function () {
+        openAuthModal('login');
+      });
+
+      if (currentUser) {
+        modal.style.display = 'none';
+      }
+
+      // --- Điều khiển đóng/mở độc quyền (Đếm ngược vs Hộp thư) ---
       const langBtn = document.getElementById('lang-btn');
       const cdBtn = document.getElementById('cd-btn');
       const cdBox = document.getElementById('cd-box');
@@ -1543,7 +2119,7 @@
         cdNote.style.color = '#4ef57b';
       }
 
-      // --- Mailbox Lời Chúc: Reply sổ xuống, Tag cảm xúc, Ghim (PIN), Thả tim (Like) ---
+      // --- Mailbox Lời Chúc: Badge tùy chỉnh, Reply sổ xuống, Ghim, Thả tim ---
       const mbList = document.getElementById('mb-list');
       const mbForm = document.getElementById('mb-form');
       const mbInput = document.getElementById('mb-input');
@@ -1683,12 +2259,18 @@
           const tagCls = detectTagClass(String(w.msg || ''));
           const pinCls = w.pinned ? ' pinned' : '';
           const pinHtml = w.pinned ? '<span class="pin-badge">' + tDict.pinLabel + '</span>' : '';
+          const badgeHtml = w.badge ? '<span class="user-badge">' + escapeHTML(w.badge) + '</span>' : '';
+          const verifiedHtml = w.username ? '<span class="verified-tick" title="@' + escapeHTML(w.username) + '">✔</span>' : '';
 
           const repItemsHtml = reps.length
             ? reps.map(function (r) {
+                const rBadge = r.badge ? '<span class="user-badge">' + escapeHTML(r.badge) + '</span>' : '';
                 return (
                   '<div class="rep-item">' +
-                    '<div class="rep-meta">' + escapeHTML(r.name) + '<span>' + escapeHTML(formatTimeVN(r.time)) + '</span></div>' +
+                    '<div class="rep-meta">' +
+                      '<div class="rep-meta-left">' + escapeHTML(r.name) + rBadge + '</div>' +
+                      '<span class="rep-time">' + escapeHTML(formatTimeVN(r.time)) + '</span>' +
+                    '</div>' +
                     '<div class="mb-msg-text">' + escapeHTML(r.msg) + '</div>' +
                   '</div>'
                 );
@@ -1698,7 +2280,7 @@
           return (
             '<div class="mb-item ' + tagCls + pinCls + '">' +
               '<div class="mb-meta">' +
-                '<div class="mb-sender-wrap">' + escapeHTML(w.name) + pinHtml + '</div>' +
+                '<div class="mb-sender-wrap">' + escapeHTML(w.name) + verifiedHtml + badgeHtml + pinHtml + '</div>' +
                 '<span class="mb-time">' + escapeHTML(formatTimeVN(w.time)) + '</span>' +
               '</div>' +
               '<div class="mb-msg-text">' + escapeHTML(w.msg) + '</div>' +
@@ -1729,17 +2311,18 @@
           if (!rowNum || isNaN(idx) || !wishes[idx]) return;
 
           const rowKey = String(rowNum);
-          if (openRepliesSet.has(rowKey)) {
-            openRepliesSet.delete(rowKey);
-          } else {
-            openRepliesSet.add(rowKey);
-          }
+          if (openRepliesSet.has(rowKey)) openRepliesSet.delete(rowKey);
+          else openRepliesSet.add(rowKey);
           renderWishes();
           return;
         }
 
         const btnRepWrite = e.target.closest('.rep-write-link');
         if (btnRepWrite) {
+          if (!currentUser) {
+            openAuthModal('login');
+            return;
+          }
           const rowNum = parseInt(btnRepWrite.getAttribute('data-row'), 10);
           const idx = parseInt(btnRepWrite.getAttribute('data-idx'), 10);
           if (!rowNum || isNaN(idx) || !wishes[idx]) return;
@@ -1749,6 +2332,10 @@
 
         const btnLike = e.target.closest('.like-btn');
         if (!btnLike) return;
+        if (!currentUser) {
+          openAuthModal('login');
+          return;
+        }
 
         const rowNum = parseInt(btnLike.getAttribute('data-row'), 10);
         const idx = parseInt(btnLike.getAttribute('data-idx'), 10);
@@ -1758,11 +2345,8 @@
         const alreadyLiked = likedSet.has(rowKey);
         const delta = alreadyLiked ? -1 : 1;
 
-        if (alreadyLiked) {
-          likedSet.delete(rowKey);
-        } else {
-          likedSet.add(rowKey);
-        }
+        if (alreadyLiked) likedSet.delete(rowKey);
+        else likedSet.add(rowKey);
         saveLikedSet();
 
         wishes[idx].likes = Math.max(0, (parseInt(wishes[idx].likes, 10) || 0) + delta);
@@ -1775,6 +2359,7 @@
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
               action: 'like',
+              token: currentUser.token,
               row: rowNum,
               delta: delta
             })
@@ -1818,6 +2403,8 @@
         document.getElementById('cd-lbl-s').textContent = tDict.cdSecs;
 
         document.getElementById('mb-title').textContent = tDict.mbTitle;
+        document.getElementById('mb-lock-text').textContent = tDict.lockText;
+        mbGuestLoginBtn.textContent = tDict.lockBtn;
         document.getElementById('tag-wish').textContent = tDict.tags.wish;
         document.getElementById('tag-gift').textContent = tDict.tags.gift;
         document.getElementById('tag-story').textContent = tDict.tags.story;
@@ -1831,9 +2418,28 @@
         }
 
         document.getElementById('modal-title').textContent = tDict.modalTitle;
-        document.getElementById('modal-sub').textContent = tDict.modalSub;
-        input.placeholder = tDict.modalPlaceholder;
-        btn.textContent = tDict.modalBtn;
+        document.getElementById('tab-guest').textContent = tDict.tabs.guest;
+        document.getElementById('tab-login').textContent = tDict.tabs.login;
+        document.getElementById('tab-register').textContent = tDict.tabs.register;
+
+        document.getElementById('guest-desc').textContent = tDict.guestDesc;
+        document.getElementById('lbl-guest-name').textContent = tDict.lblGuestName;
+        document.getElementById('btn-guest-go').textContent = tDict.btnGuestGo;
+
+        document.getElementById('lbl-login-user').textContent = tDict.lblLoginUser;
+        document.getElementById('lbl-login-pass').textContent = tDict.lblLoginPass;
+        document.getElementById('btn-login-go').textContent = tDict.btnLoginGo;
+
+        document.getElementById('ip-suggest-title').textContent = tDict.ipSuggestTitle;
+        document.getElementById('lbl-reg-display').textContent = tDict.lblRegDisplay;
+        document.getElementById('lbl-reg-user').textContent = tDict.lblRegUser;
+        document.getElementById('lbl-reg-pass').textContent = tDict.lblRegPass;
+        document.getElementById('btn-register-go').textContent = tDict.btnRegGo;
+
+        document.getElementById('lbl-prof-display').textContent = tDict.lblProfDisplay;
+        document.getElementById('btn-prof-save').textContent = tDict.btnProfSave;
+        document.getElementById('btn-logout').textContent = tDict.btnLogout;
+        document.getElementById('btn-prof-close').textContent = tDict.btnProfClose;
 
         updateCountdown();
         renderWishes();
@@ -1867,10 +2473,13 @@
 
       mbForm.addEventListener('submit', async function (e) {
         e.preventDefault();
+        if (!currentUser) {
+          openAuthModal('login');
+          return;
+        }
         const rawTxt = mbInput.value.trim();
         if (!rawTxt) return;
 
-        const sender = nameLabel.textContent.trim() || I18N[curLang].anon;
         const nowStr = formatTimeVN(new Date().toISOString());
 
         if (replyingTarget) {
@@ -1878,7 +2487,13 @@
           const targetWish = wishes[target.idx];
           if (targetWish) {
             if (!Array.isArray(targetWish.replies)) targetWish.replies = [];
-            targetWish.replies.push({ name: sender, msg: rawTxt, time: nowStr });
+            targetWish.replies.push({
+              name: currentUser.displayName,
+              username: currentUser.username,
+              badge: currentUser.badge || '',
+              msg: rawTxt,
+              time: nowStr
+            });
             openRepliesSet.add(String(target.row));
           }
 
@@ -1890,23 +2505,15 @@
           mbSend.disabled = true;
           mbSend.textContent = '...';
           try {
-            let userIP = 'Không rõ';
-            try {
-              const ipRes = await fetch('https://api.ipify.org?format=json');
-              const ipData = await ipRes.json();
-              userIP = ipData.ip || 'Không rõ';
-            } catch (errIP) {}
-
             await fetch(SHEET_API_URL, {
               method: 'POST',
               mode: 'no-cors',
               headers: { 'Content-Type': 'text/plain' },
               body: JSON.stringify({
                 action: 'reply',
+                token: currentUser.token,
                 row: target.row,
-                name: sender,
-                msg: rawTxt,
-                ip: userIP
+                msg: rawTxt
               })
             });
             setTimeout(loadWishes, 1200);
@@ -1921,12 +2528,18 @@
         const fullMsg = tagPrefix + rawTxt;
 
         const firstNormalIdx = wishes.findIndex(item => !item.pinned);
-        const newWishObj = { name: sender, msg: fullMsg, time: nowStr, pinned: false, likes: 0, replies: [] };
-        if (firstNormalIdx === -1) {
-          wishes.push(newWishObj);
-        } else {
-          wishes.splice(firstNormalIdx, 0, newWishObj);
-        }
+        const newWishObj = {
+          name: currentUser.displayName,
+          username: currentUser.username,
+          badge: currentUser.badge || '',
+          msg: fullMsg,
+          time: nowStr,
+          pinned: false,
+          likes: 0,
+          replies: []
+        };
+        if (firstNormalIdx === -1) wishes.push(newWishObj);
+        else wishes.splice(firstNormalIdx, 0, newWishObj);
 
         renderWishes();
         mbInput.value = '';
@@ -1935,21 +2548,15 @@
         mbSend.disabled = true;
         mbSend.textContent = '...';
         try {
-          let userIP = 'Không rõ';
-          try {
-            const ipRes = await fetch('https://api.ipify.org?format=json');
-            const ipData = await ipRes.json();
-            userIP = ipData.ip || 'Không rõ';
-          } catch (errIP) {}
-
           await fetch(SHEET_API_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
-              name: sender,
+              action: 'wish',
+              token: currentUser.token,
               msg: fullMsg,
-              ip: userIP,
+              ip: cachedUserIP,
               device: getDeviceInfo()
             })
           });
@@ -1960,9 +2567,11 @@
         mbSend.textContent = I18N[curLang].mbSend;
       });
 
+      syncAuthUI();
       applyLanguage();
       setInterval(updateCountdown, 1000);
       loadWishes();
+      fetchIpAndSuggestions();
     })();
   </script>
 
@@ -2194,13 +2803,11 @@
         const c0 = (cx / cw) | 0;
         const wb = Math.round((0.37 * treeH) / cw);
 
-        // Sao nền
         for (const s of BG) {
           const v = Math.sin(t * s.sp + s.ph);
           put((s.fx * cols) | 0, (s.fy * rows) | 0, v > 0.5 ? '+' : v > -0.3 ? '.' : '*', v > 0.2 ? 7 : 13, -9);
         }
 
-        // Cực quang (Aurora)
         if (F.aurora > 0.02) {
           const hb = (rows * 0.4) | 0;
           for (let c = 0; c < cols; c++) {
@@ -2213,7 +2820,6 @@
           }
         }
 
-        // Sao băng
         nextSS -= dt;
         if (!ss && nextSS <= 0) {
           ss = { x: rnd() * cols * 0.5, y: rnd() * rows * 0.18, t: 0 };
@@ -2229,7 +2835,6 @@
           if (hx > cols + 14 || hy > rows) ss = null;
         }
 
-        // Mặt đất tuyết
         for (let r = groundRow; r < rows; r++) {
           for (let c = 0; c < cols; c++) {
             const h = hs(c, r * 3);
@@ -2239,7 +2844,6 @@
           }
         }
 
-        // Thân cây thông 3D ASCII
         const rTop = Math.floor((baseY - treeH) / chh) - 1;
         const rBot = Math.floor(baseY / chh);
         for (let r = rTop; r <= rBot; r++) {
@@ -2289,7 +2893,6 @@
           }
         }
 
-        // Quả châu (Ornaments)
         for (const o of OR) {
           const psi = wrap(o.th + ang);
           const cs = Math.cos(psi);
@@ -2317,7 +2920,6 @@
           glows.push(px, py, o.k, a * 0.6);
         }
 
-        // Đèn nhấp nháy (Lights)
         litCount = 0;
         for (const l of LT) {
           const s = cl(F.lights * 1.4 - l.f * 0.4);
@@ -2347,7 +2949,6 @@
           glows.push(px, py, l.k, v * a);
         }
 
-        // Ngôi sao đỉnh cây
         const sA = F.star;
         if (sA > 0.03) {
           const Ro = treeH * 0.06;
@@ -2388,13 +2989,11 @@
           glows.push(sx, sy, 11, (0.9 + 0.2 * pu) * sA * 1.3);
         }
 
-        // Hộp quà dưới gốc cây
         for (const [o, w, h, k, i] of [[-wb - 3, 9, 5, 6, 0], [-6, 13, 3, 4, 1], [wb - 9, 9, 3, 17, 2]]) {
           const a = cl(F.gifts * 1.4 - i * 0.12);
           if (a > 0.03) box(c0 + o, w, h, groundRow + 2, k, a);
         }
 
-        // Tuyết rơi
         for (const f of SN) {
           if (!f.on && f.f < F.snow) {
             f.on = true;
@@ -2415,7 +3014,6 @@
           put(((c % cols) + cols) % cols, (f.fy * rows) | 0, f.z > 0.3 ? '+' : f.z > -0.2 ? '*' : '.', f.z > 0.3 ? 7 : f.z > -0.2 ? 10 : 9, f.z);
         }
 
-        // Hạt lấp lánh & Pháo hoa
         spawnAcc += dt * 24 * F.sparkle * cl(bp - 0.6);
         while (spawnAcc > 1) {
           spawnAcc--;
@@ -2445,7 +3043,6 @@
           put(p.c | 0, p.r | 0, SPC[Math.min(4, (Math.sin((Math.PI * p.a) / p.l) * 4.99) | 0)], p.k, 12);
         }
 
-        // Dòng chữ MERRY CHRISTMAS chạy dưới gốc
         const shown = Math.min(msg.length, (mT * 9) | 0);
         const mr = groundRow + 4;
         if (mr < rows - 1) {
@@ -2457,7 +3054,6 @@
           }
         }
 
-        // Vẽ toàn bộ lên Canvas
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.globalCompositeOperation = 'source-over';
         ctx.globalAlpha = 1;
@@ -2498,7 +3094,6 @@
           }
         }
 
-        // Cập nhật HUD
         ctx.globalAlpha = 1;
         hudT += dt;
         if (hudT > 0.25) {
@@ -2511,7 +3106,6 @@
         }
       }
 
-      // Tương tác chuột / cảm ứng
       cv.addEventListener('pointerdown', e => {
         drag = true;
         moved = 0;
@@ -2545,7 +3139,6 @@
       addEventListener('blur', () => { drag = false; });
       document.addEventListener('visibilitychange', () => { drag = false; });
 
-      // Khởi tạo thanh nút bấm điều khiển (hỗ trợ dịch 3 ngôn ngữ + đổi bài nhạc)
       const bar = $('bar');
       const barRefs = {};
 
