@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quản lý nhạc Giáng Sinh - Riss</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050a1a;
+      --card: #0d1633;
+      --fg: #cfe3ff;
+      --dim: #7389b0;
+      --gold: #ffd36b;
+      --green: #4ef57b;
+      --cyan: #52f0ff;
+      --red: #ff6b8b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0d1c42, var(--bg));
+      color: var(--fg);
+      font-family: "JetBrains Mono", monospace;
+      display: flex;
+      justify-content: center;
+      padding: 24px 14px;
+    }
+    .wrap { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 16px; }
+    .card {
+      background: var(--card);
+      border: 1px solid #2a3b70;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    }
+    .hidden { display: none !important; }
+    h1 { margin: 0 0 6px; font-size: 17px; color: var(--gold); }
+    p.sub { margin: 0 0 16px; font-size: 11.5px; color: var(--dim); line-height: 1.5; }
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+    label { font-size: 11px; color: #8aa0c8; }
+    input[type="text"], input[type="password"], input:not([type]) {
+      width: 100%;
+      background: #050a1a;
+      border: 1px solid #2a3b70;
+      border-radius: 9px;
+      padding: 10px 12px;
+      color: var(--fg);
+      font: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+    input:focus { border-color: var(--gold); }
+    button {
+      font: inherit;
+      font-size: 12.5px;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 11px 16px;
+      cursor: pointer;
+      border: 1px solid var(--gold);
+      background: #1d2f63;
+      color: var(--gold);
+      transition: 0.15s;
+    }
+    button:hover { background: #263d80; }
+    button:disabled { opacity: 0.5; cursor: wait; }
+    .btn-full { width: 100%; }
+    .btn-sm { padding: 5px 10px; font-size: 11px; border-color: var(--cyan); color: var(--cyan); background: #101b3a; }
+    .btn-del { padding: 4px 8px; font-size: 10.5px; border-color: var(--red); color: var(--red); background: rgba(255, 59, 92, 0.12); }
+    .status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 9px;
+      font-size: 11.5px;
+      line-height: 1.5;
+      display: none;
+    }
+    .status.ok { display: block; background: rgba(78,245,123,0.12); border: 1px solid var(--green); color: var(--green); }
+    .status.err { display: block; background: rgba(255,59,92,0.12); border: 1px solid var(--red); color: var(--red); }
+    .song-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .song-item {
+      background: #070e24;
+      border: 1px solid #1e2d59;
+      border-radius: 9px;
+      padding: 9px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .song-meta { font-size: 10px; color: var(--dim); margin-top: 2px; }
+    .head-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
+    a.link { color: var(--cyan); font-size: 11px; text-decoration: none; }
+    .who { font-size: 11.5px; color: var(--green); margin: 0; }
+    .user-badge {
+      background: rgba(255, 211, 107, 0.18);
+      border: 1px solid #ffd36baa;
+      color: var(--gold);
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 0 5px;
+      border-radius: 5px;
+      margin-left: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- ĐĂNG NHẬP BẰNG TÀI KHOẢN CỦA CÂY THÔNG -->
+    <div class="card" id="login-card">
+      <div class="head-flex">
+        <h1>🔐 Đăng nhập quản lý nhạc</h1>
+        <a class="link" href="./index.html">← Về cây thông</a>
+      </div>
+      <p class="sub">Dùng tài khoản đã đăng ký trên trang cây thông. Chỉ tài khoản có huy hiệu DEV (do admin đặt trong Google Sheet) mới quản lý được nhạc.</p>
+      <form id="login-form">
+        <div class="field">
+          <label for="lg-user">Tên tài khoản</label>
+          <input id="lg-user" type="text" autocomplete="username" autocapitalize="none" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="lg-pass">Mật khẩu</label>
+          <input id="lg-pass" type="password" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-full" id="btn-login">🔓 Đăng nhập</button>
+      </form>
+      <div id="login-status" class="status"></div>
+    </div>
+
+    <!-- KHU QUẢN LÝ (chỉ hiện sau khi đăng nhập) -->
+    <div id="app" class="hidden" style="display:contents">
+
+      <div class="card" id="who-card">
+        <div class="head-flex" style="margin:0">
+          <p class="who" id="who"></p>
+          <a class="link" href="#" id="btn-logout">Đăng xuất</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h1>🎵 Thêm bài nhạc YouTube mới</h1>
+        <p class="sub">Dán link YouTube đầy đủ hoặc mã ID 11 ký tự, tool sẽ tự trích xuất mã và cập nhật thẳng vào <b>index.html</b>.</p>
+
+        <form id="add-form">
+          <div class="field">
+            <label>Tên bài hát hiển thị trên nút bấm</label>
+            <input id="song-name" required maxlength="60" placeholder="vd: Last Christmas (Lofi)">
+          </div>
+          <div class="field">
+            <label>Link YouTube hoặc Mã Video ID (có thể nhập nhiều link cách nhau dấu phẩy để dự phòng)</label>
+            <input id="song-url" required placeholder="vd: https://youtu.be/OKK90zbS40w hoặc OKK90zbS40w">
+          </div>
+          <button type="submit" class="btn-full" id="btn-add">🚀 Thêm vào index.html & Commit</button>
+        </form>
+
+        <div id="status" class="status"></div>
+      </div>
+
+      <div class="card">
+        <div class="head-flex">
+          <h1 style="margin:0">📜 Danh sách nhạc hiện tại</h1>
+          <button type="button" class="btn-sm" id="btn-reload">🔄 Tải lại</button>
+        </div>
+        <div id="song-list" class="song-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    // Cùng máy chủ tài khoản với index.html
+    const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxrsc-RtFFOPjfbTAjcTsxFcmlUMXPCkRslxr_ZotyQ0XaXHj0TecatX7oRseX22Zs24A/exec";
+
+    // Dùng chung khóa phiên đăng nhập với index.html (đã đăng nhập cây thông thì vào thẳng đây)
+    const SESSION_KEY = 'cgor_auth_user';
+
+    let session = null; // { username, displayName, badge, token }
+
+    const ERRORS = {
+      WRONG_PASSWORD: 'Mật khẩu không chính xác.',
+      USER_NOT_FOUND: 'Không tìm thấy tên tài khoản này.',
+      UNAUTHORIZED: 'Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.',
+      FORBIDDEN: 'Tài khoản này chưa có huy hiệu DEV nên không quản lý được nhạc.',
+      GITHUB_NOT_CONFIGURED: 'Apps Script chưa cấu hình GitHub (kiểm tra Script properties).',
+      INVALID_SONG: 'Tên bài hoặc link YouTube không hợp lệ.',
+      SONG_NOT_FOUND: 'Không tìm thấy bài hát này (có thể đã bị xóa).',
+      SONGS_NOT_FOUND: 'Không tìm thấy mảng SONGS trong index.html.',
+      NETWORK: 'Lỗi kết nối máy chủ, vui lòng thử lại.'
+    };
+
+    function errText(code) {
+      const c = String(code || 'NETWORK');
+      if (ERRORS[c]) return ERRORS[c];
+      if (c.indexOf('GITHUB_ERROR') === 0) return 'GitHub báo lỗi: ' + c.replace('GITHUB_ERROR:', '').trim();
+      return c;
+    }
+
+    function showStatus(msg, isOk, id) {
+      const el = $(id || 'status');
+      el.textContent = msg;
+      el.className = 'status ' + (isOk ? 'ok' : 'err');
+    }
+
+    function escapeHTML(s) {
+      return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    }
+
+    function readSharedSession() {
+      try {
+        const u = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+        if (u && u.token && u.username) return u;
+      } catch (e) {}
+      return null;
+    }
+
+    function saveSession(u) {
+      session = u;
+      try {
+        if (u) localStorage.setItem(SESSION_KEY, JSON.stringify(u));
+        else localStorage.removeItem(SESSION_KEY);
+      } catch (e) {}
+    }
+
+    // Gọi Apps Script (token đăng nhập gửi kèm, token GitHub nằm phía máy chủ)
+    async function api(action, extra) {
+      let data;
+      try {
+        const res = await fetch(SHEET_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(Object.assign({ action: action, token: session ? session.token : '' }, extra || {}))
+        });
+        data = await res.json();
+      } catch (e) {
+        const err = new Error(errText('NETWORK'));
+        err.code = 'NETWORK';
+        throw err;
+      }
+      if (!data || !data.ok) {
+        const code = (data && data.error) || 'NETWORK';
+        const err = new Error(errText(code));
+        err.code = code;
+        throw err;
+      }
+      return data;
+    }
+
+    function backToLogin(msg) {
+      saveSession(null);
+      $('song-list').innerHTML = '';
+      $('app').classList.add('hidden');
+      $('login-card').classList.remove('hidden');
+      if (msg) showStatus('❌ ' + msg, false, 'login-status');
+      else $('login-status').className = 'status';
+    }
+
+    function handleApiError(err) {
+      if (err.code === 'UNAUTHORIZED' || err.code === 'FORBIDDEN') {
+        backToLogin(err.message);
+        return true;
+      }
+      return false;
+    }
+
+    // ---------- Đăng nhập ----------
+    $('login-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const username = $('lg-user').value.trim().toLowerCase();
+      const password = $('lg-pass').value;
+      if (!username || !password) return;
+
+      const btn = $('btn-login');
+      btn.disabled = true;
+      showStatus('⏳ Đang đăng nhập...', true, 'login-status');
+      try {
+        const res = await fetch(SHEET_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'login', username: username, password: password, ip: '' })
+        });
+        const data = await res.json();
+        if (!(data && data.ok && data.user)) {
+          showStatus('❌ ' + errText(data && data.error), false, 'login-status');
+        } else {
+          saveSession(data.user);
+          $('lg-pass').value = '';
+          $('login-status').className = 'status';
+          await enterApp();
+        }
+      } catch (err) {
+        showStatus('❌ ' + errText('NETWORK'), false, 'login-status');
+      }
+      btn.disabled = false;
+    });
+
+    async function enterApp() {
+      $('login-card').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      const badge = session.badge ? '<span class="user-badge">' + escapeHTML(session.badge) + '</span>' : '';
+      $('who').innerHTML = 'Đã đăng nhập: <b>' + escapeHTML(session.displayName || session.username) + '</b> (@' + escapeHTML(session.username) + ')' + badge;
+      await renderSongList();
+    }
+
+    $('btn-logout').addEventListener('click', e => {
+      e.preventDefault();
+      backToLogin('');
+    });
+
+    // ---------- Danh sách / thêm / xóa bài hát ----------
+    function extractYtIds(raw) {
+      const parts = raw.split(',').map(s => s.trim()).filter(Boolean);
+      const ids = [];
+      for (const p of parts) {
+        if (/^[a-zA-Z0-9_-]{11}$/.test(p)) { ids.push(p); continue; }
+        const m = p.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+        if (m && m[1]) ids.push(m[1]);
+      }
+      return [...new Set(ids)];
+    }
+
+    async function renderSongList() {
+      const box = $('song-list');
+      box.innerHTML = '<div style="font-size:11.5px;color:var(--dim)">Đang tải từ GitHub...</div>';
+      try {
+        const data = await api('songs_list');
+        const songs = data.songs || [];
+        if (!songs.length) {
+          box.innerHTML = '<div style="font-size:11.5px;color:var(--red)">Không tìm thấy bài hát nào trong index.html</div>';
+          return;
+        }
+        box.innerHTML = songs.map((s, idx) => `
+          <div class="song-item">
+            <div>
+              <div><b>${idx + 1}. ${escapeHTML(s.name)}</b></div>
+              <div class="song-meta">${s.type === 'youtube' ? 'YouTube ID: ' + escapeHTML((s.ytIds || []).join(', ')) : 'Nhạc hộp nhạc tích hợp'}</div>
+            </div>
+            ${s.type === 'youtube' ? `<button type="button" class="btn-del" data-id="${escapeHTML(s.id)}" data-name="${escapeHTML(s.name)}">Xóa</button>` : ''}
+          </div>
+        `).join('');
+      } catch (err) {
+        if (handleApiError(err)) return;
+        box.innerHTML = `<div style="font-size:11.5px;color:var(--red)">${escapeHTML(err.message)}</div>`;
+      }
+    }
+
+    $('btn-reload').addEventListener('click', renderSongList);
+
+    $('add-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const name = $('song-name').value.trim();
+      const ids = extractYtIds($('song-url').value);
+      if (!ids.length) {
+        showStatus('Link hoặc mã YouTube không hợp lệ! Hãy kiểm tra lại.', false);
+        return;
+      }
+
+      const btn = $('btn-add');
+      btn.disabled = true;
+      showStatus('⏳ Đang cập nhật index.html trên GitHub...', true);
+      try {
+        await api('songs_add', { name: name, ytIds: ids });
+        $('song-name').value = '';
+        $('song-url').value = '';
+        showStatus(`✅ Đã thêm "${name}" thành công! GitHub Pages sẽ cập nhật sau khoảng 1-2 phút.`, true);
+        renderSongList();
+      } catch (err) {
+        if (!handleApiError(err)) showStatus('❌ ' + err.message, false);
+      }
+      btn.disabled = false;
+    });
+
+    $('song-list').addEventListener('click', async e => {
+      const btn = e.target.closest('.btn-del');
+      if (!btn) return;
+      const id = btn.getAttribute('data-id');
+      const name = btn.getAttribute('data-name');
+      if (!confirm(`Xóa bài "${name}" khỏi trang web?`)) return;
+
+      btn.disabled = true;
+      try {
+        await api('songs_remove', { id: id });
+        showStatus(`🗑️ Đã xóa bài "${name}".`, true);
+        renderSongList();
+      } catch (err) {
+        if (!handleApiError(err)) {
+          showStatus('❌ ' + err.message, false);
+          btn.disabled = false;
+        }
+      }
+    });
+
+    // Đã đăng nhập sẵn ở cây thông thì vào thẳng
+    (function init() {
+      const shared = readSharedSession();
+      if (shared) {
+        session = shared;
+        enterApp();
+      }
+    })();
+  </script>
+</body>
+</html>
