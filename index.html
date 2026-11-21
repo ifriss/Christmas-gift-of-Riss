@@ -41,6 +41,18 @@
       user-select: none;
     }
 
+    /* Trình phát YouTube ẩn chạy nền */
+    #yt-hidden-wrap {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      left: -9999px;
+      top: -9999px;
+      opacity: 0.001;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
     /* Gợi ý và bộ đếm thời gian góc trên */
     #hint {
       position: fixed;
@@ -763,6 +775,9 @@
 <body>
   <canvas id="c"></canvas>
 
+  <!-- Container ẩn cho YouTube IFrame API -->
+  <div id="yt-hidden-wrap"><div id="yt-player"></div></div>
+
   <div id="name" title="Nhấn để đổi tên">Christmas gift of Riss</div>
   <div id="hint">Kéo để xoay. Chạm để bắn pháo hoa.</div>
   <div id="tt">t 00.00</div>
@@ -856,8 +871,9 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 1: HỘP NHẠC LOFI PIANO SÓNG GIÓ & 3 BẢN NHẠC GIÁNG SINH          -->
+  <!-- KHỐI 1: HỘP NHẠC LAI (3 BÀI NOEL WEB AUDIO + BÀI 4 SÓNG GIÓ YOUTUBE)   -->
   <!-- ===================================================================== -->
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script>
     window.LofiXmas = (function () {
       let ctx = null;
@@ -866,24 +882,56 @@
       let playing = false;
       let timer = null;
       let step = 0;
-      let songIdx = 0;
+      let songIdx = 0; // Mặc định bắt đầu ở bài 1 (Jingle Bells)
 
+      // Trình phát YouTube IFrame API ẩn (Bài 4: Sóng Gió - ID SEsMhb74jTI)
+      const YT_VIDEO_ID = 'SEsMhb74jTI';
+      let ytPlayer = null;
+      let ytReady = false;
+      let wantYtPlay = false;
+
+      window.onYouTubeIframeAPIReady = function () {
+        ytPlayer = new YT.Player('yt-player', {
+          height: '1',
+          width: '1',
+          videoId: YT_VIDEO_ID,
+          playerVars: {
+            autoplay: 0,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            iv_load_policy: 3,
+            loop: 1,
+            playlist: YT_VIDEO_ID,
+            modestbranding: 1,
+            playsinline: 1
+          },
+          events: {
+            onReady: function () {
+              ytReady = true;
+              ytPlayer.setVolume(75);
+              if (wantYtPlay && SONGS[songIdx].type === 'youtube') {
+                ytPlayer.playVideo();
+              }
+            },
+            onStateChange: function (e) {
+              if (SONGS[songIdx].type !== 'youtube') return;
+              if (e.data === YT.PlayerState.PLAYING) {
+                playing = true;
+                syncBtn();
+              } else if (e.data === YT.PlayerState.PAUSED) {
+                playing = false;
+                syncBtn();
+              } else if (e.data === YT.PlayerState.ENDED) {
+                ytPlayer.playVideo();
+              }
+            }
+          }
+        });
+      };
+
+      // Danh sách 4 bài: 3 bài Noel Web Audio gốc (0, 1, 2) + Sóng Gió YouTube ở vị trí 4 (index 3)
       const SONGS = [
-        {
-          id: 'songgio',
-          type: 'piano',
-          beatSec: 0.39, // ~76 BPM sâu lắng
-          seq: [
-            { chord: [220.00, 261.63, 329.63, 392.00], mel: [329.63, 392.00, 440.00, 523.25] }, // Am7
-            { chord: [174.61, 220.00, 261.63, 329.63], mel: [493.88, 440.00, 392.00, 440.00] }, // Fmaj7
-            { chord: [130.81, 196.00, 246.94, 329.63], mel: [329.63, 392.00, 440.00, 392.00] }, // Cmaj7
-            { chord: [196.00, 246.94, 293.66, 392.00], mel: [329.63, 293.66, 261.63, 293.66] }, // G6
-            { chord: [220.00, 261.63, 329.63, 392.00], mel: [329.63, 392.00, 440.00, 523.25] }, // Am7
-            { chord: [174.61, 220.00, 261.63, 329.63], mel: [587.33, 523.25, 493.88, 440.00] }, // Fmaj7
-            { chord: [146.83, 174.61, 220.00, 261.63], mel: [392.00, 440.00, 493.88, 392.00] }, // Dm7
-            { chord: [164.81, 196.00, 246.94, 329.63], mel: [329.63, null, 293.66, 261.63] }  // Em7
-          ]
-        },
         {
           id: 'jingle',
           type: 'bell',
@@ -916,7 +964,7 @@
         },
         {
           id: 'silent',
-          type: 'piano',
+          type: 'bell',
           beatSec: 0.42,
           seq: [
             { chord: [130.81, 196.00, 246.94, 329.63], mel: [392.00, 440.00, 392.00, 329.63] },
@@ -928,10 +976,14 @@
             { chord: [196.00, 246.94, 293.66, 349.23], mel: [587.33, 698.46, 587.33, 493.88] },
             { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, 659.25, 523.25, null] }
           ]
+        },
+        {
+          id: 'songgio',
+          type: 'youtube'
         }
       ];
 
-      function init() {
+      function initWebAudio() {
         if (ctx) return;
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         ctx = new AudioCtx();
@@ -1028,52 +1080,6 @@
         sub.stop(now + dur + 0.05);
       }
 
-      function playPiano(freq, dur) {
-        if (!freq) return;
-        const now = ctx.currentTime;
-
-        const osc1 = ctx.createOscillator();
-        const osc2 = ctx.createOscillator();
-        const osc3 = ctx.createOscillator();
-
-        osc1.type = 'triangle';
-        osc2.type = 'sine';
-        osc3.type = 'sine';
-
-        osc1.frequency.setValueAtTime(freq, now);
-        osc2.frequency.setValueAtTime(freq * 2, now);
-        osc3.frequency.setValueAtTime(freq * 3, now);
-
-        const g1 = ctx.createGain();
-        const g2 = ctx.createGain();
-        const g3 = ctx.createGain();
-
-        g1.gain.value = 0.75;
-        g2.gain.value = 0.22;
-        g3.gain.setValueAtTime(0.12, now);
-        g3.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-
-        const lpf = ctx.createBiquadFilter();
-        lpf.type = 'lowpass';
-        lpf.frequency.setValueAtTime(2200, now);
-        lpf.frequency.exponentialRampToValueAtTime(680, now + dur * 1.4);
-
-        const env = ctx.createGain();
-        env.gain.setValueAtTime(0.001, now);
-        env.gain.linearRampToValueAtTime(0.16, now + 0.012);
-        env.gain.exponentialRampToValueAtTime(0.0008, now + dur * 1.8);
-
-        osc1.connect(g1); g1.connect(lpf);
-        osc2.connect(g2); g2.connect(lpf);
-        osc3.connect(g3); g3.connect(lpf);
-        lpf.connect(env);
-        env.connect(master);
-
-        osc1.start(now); osc2.start(now); osc3.start(now);
-        const stopAt = now + dur * 1.85;
-        osc1.stop(stopAt); osc2.stop(stopAt); osc3.stop(stopAt);
-      }
-
       function playDrum(type) {
         const now = ctx.currentTime;
         if (type === 'kick') {
@@ -1116,8 +1122,9 @@
       }
 
       function tick() {
-        if (!playing) return;
         const song = SONGS[songIdx];
+        if (!playing || song.type === 'youtube') return;
+
         const barIdx = Math.floor(step / 4) % song.seq.length;
         const beat = step % 4;
         const item = song.seq[barIdx];
@@ -1132,22 +1139,18 @@
         }
         if (beat === 2) {
           setTimeout(() => {
-            if (playing) playDrum('kick');
+            if (playing && SONGS[songIdx].type !== 'youtube') playDrum('kick');
           }, beatSec * 330);
         }
 
         playDrum('hat');
         setTimeout(() => {
-          if (playing) playDrum('hat');
+          if (playing && SONGS[songIdx].type !== 'youtube') playDrum('hat');
         }, beatSec * 530);
 
         const note = item.mel[beat];
         if (note) {
-          if (song.type === 'piano') {
-            playPiano(note, beatSec * 1.6);
-          } else {
-            playBell(note, beatSec * 1.5);
-          }
+          playBell(note, beatSec * 1.5);
         }
 
         step++;
@@ -1155,17 +1158,37 @@
       }
 
       function start() {
-        init();
-        if (ctx.state === 'suspended') ctx.resume();
-        if (playing) return;
-        playing = true;
-        tick();
-        syncBtn();
+        const song = SONGS[songIdx];
+        clearTimeout(timer);
+
+        if (song.type === 'youtube') {
+          if (ctx && ctx.state === 'running') ctx.suspend();
+          wantYtPlay = true;
+          if (ytReady && ytPlayer && typeof ytPlayer.playVideo === 'function') {
+            ytPlayer.playVideo();
+          }
+          playing = true;
+          syncBtn();
+        } else {
+          wantYtPlay = false;
+          if (ytReady && ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+            ytPlayer.pauseVideo();
+          }
+          initWebAudio();
+          if (ctx.state === 'suspended') ctx.resume();
+          playing = true;
+          tick();
+          syncBtn();
+        }
       }
 
       function stop() {
         playing = false;
+        wantYtPlay = false;
         clearTimeout(timer);
+        if (ytReady && ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+          ytPlayer.pauseVideo();
+        }
         if (ctx && ctx.state === 'running') ctx.suspend();
         syncBtn();
       }
@@ -1173,12 +1196,7 @@
       function nextSong() {
         songIdx = (songIdx + 1) % SONGS.length;
         step = 0;
-        if (!playing) {
-          start();
-        } else {
-          clearTimeout(timer);
-          tick();
-        }
+        start();
         return songIdx;
       }
 
@@ -1204,7 +1222,7 @@
     (function () {
       const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxrsc-RtFFOPjfbTAjcTsxFcmlUMXPCkRslxr_ZotyQ0XaXHj0TecatX7oRseX22Zs24A/exec";
 
-      // --- Từ điển song ngữ Việt - Anh ---
+      // --- Từ điển song ngữ Việt - Anh (Sóng Gió đứng ở vị trí 4) ---
       const I18N = {
         vi: {
           langBadge: '🌐 VI',
@@ -1246,7 +1264,7 @@
           bar: {
             music: 'Nhạc',
             song: 'Bài',
-            songs: ['Sóng Gió (Piano)', 'Jingle Bells', 'We Wish You', 'Silent Night'],
+            songs: ['Jingle Bells', 'We Wish You', 'Silent Night', 'Sóng Gió'],
             replay: 'Chạy lại',
             style: 'Kiểu',
             modes: ['Dâng lên', 'Xoắn ốc', 'Quét ngang', 'Nở hoa'],
@@ -1302,7 +1320,7 @@
           bar: {
             music: 'Music',
             song: 'Song',
-            songs: ['Sóng Gió (Piano)', 'Jingle Bells', 'We Wish You', 'Silent Night'],
+            songs: ['Jingle Bells', 'We Wish You', 'Silent Night', 'Sóng Gió'],
             replay: 'Replay',
             style: 'Style',
             modes: ['Rise', 'Spiral', 'Sweep', 'Bloom'],
@@ -1484,8 +1502,8 @@
       let loadedOnce = false;
       let selectedTag = 'wish';
       let likedSet = new Set();
-      let openRepliesSet = new Set(); // Lưu danh sách row đang mở sổ xuống
-      let replyingTarget = null;      // { row, idx, name } khi đang viết reply
+      let openRepliesSet = new Set();
+      let replyingTarget = null;
 
       try {
         const savedLikes = JSON.parse(localStorage.getItem('cgor_liked_rows') || '[]');
@@ -1646,9 +1664,7 @@
         }).join('');
       }
 
-      // Xử lý bấm thả tim, bấm sổ xuống xem reply, hoặc bấm "+ Viết trả lời"
       mbList.addEventListener('click', async function (e) {
-        // 1. Bấm nút sổ xuống danh sách Reply
         const btnRepToggle = e.target.closest('.rep-toggle-btn');
         if (btnRepToggle) {
           const rowNum = parseInt(btnRepToggle.getAttribute('data-row'), 10);
@@ -1665,7 +1681,6 @@
           return;
         }
 
-        // 2. Bấm "+ Viết trả lời" bên trong khung sổ xuống
         const btnRepWrite = e.target.closest('.rep-write-link');
         if (btnRepWrite) {
           const rowNum = parseInt(btnRepWrite.getAttribute('data-row'), 10);
@@ -1675,7 +1690,6 @@
           return;
         }
 
-        // 3. Bấm thả tim
         const btnLike = e.target.closest('.like-btn');
         if (!btnLike) return;
 
@@ -1801,7 +1815,6 @@
         const sender = nameLabel.textContent.trim() || I18N[curLang].anon;
         const nowStr = formatTimeVN(new Date().toISOString());
 
-        // Trường hợp 1: Đang gửi Reply cho một lời chúc
         if (replyingTarget) {
           const target = replyingTarget;
           const targetWish = wishes[target.idx];
@@ -1846,7 +1859,6 @@
           return;
         }
 
-        // Trường hợp 2: Gửi lời chúc mới bình thường
         const tagPrefix = '[' + I18N[curLang].tags[selectedTag] + '] ';
         const fullMsg = tagPrefix + rawTxt;
 
