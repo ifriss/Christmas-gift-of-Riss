@@ -2219,6 +2219,14 @@
         return '';
       }
 
+      function localizeWishTag(msg) {
+        const tags = I18N[curLang].tags;
+        return String(msg || '')
+          .replace(/^\[🎅[^\]]*\]/, '[' + tags.wish + ']')
+          .replace(/^\[🎁[^\]]*\]/, '[' + tags.gift + ']')
+          .replace(/^\[❄️[^\]]*\]/, '[' + tags.story + ']');
+      }
+      
       function getDeviceInfo() {
         const ua = navigator.userAgent;
         let os = 'Khác';
@@ -2283,7 +2291,7 @@
                 '<div class="mb-sender-wrap">' + escapeHTML(w.name) + verifiedHtml + badgeHtml + pinHtml + '</div>' +
                 '<span class="mb-time">' + escapeHTML(formatTimeVN(w.time)) + '</span>' +
               '</div>' +
-              '<div class="mb-msg-text">' + escapeHTML(w.msg) + '</div>' +
+              '<div class="mb-msg-text">' + escapeHTML(localizeWishTag(w.msg)) + '</div>' +
               (w.row
                 ? '<div class="mb-foot">' +
                     '<button type="button" class="rep-toggle-btn' + (isRepOpen ? ' open' : '') + '" data-row="' + w.row + '" data-idx="' + idx + '">' +
