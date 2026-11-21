@@ -1750,6 +1750,7 @@
         filter.connect(gain);
         gain.connect(master);
         crackleNode.start();
+        attachBgAudioStream();
       }
 
       function playChord(freqs, dur) {
@@ -1927,6 +1928,7 @@
           }
           initWebAudio();
           if (ctx.state === 'suspended') ctx.resume();
+          if (bgAudioEl) bgAudioEl.play().catch(() => {});
           playing = true;
           tick();
           syncBtn();
@@ -1940,6 +1942,7 @@
         if (ytReady && ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
           ytPlayer.pauseVideo();
         }
+        if (bgAudioEl) bgAudioEl.pause();
         if (ctx && ctx.state === 'running') ctx.suspend();
         syncBtn();
       }
@@ -1966,8 +1969,55 @@
       function syncBtn() {
         const b = document.getElementById('btn-music');
         if (b) b.setAttribute('aria-pressed', playing ? 'true' : 'false');
+        syncMediaSession();
         notifyListeners();
       }
+
+      // --- HỖ TRỢ CHẠY NỀN & ĐIỀU KHIỂN MÀN HÌNH KHÓA (MEDIA SESSION API) ---
+      let bgAudioEl = null;
+
+      function attachBgAudioStream() {
+        if (!ctx || !master || bgAudioEl || !ctx.createMediaStreamDestination) return;
+        try {
+          const dest = ctx.createMediaStreamDestination();
+          master.connect(dest);
+          bgAudioEl = document.createElement('audio');
+          bgAudioEl.setAttribute('playsinline', '');
+          bgAudioEl.srcObject = dest.stream;
+          bgAudioEl.volume = 1.0;
+        } catch (e) {}
+      }
+
+      function syncMediaSession() {
+        if (!('mediaSession' in navigator)) return;
+        const song = SONGS[songIdx];
+        if (!song) return;
+        try {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: song.name,
+            artist: 'Christmas gift of Riss 🎄',
+            album: 'Holiday Lo-Fi & Chill'
+          });
+          navigator.mediaSession.playbackState = playing ? 'playing' : 'paused';
+        } catch (e) {}
+      }
+
+      if ('mediaSession' in navigator) {
+        try {
+          navigator.mediaSession.setActionHandler('play', () => start());
+          navigator.mediaSession.setActionHandler('pause', () => stop());
+          navigator.mediaSession.setActionHandler('nexttrack', () => nextSong());
+        } catch (e) {}
+      }
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && playing) {
+          if (SONGS[songIdx].type !== 'youtube' && bgAudioEl) {
+            bgAudioEl.play().catch(() => {});
+          }
+          syncMediaSession();
+        }
+      });
 
       function playHoHoHo() {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
