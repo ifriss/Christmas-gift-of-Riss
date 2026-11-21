@@ -324,8 +324,8 @@
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
       top: calc(env(safe-area-inset-top, 0px) + 104px);
-      width: min(350px, calc(100vw - 28px));
-      max-height: min(490px, calc(100dvh - 225px));
+      width: min(355px, calc(100vw - 28px));
+      max-height: min(500px, calc(100dvh - 225px));
       background: rgba(13, 22, 51, 0.94);
       border: 1px solid #2a3b70;
       border-radius: 14px;
@@ -445,10 +445,12 @@
     .mb-foot {
       display: flex;
       justify-content: flex-end;
+      align-items: center;
+      gap: 6px;
       margin-top: 6px;
     }
 
-    .like-btn {
+    .like-btn, .rep-toggle-btn {
       background: rgba(16, 27, 58, 0.8);
       border: 1px solid #2a3b70;
       color: var(--dim);
@@ -473,8 +475,102 @@
       font-weight: 700;
     }
 
-    .like-btn:active {
+    .rep-toggle-btn:hover, .rep-toggle-btn.open {
+      border-color: #52f0ff;
+      color: #52f0ff;
+    }
+
+    .like-btn:active, .rep-toggle-btn:active {
       transform: scale(0.92);
+    }
+
+    /* Khu vực danh sách phản hồi (Reply) sổ xuống */
+    .rep-list {
+      display: none;
+      margin-top: 8px;
+      padding-top: 8px;
+      padding-left: 9px;
+      border-top: 1px dashed #243566;
+      border-left: 2px solid #52f0ff66;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rep-list.open {
+      display: flex;
+    }
+
+    .rep-item {
+      background: rgba(12, 22, 52, 0.85);
+      border: 1px solid #1b2a54;
+      border-radius: 7px;
+      padding: 6px 8px;
+      font-size: 10.5px;
+      line-height: 1.45;
+    }
+
+    .rep-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      color: #52f0ff;
+      font-weight: 700;
+      font-size: 9.5px;
+      margin-bottom: 2px;
+    }
+
+    .rep-meta span {
+      color: var(--dim);
+      font-weight: 400;
+      font-size: 9px;
+      white-space: nowrap;
+    }
+
+    .rep-empty {
+      color: var(--dim);
+      font-size: 10px;
+      font-style: italic;
+    }
+
+    .rep-write-link {
+      align-self: flex-start;
+      background: transparent;
+      border: 1px dashed #52f0ff66;
+      color: #52f0ff;
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      margin-top: 2px;
+    }
+
+    .rep-write-link:hover {
+      background: rgba(82, 240, 255, 0.12);
+    }
+
+    /* Thanh báo trạng thái đang trả lời tin nhắn */
+    #reply-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 5px 10px;
+      background: #132552;
+      border-bottom: 1px solid #2a3b70;
+      color: #52f0ff;
+      font-size: 10.5px;
+    }
+
+    #reply-banner.active {
+      display: flex;
+    }
+
+    #reply-cancel {
+      background: none;
+      border: none;
+      color: #ff8a8a;
+      font-size: 12px;
+      padding: 0 4px;
     }
 
     /* Thanh chọn nhãn cảm xúc & ô nhập thư */
@@ -731,6 +827,10 @@
       <div style="color:var(--dim);text-align:center;padding:16px 0">Đang tải lời chúc...</div>
     </div>
     <div class="mb-compose">
+      <div id="reply-banner">
+        <span id="reply-banner-text">↳ Đang trả lời...</span>
+        <button type="button" id="reply-cancel" title="Hủy trả lời">✕</button>
+      </div>
       <div class="mb-tags" id="mb-tags">
         <button type="button" class="tag-pill active" data-tag="wish" id="tag-wish">🎅 Lời chúc</button>
         <button type="button" class="tag-pill" data-tag="gift" id="tag-gift">🎁 Đòi quà Riss</button>
@@ -756,7 +856,7 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 1: HỘP NHẠC GIÁNG SINH LOFI 3 GIAI ĐIỆU (WEB AUDIO API)          -->
+  <!-- KHỐI 1: HỘP NHẠC LOFI PIANO SÓNG GIÓ & 3 BẢN NHẠC GIÁNG SINH          -->
   <!-- ===================================================================== -->
   <script>
     window.LofiXmas = (function () {
@@ -768,48 +868,65 @@
       let step = 0;
       let songIdx = 0;
 
-      // 3 bản phối Lofi Giáng sinh: Jingle Bells, We Wish You a Merry Christmas, Silent Night
       const SONGS = [
         {
-          id: 'jingle',
-          beatSec: 0.34, // ~88 BPM vui tươi
+          id: 'songgio',
+          type: 'piano',
+          beatSec: 0.39, // ~76 BPM sâu lắng
           seq: [
-            { chord: [174.61, 220.00, 261.63, 329.63], mel: [659.25, null, 659.25, 659.25] }, // Fmaj7
-            { chord: [196.00, 246.94, 293.66, 349.23], mel: [659.25, null, 659.25, 659.25] }, // G7
-            { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 783.99, 523.25, 587.33] }, // Em7
-            { chord: [220.00, 261.63, 329.63, 392.00], mel: [659.25, null, null, null] },     // Am7
-            { chord: [146.83, 174.61, 220.00, 261.63], mel: [698.46, 698.46, 698.46, 698.46] }, // Dm7
-            { chord: [196.00, 246.94, 293.66, 349.23], mel: [698.46, 659.25, 659.25, 659.25] }, // G7
-            { chord: [130.81, 196.00, 246.94, 293.66], mel: [587.33, 587.33, 659.25, 587.33] }, // Cmaj7
-            { chord: [130.81, 196.00, 233.08, 293.66], mel: [783.99, null, 659.25, 523.25] }  // C9
+            { chord: [220.00, 261.63, 329.63, 392.00], mel: [329.63, 392.00, 440.00, 523.25] }, // Am7
+            { chord: [174.61, 220.00, 261.63, 329.63], mel: [493.88, 440.00, 392.00, 440.00] }, // Fmaj7
+            { chord: [130.81, 196.00, 246.94, 329.63], mel: [329.63, 392.00, 440.00, 392.00] }, // Cmaj7
+            { chord: [196.00, 246.94, 293.66, 392.00], mel: [329.63, 293.66, 261.63, 293.66] }, // G6
+            { chord: [220.00, 261.63, 329.63, 392.00], mel: [329.63, 392.00, 440.00, 523.25] }, // Am7
+            { chord: [174.61, 220.00, 261.63, 329.63], mel: [587.33, 523.25, 493.88, 440.00] }, // Fmaj7
+            { chord: [146.83, 174.61, 220.00, 261.63], mel: [392.00, 440.00, 493.88, 392.00] }, // Dm7
+            { chord: [164.81, 196.00, 246.94, 329.63], mel: [329.63, null, 293.66, 261.63] }  // Em7
+          ]
+        },
+        {
+          id: 'jingle',
+          type: 'bell',
+          beatSec: 0.34,
+          seq: [
+            { chord: [174.61, 220.00, 261.63, 329.63], mel: [659.25, null, 659.25, 659.25] },
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [659.25, null, 659.25, 659.25] },
+            { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 783.99, 523.25, 587.33] },
+            { chord: [220.00, 261.63, 329.63, 392.00], mel: [659.25, null, null, null] },
+            { chord: [146.83, 174.61, 220.00, 261.63], mel: [698.46, 698.46, 698.46, 698.46] },
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [698.46, 659.25, 659.25, 659.25] },
+            { chord: [130.81, 196.00, 246.94, 293.66], mel: [587.33, 587.33, 659.25, 587.33] },
+            { chord: [130.81, 196.00, 233.08, 293.66], mel: [783.99, null, 659.25, 523.25] }
           ]
         },
         {
           id: 'wewish',
-          beatSec: 0.36, // ~83 BPM ấm áp
+          type: 'bell',
+          beatSec: 0.36,
           seq: [
-            { chord: [130.81, 164.81, 196.00, 246.94], mel: [392.00, 523.25, 587.33, 523.25] }, // Cmaj7
-            { chord: [174.61, 220.00, 261.63, 329.63], mel: [493.88, 440.00, 440.00, 440.00] }, // Fmaj7
-            { chord: [146.83, 174.61, 220.00, 261.63], mel: [587.33, 659.25, 587.33, 523.25] }, // Dm7
-            { chord: [196.00, 246.94, 293.66, 349.23], mel: [493.88, 392.00, 392.00, null] },   // G7
-            { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 698.46, 659.25, 587.33] }, // Em7
-            { chord: [220.00, 261.63, 329.63, 392.00], mel: [523.25, 440.00, 392.00, 392.00] }, // Am7
-            { chord: [146.83, 174.61, 220.00, 261.63], mel: [440.00, 587.33, 493.88, 523.25] }, // Dm7 -> G7
-            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, null, null, null] }        // Cmaj7
+            { chord: [130.81, 164.81, 196.00, 246.94], mel: [392.00, 523.25, 587.33, 523.25] },
+            { chord: [174.61, 220.00, 261.63, 329.63], mel: [493.88, 440.00, 440.00, 440.00] },
+            { chord: [146.83, 174.61, 220.00, 261.63], mel: [587.33, 659.25, 587.33, 523.25] },
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [493.88, 392.00, 392.00, null] },
+            { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 698.46, 659.25, 587.33] },
+            { chord: [220.00, 261.63, 329.63, 392.00], mel: [523.25, 440.00, 392.00, 392.00] },
+            { chord: [146.83, 174.61, 220.00, 261.63], mel: [440.00, 587.33, 493.88, 523.25] },
+            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, null, null, null] }
           ]
         },
         {
           id: 'silent',
-          beatSec: 0.42, // ~72 BPM chill đêm khuya
+          type: 'piano',
+          beatSec: 0.42,
           seq: [
-            { chord: [130.81, 196.00, 246.94, 329.63], mel: [392.00, 440.00, 392.00, 329.63] }, // Cmaj7
-            { chord: [130.81, 196.00, 246.94, 329.63], mel: [392.00, 440.00, 392.00, 329.63] }, // Cmaj7
-            { chord: [196.00, 246.94, 293.66, 349.23], mel: [587.33, null, 587.33, 493.88] },   // G7
-            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, null, 523.25, 392.00] },   // Cmaj7
-            { chord: [174.61, 220.00, 261.63, 329.63], mel: [440.00, null, 440.00, 523.25] },   // Fmaj7
-            { chord: [164.81, 196.00, 246.94, 293.66], mel: [493.88, 440.00, 392.00, 440.00] }, // Em7
-            { chord: [196.00, 246.94, 293.66, 349.23], mel: [587.33, 698.46, 587.33, 493.88] }, // G7
-            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, 659.25, 523.25, null] }    // Cmaj7
+            { chord: [130.81, 196.00, 246.94, 329.63], mel: [392.00, 440.00, 392.00, 329.63] },
+            { chord: [130.81, 196.00, 246.94, 329.63], mel: [392.00, 440.00, 392.00, 329.63] },
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [587.33, null, 587.33, 493.88] },
+            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, null, 523.25, 392.00] },
+            { chord: [174.61, 220.00, 261.63, 329.63], mel: [440.00, null, 440.00, 523.25] },
+            { chord: [164.81, 196.00, 246.94, 293.66], mel: [493.88, 440.00, 392.00, 440.00] },
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [587.33, 698.46, 587.33, 493.88] },
+            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, 659.25, 523.25, null] }
           ]
         }
       ];
@@ -911,6 +1028,52 @@
         sub.stop(now + dur + 0.05);
       }
 
+      function playPiano(freq, dur) {
+        if (!freq) return;
+        const now = ctx.currentTime;
+
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const osc3 = ctx.createOscillator();
+
+        osc1.type = 'triangle';
+        osc2.type = 'sine';
+        osc3.type = 'sine';
+
+        osc1.frequency.setValueAtTime(freq, now);
+        osc2.frequency.setValueAtTime(freq * 2, now);
+        osc3.frequency.setValueAtTime(freq * 3, now);
+
+        const g1 = ctx.createGain();
+        const g2 = ctx.createGain();
+        const g3 = ctx.createGain();
+
+        g1.gain.value = 0.75;
+        g2.gain.value = 0.22;
+        g3.gain.setValueAtTime(0.12, now);
+        g3.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        const lpf = ctx.createBiquadFilter();
+        lpf.type = 'lowpass';
+        lpf.frequency.setValueAtTime(2200, now);
+        lpf.frequency.exponentialRampToValueAtTime(680, now + dur * 1.4);
+
+        const env = ctx.createGain();
+        env.gain.setValueAtTime(0.001, now);
+        env.gain.linearRampToValueAtTime(0.16, now + 0.012);
+        env.gain.exponentialRampToValueAtTime(0.0008, now + dur * 1.8);
+
+        osc1.connect(g1); g1.connect(lpf);
+        osc2.connect(g2); g2.connect(lpf);
+        osc3.connect(g3); g3.connect(lpf);
+        lpf.connect(env);
+        env.connect(master);
+
+        osc1.start(now); osc2.start(now); osc3.start(now);
+        const stopAt = now + dur * 1.85;
+        osc1.stop(stopAt); osc2.stop(stopAt); osc3.stop(stopAt);
+      }
+
       function playDrum(type) {
         const now = ctx.currentTime;
         if (type === 'kick') {
@@ -980,7 +1143,11 @@
 
         const note = item.mel[beat];
         if (note) {
-          playBell(note, beatSec * 1.5);
+          if (song.type === 'piano') {
+            playPiano(note, beatSec * 1.6);
+          } else {
+            playBell(note, beatSec * 1.5);
+          }
         }
 
         step++;
@@ -1031,7 +1198,7 @@
   </script>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 2: ĐA NGÔN NGỮ ANH-VIỆT, ĐẾM NGƯỢC GMT+7 & MAILBOX THẢ TIM/TAG   -->
+  <!-- KHỐI 2: ĐA NGÔN NGỮ ANH-VIỆT, ĐẾM NGƯỢC GMT+7 & MAILBOX REPLY/LIKE    -->
   <!-- ===================================================================== -->
   <script>
     (function () {
@@ -1060,6 +1227,10 @@
           mbLoading: 'Đang tải lời chúc...',
           mbEmpty: 'Chưa có lời chúc nào. Hãy là người đầu tiên!',
           mbPlaceholder: 'Viết thư chúc Giáng Sinh... (Shift+Enter xuống dòng)',
+          repPlaceholder: (n) => 'Viết trả lời cho ' + n + '...',
+          replyingTo: (n) => '↳ Đang trả lời: ' + n,
+          repEmpty: 'Chưa có phản hồi nào.',
+          repWriteBtn: '+ Viết trả lời',
           mbSend: 'Gửi',
           pinLabel: '📌 Đã ghim',
           tags: {
@@ -1075,7 +1246,7 @@
           bar: {
             music: 'Nhạc',
             song: 'Bài',
-            songs: ['Jingle Bells', 'We Wish You', 'Silent Night'],
+            songs: ['Sóng Gió (Piano)', 'Jingle Bells', 'We Wish You', 'Silent Night'],
             replay: 'Chạy lại',
             style: 'Kiểu',
             modes: ['Dâng lên', 'Xoắn ốc', 'Quét ngang', 'Nở hoa'],
@@ -1112,6 +1283,10 @@
           mbLoading: 'Loading wishes...',
           mbEmpty: 'No wishes yet. Be the first to send one!',
           mbPlaceholder: 'Write a Christmas wish... (Shift+Enter for new line)',
+          repPlaceholder: (n) => 'Write a reply to ' + n + '...',
+          replyingTo: (n) => '↳ Replying to: ' + n,
+          repEmpty: 'No replies yet.',
+          repWriteBtn: '+ Write a reply',
           mbSend: 'Send',
           pinLabel: '📌 Pinned',
           tags: {
@@ -1127,7 +1302,7 @@
           bar: {
             music: 'Music',
             song: 'Song',
-            songs: ['Jingle Bells', 'We Wish You', 'Silent Night'],
+            songs: ['Sóng Gió (Piano)', 'Jingle Bells', 'We Wish You', 'Silent Night'],
             replay: 'Replay',
             style: 'Style',
             modes: ['Rise', 'Spiral', 'Sweep', 'Bloom'],
@@ -1293,18 +1468,24 @@
         cdNote.style.color = '#4ef57b';
       }
 
-      // --- Mailbox Lời Chúc: Tag cảm xúc, Ghim (PIN), Thả tim (Like) & Giờ GMT+7 ---
+      // --- Mailbox Lời Chúc: Reply sổ xuống, Tag cảm xúc, Ghim (PIN), Thả tim (Like) ---
       const mbList = document.getElementById('mb-list');
       const mbForm = document.getElementById('mb-form');
       const mbInput = document.getElementById('mb-input');
       const mbSend = document.getElementById('mb-send');
       const mailCount = document.getElementById('mail-count');
+      const mbTagsWrap = document.getElementById('mb-tags');
       const tagBtns = document.querySelectorAll('.tag-pill');
+      const replyBanner = document.getElementById('reply-banner');
+      const replyBannerText = document.getElementById('reply-banner-text');
+      const replyCancel = document.getElementById('reply-cancel');
 
       let wishes = [];
       let loadedOnce = false;
       let selectedTag = 'wish';
       let likedSet = new Set();
+      let openRepliesSet = new Set(); // Lưu danh sách row đang mở sổ xuống
+      let replyingTarget = null;      // { row, idx, name } khi đang viết reply
 
       try {
         const savedLikes = JSON.parse(localStorage.getItem('cgor_liked_rows') || '[]');
@@ -1316,6 +1497,26 @@
           localStorage.setItem('cgor_liked_rows', JSON.stringify(Array.from(likedSet)));
         } catch (e) {}
       }
+
+      function setReplyTarget(target) {
+        replyingTarget = target;
+        const tDict = I18N[curLang];
+        if (target) {
+          replyBanner.classList.add('active');
+          replyBannerText.textContent = tDict.replyingTo(target.name);
+          mbTagsWrap.style.display = 'none';
+          mbInput.placeholder = tDict.repPlaceholder(target.name);
+          mbInput.focus();
+        } else {
+          replyBanner.classList.remove('active');
+          mbTagsWrap.style.display = 'flex';
+          mbInput.placeholder = tDict.mbPlaceholder;
+        }
+      }
+
+      replyCancel.addEventListener('click', function () {
+        setReplyTarget(null);
+      });
 
       tagBtns.forEach(btnTag => {
         btnTag.addEventListener('click', function () {
@@ -1400,10 +1601,24 @@
         mbList.innerHTML = wishes.map(function (w, idx) {
           const rowKey = w.row ? String(w.row) : ('tmp_' + idx);
           const isLiked = likedSet.has(rowKey);
+          const isRepOpen = openRepliesSet.has(rowKey);
           const likesCount = parseInt(w.likes, 10) || 0;
+          const reps = Array.isArray(w.replies) ? w.replies : [];
+          const repCount = reps.length;
           const tagCls = detectTagClass(String(w.msg || ''));
           const pinCls = w.pinned ? ' pinned' : '';
           const pinHtml = w.pinned ? '<span class="pin-badge">' + tDict.pinLabel + '</span>' : '';
+
+          const repItemsHtml = reps.length
+            ? reps.map(function (r) {
+                return (
+                  '<div class="rep-item">' +
+                    '<div class="rep-meta">' + escapeHTML(r.name) + '<span>' + escapeHTML(formatTimeVN(r.time)) + '</span></div>' +
+                    '<div class="mb-msg-text">' + escapeHTML(r.msg) + '</div>' +
+                  '</div>'
+                );
+              }).join('')
+            : '<div class="rep-empty">' + tDict.repEmpty + '</div>';
 
           return (
             '<div class="mb-item ' + tagCls + pinCls + '">' +
@@ -1414,9 +1629,16 @@
               '<div class="mb-msg-text">' + escapeHTML(w.msg) + '</div>' +
               (w.row
                 ? '<div class="mb-foot">' +
+                    '<button type="button" class="rep-toggle-btn' + (isRepOpen ? ' open' : '') + '" data-row="' + w.row + '" data-idx="' + idx + '">' +
+                      '💬 <span>' + repCount + '</span> ' + (isRepOpen ? '▴' : '▾') +
+                    '</button>' +
                     '<button type="button" class="like-btn' + (isLiked ? ' liked' : '') + '" data-row="' + w.row + '" data-idx="' + idx + '">' +
                       (isLiked ? '❤️' : '🤍') + ' <span>' + likesCount + '</span>' +
                     '</button>' +
+                  '</div>' +
+                  '<div class="rep-list' + (isRepOpen ? ' open' : '') + '">' +
+                    repItemsHtml +
+                    '<button type="button" class="rep-write-link" data-row="' + w.row + '" data-idx="' + idx + '">' + tDict.repWriteBtn + '</button>' +
                   '</div>'
                 : '') +
             '</div>'
@@ -1424,8 +1646,36 @@
         }).join('');
       }
 
-      // Xử lý bấm thả tim lời chúc
+      // Xử lý bấm thả tim, bấm sổ xuống xem reply, hoặc bấm "+ Viết trả lời"
       mbList.addEventListener('click', async function (e) {
+        // 1. Bấm nút sổ xuống danh sách Reply
+        const btnRepToggle = e.target.closest('.rep-toggle-btn');
+        if (btnRepToggle) {
+          const rowNum = parseInt(btnRepToggle.getAttribute('data-row'), 10);
+          const idx = parseInt(btnRepToggle.getAttribute('data-idx'), 10);
+          if (!rowNum || isNaN(idx) || !wishes[idx]) return;
+
+          const rowKey = String(rowNum);
+          if (openRepliesSet.has(rowKey)) {
+            openRepliesSet.delete(rowKey);
+          } else {
+            openRepliesSet.add(rowKey);
+          }
+          renderWishes();
+          return;
+        }
+
+        // 2. Bấm "+ Viết trả lời" bên trong khung sổ xuống
+        const btnRepWrite = e.target.closest('.rep-write-link');
+        if (btnRepWrite) {
+          const rowNum = parseInt(btnRepWrite.getAttribute('data-row'), 10);
+          const idx = parseInt(btnRepWrite.getAttribute('data-idx'), 10);
+          if (!rowNum || isNaN(idx) || !wishes[idx]) return;
+          setReplyTarget({ row: rowNum, idx: idx, name: wishes[idx].name });
+          return;
+        }
+
+        // 3. Bấm thả tim
         const btnLike = e.target.closest('.like-btn');
         if (!btnLike) return;
 
@@ -1500,8 +1750,14 @@
         document.getElementById('tag-wish').textContent = tDict.tags.wish;
         document.getElementById('tag-gift').textContent = tDict.tags.gift;
         document.getElementById('tag-story').textContent = tDict.tags.story;
-        mbInput.placeholder = tDict.mbPlaceholder;
         mbSend.textContent = tDict.mbSend;
+
+        if (replyingTarget) {
+          replyBannerText.textContent = tDict.replyingTo(replyingTarget.name);
+          mbInput.placeholder = tDict.repPlaceholder(replyingTarget.name);
+        } else {
+          mbInput.placeholder = tDict.mbPlaceholder;
+        }
 
         document.getElementById('modal-title').textContent = tDict.modalTitle;
         document.getElementById('modal-sub').textContent = tDict.modalSub;
@@ -1542,15 +1798,60 @@
         const rawTxt = mbInput.value.trim();
         if (!rawTxt) return;
 
-        const tagPrefix = '[' + I18N[curLang].tags[selectedTag] + '] ';
-        const fullMsg = tagPrefix + rawTxt;
-
         const sender = nameLabel.textContent.trim() || I18N[curLang].anon;
         const nowStr = formatTimeVN(new Date().toISOString());
 
-        // Chèn ngay sau các bài được ghim (nếu có)
+        // Trường hợp 1: Đang gửi Reply cho một lời chúc
+        if (replyingTarget) {
+          const target = replyingTarget;
+          const targetWish = wishes[target.idx];
+          if (targetWish) {
+            if (!Array.isArray(targetWish.replies)) targetWish.replies = [];
+            targetWish.replies.push({ name: sender, msg: rawTxt, time: nowStr });
+            openRepliesSet.add(String(target.row));
+          }
+
+          setReplyTarget(null);
+          renderWishes();
+          mbInput.value = '';
+          autoResizeInput();
+
+          mbSend.disabled = true;
+          mbSend.textContent = '...';
+          try {
+            let userIP = 'Không rõ';
+            try {
+              const ipRes = await fetch('https://api.ipify.org?format=json');
+              const ipData = await ipRes.json();
+              userIP = ipData.ip || 'Không rõ';
+            } catch (errIP) {}
+
+            await fetch(SHEET_API_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain' },
+              body: JSON.stringify({
+                action: 'reply',
+                row: target.row,
+                name: sender,
+                msg: rawTxt,
+                ip: userIP
+              })
+            });
+            setTimeout(loadWishes, 1200);
+          } catch (err) {}
+
+          mbSend.disabled = false;
+          mbSend.textContent = I18N[curLang].mbSend;
+          return;
+        }
+
+        // Trường hợp 2: Gửi lời chúc mới bình thường
+        const tagPrefix = '[' + I18N[curLang].tags[selectedTag] + '] ';
+        const fullMsg = tagPrefix + rawTxt;
+
         const firstNormalIdx = wishes.findIndex(item => !item.pinned);
-        const newWishObj = { name: sender, msg: fullMsg, time: nowStr, pinned: false, likes: 0 };
+        const newWishObj = { name: sender, msg: fullMsg, time: nowStr, pinned: false, likes: 0, replies: [] };
         if (firstNormalIdx === -1) {
           wishes.push(newWishObj);
         } else {
