@@ -147,12 +147,12 @@
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 12px);
       bottom: calc(env(safe-area-inset-bottom, 0px) + 52px);
-      font-size: 11px;
-      line-height: 1.4;
+      font-size: 12.5px;
+      line-height: 1.5;
       text-align: right;
       pointer-events: none;
       z-index: 15;
-      max-width: 300px;
+      max-width: 340px;
       text-shadow: 0 2px 6px rgba(3, 6, 26, 0.95);
     }
 
@@ -267,6 +267,25 @@
       box-shadow: 0 0 12px rgba(255, 211, 107, 0.35);
     }
 
+    #noti-btn {
+      border-color: #ff7ad9;
+      color: #ff7ad9;
+    }
+
+    #noti-btn.active {
+      background: #361942;
+      box-shadow: 0 0 12px rgba(255, 122, 217, 0.35);
+    }
+
+    #noti-count {
+      background: #ff3b3b;
+      color: #ffffff;
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+
     #mail-count {
       background: #ff3b3b;
       color: #ffffff;
@@ -347,6 +366,113 @@
       font-size: 11px;
       color: #4ef57b;
       font-weight: 600;
+    }
+
+    /* Khung Thông báo từ DEV bên phải */
+    #noti-box {
+      position: fixed;
+      right: max(14px, env(safe-area-inset-right, 0px) + 10px);
+      top: calc(env(safe-area-inset-top, 0px) + 104px);
+      width: min(355px, calc(100vw - 28px));
+      max-height: min(460px, calc(100dvh - 225px));
+      background: rgba(13, 22, 51, 0.94);
+      border: 1px solid #ff7ad988;
+      border-radius: 14px;
+      display: none;
+      flex-direction: column;
+      z-index: 40;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+
+    #noti-box.open {
+      display: flex;
+    }
+
+    .noti-head {
+      color: #ff7ad9;
+    }
+
+    #noti-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 11.5px;
+    }
+
+    .noti-item {
+      background: linear-gradient(135deg, rgba(44, 20, 62, 0.45), rgba(7, 14, 36, 0.95));
+      border: 1px solid #3c2863;
+      border-left: 3px solid #ff7ad9;
+      border-radius: 9px;
+      padding: 9px 11px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .noti-item.unread {
+      border-color: #ff7ad9;
+      box-shadow: 0 0 10px rgba(255, 122, 217, 0.22);
+    }
+
+    .noti-new-badge {
+      background: rgba(255, 59, 59, 0.22);
+      border: 1px solid #ff5c7c;
+      color: #ff8fa8;
+      font-size: 8.5px;
+      font-weight: 700;
+      padding: 0 5px;
+      border-radius: 4px;
+    }
+
+    .noti-del-btn {
+      background: none;
+      border: none;
+      color: var(--dim);
+      font-size: 10px;
+      padding: 0 3px;
+      cursor: pointer;
+    }
+
+    .noti-del-btn:hover {
+      color: #ff7a8a;
+    }
+
+    #noti-input {
+      flex: 1;
+      min-width: 0;
+      min-height: 34px;
+      max-height: 120px;
+      resize: none;
+      overflow-y: auto;
+      background: #050a1a;
+      border: 1px solid #2a3b70;
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: var(--fg);
+      font: inherit;
+      font-size: 11.5px;
+      line-height: 1.4;
+      outline: none;
+    }
+
+    #noti-input:focus {
+      border-color: #ff7ad9;
+    }
+
+    #noti-send {
+      background: #361942;
+      border-color: #ff7ad9;
+      color: #ff7ad9;
+      font-weight: 700;
+      padding: 8px 14px;
+      white-space: nowrap;
+      height: 34px;
     }
 
     /* Khung Hộp thư bên phải */
@@ -1079,9 +1205,9 @@
         bottom: calc(env(safe-area-inset-bottom, 0px) + 98px);
       }
       #dev-credit {
-        font-size: 8.5px;
+        font-size: 10px;
         bottom: calc(env(safe-area-inset-bottom, 0px) + 98px);
-        max-width: 185px;
+        max-width: 215px;
       }
       button {
         font-size: 10px;
@@ -1094,10 +1220,10 @@
       .tool-btn {
         padding: 5px 8px;
       }
-      #cd-box, #mailbox {
+      #cd-box, #noti-box, #mailbox {
         top: calc(env(safe-area-inset-top, 0px) + 98px);
       }
-      #mailbox {
+      #noti-box, #mailbox {
         max-height: calc(100dvh - 220px);
       }
 
@@ -1160,6 +1286,7 @@
     <button id="lang-btn" class="tool-btn" type="button" title="Switch language / Đổi ngôn ngữ / 切换语言">🌐 VI</button>
     <button id="refresh-btn" class="tool-btn" type="button" title="Làm mới trang / Reload / 刷新页面">🔄</button>
     <button id="cd-btn" class="tool-btn" type="button">⏳ <span id="cd-btn-txt">Đếm ngược</span></button>
+    <button id="noti-btn" class="tool-btn" type="button">🔔 <span id="noti-btn-txt">Thông báo</span> <span id="noti-count" style="display:none">0</span></button>
     <button id="mail-btn" class="tool-btn" type="button">📩 <span id="mail-btn-txt">Lời chúc</span> <span id="mail-count">0</span></button>
   </div>
 
@@ -1189,6 +1316,24 @@
         </div>
       </div>
       <div id="cd-note">Đếm ngược tới 25/12 (GMT+7) 🎄</div>
+    </div>
+  </div>
+
+  <!-- Hộp Thông báo từ DEV -->
+  <div id="noti-box">
+    <div class="mb-head noti-head">
+      <span id="noti-title">🔔 Thông báo từ DEV</span>
+      <button type="button" class="mb-close" id="noti-close">✕</button>
+    </div>
+    <div id="noti-list">
+      <div style="color:var(--dim);text-align:center;padding:16px 0">Đang tải thông báo...</div>
+    </div>
+    <!-- Khung đăng thông báo: chỉ hiển thị với tài khoản có DEV -->
+    <div class="mb-compose" id="noti-compose" style="display:none">
+      <form class="mb-form" id="noti-form">
+        <textarea id="noti-input" rows="1" placeholder="Đăng thông báo mới từ DEV... (Shift+Enter xuống dòng)"></textarea>
+        <button type="submit" id="noti-send">Đăng</button>
+      </form>
     </div>
   </div>
 
@@ -1436,18 +1581,6 @@
           type: 'youtube',
           color: '#ff7ad9',
           ytIds: ['0OWK5yy-7lM']
-        },
-        {
-          id: 'yt_mwqhptld',
-          name: 'Làm sao để Em tựa vào',
-          type: 'youtube',
-          ytIds: ['RrXuurgEVC0']
-        },
-        {
-          id: 'yt_mwqi8yv8',
-          name: 'XE ĐẠP (Lofi Ver)',
-          type: 'youtube',
-          ytIds: ['3v3YYpVrEuA']
         }
       ];
 
@@ -1896,13 +2029,7 @@
         getRepeatMode: () => repeatMode,
         isShuffle: () => shuffle,
         getSongIdx: () => songIdx,
-       getSongIdx: () => songIdx,
-      getSongColor: () => {
-        const palette = ['#ffd36b', '#ff5c7c', '#52f0ff', '#4ef57b', '#ff9a3c', '#b47aff', '#ff7ad9'];
-        const s = SONGS[songIdx];
-        return (s && s.color) ? s.color : palette[songIdx % palette.length];
-      },
-      isPlaying: () => playing,
+        getSongColor: () => (SONGS[songIdx] ? SONGS[songIdx].color : '#ffd36b'),
         isPlaying: () => playing,
         getSongs: () => SONGS.map((s, i) => ({ index: i, name: s.name, type: s.type })),
         selectSong: (i) => {
@@ -1937,6 +2064,13 @@
           chars: 'ký tự',
           devWish: 'chúc mọi người giáng sinh vui vẻ 🎄',
           cdBtn: 'Đếm ngược',
+          notiBtn: 'Thông báo',
+          notiTitle: '🔔 Thông báo từ DEV',
+          notiLoading: 'Đang tải thông báo...',
+          notiEmpty: 'Chưa có thông báo nào từ DEV.',
+          notiPlaceholder: 'Đăng thông báo mới từ DEV... (Shift+Enter xuống dòng)',
+          notiSend: 'Đăng',
+          notiNewTag: 'MỚI',
           mailBtn: 'Lời chúc',
           cdTitle: '⏳ Đếm ngược Giáng Sinh (GMT+7)',
           cdDays: 'Ngày',
@@ -2034,6 +2168,13 @@
           chars: 'letters',
           devWish: 'wishes everyone a Merry Christmas 🎄',
           cdBtn: 'Countdown',
+          notiBtn: 'Notices',
+          notiTitle: '🔔 DEV Announcements',
+          notiLoading: 'Loading announcements...',
+          notiEmpty: 'No announcements from DEV yet.',
+          notiPlaceholder: 'Post a new DEV announcement... (Shift+Enter for new line)',
+          notiSend: 'Post',
+          notiNewTag: 'NEW',
           mailBtn: 'Wishes',
           cdTitle: '⏳ Christmas Countdown (GMT+7)',
           cdDays: 'Days',
@@ -2131,6 +2272,13 @@
           chars: '字符数',
           devWish: '祝大家圣诞快乐 🎄',
           cdBtn: '倒计时',
+          notiBtn: '通知',
+          notiTitle: '🔔 开发者公告',
+          notiLoading: '正在加载公告...',
+          notiEmpty: '暂无开发者公告。',
+          notiPlaceholder: '发布新的开发者公告... (Shift+Enter 换行)',
+          notiSend: '发布',
+          notiNewTag: '新',
           mailBtn: '祝福墙',
           cdTitle: '⏳ 圣诞节倒计时 (GMT+7)',
           cdDays: '天',
@@ -2330,12 +2478,19 @@
         modal.style.display = 'flex';
       }
 
+      function isDevUser() {
+        if (!currentUser) return false;
+        return String(currentUser.badge || '').toUpperCase().includes('DEV');
+      }
+
       function syncAuthUI() {
+        const notiComposeEl = document.getElementById('noti-compose');
         if (currentUser) {
           const badgeStr = currentUser.badge ? ' [' + currentUser.badge + ']' : '';
           nameLabel.textContent = currentUser.displayName + badgeStr;
           mbGuestLock.classList.remove('active');
           mbCompose.style.display = 'flex';
+          if (notiComposeEl) notiComposeEl.style.display = isDevUser() ? 'flex' : 'none';
         } else {
           let guestSaved = '';
           try { guestSaved = localStorage.getItem('xmas_custom_name') || ''; } catch (e) {}
@@ -2343,7 +2498,9 @@
           guestNameInput.value = guestSaved;
           mbGuestLock.classList.add('active');
           mbCompose.style.display = 'none';
+          if (notiComposeEl) notiComposeEl.style.display = 'none';
         }
+        if (typeof renderNotices === 'function') renderNotices();
       }
 
       function slugifyUsername(str) {
@@ -2534,6 +2691,10 @@
       const cdBox = document.getElementById('cd-box');
       const cdClose = document.getElementById('cd-close');
 
+      const notiBtn = document.getElementById('noti-btn');
+      const notiBox = document.getElementById('noti-box');
+      const notiClose = document.getElementById('noti-close');
+
       const mailBtn = document.getElementById('mail-btn');
       const mailbox = document.getElementById('mailbox');
       const mbClose = document.getElementById('mb-close');
@@ -2543,6 +2704,11 @@
         cdBtn.classList.remove('active');
       }
 
+      function closeNotiBox() {
+        notiBox.classList.remove('open');
+        notiBtn.classList.remove('active');
+      }
+
       function closeMailbox() {
         mailbox.classList.remove('open');
         mailBtn.classList.remove('active');
@@ -2550,6 +2716,7 @@
 
       window.closeAllFloatingPanels = function (except) {
         if (except !== 'cd') closeCountdown();
+        if (except !== 'noti') closeNotiBox();
         if (except !== 'mail') closeMailbox();
         if (except !== 'deck' && window.closeDeckPanel) window.closeDeckPanel();
       };
@@ -2920,7 +3087,11 @@
         document.getElementById('dc-wish-text').textContent = tDict.devWish;
 
         document.getElementById('cd-btn-txt').textContent = tDict.cdBtn;
+        document.getElementById('noti-btn-txt').textContent = tDict.notiBtn;
         document.getElementById('mail-btn-txt').textContent = tDict.mailBtn;
+        document.getElementById('noti-title').textContent = tDict.notiTitle;
+        document.getElementById('noti-input').placeholder = tDict.notiPlaceholder;
+        document.getElementById('noti-send').textContent = tDict.notiSend;
         document.getElementById('cd-title').textContent = tDict.cdTitle;
         document.getElementById('cd-lbl-d').textContent = tDict.cdDays;
         document.getElementById('cd-lbl-h').textContent = tDict.cdHours;
@@ -2967,6 +3138,7 @@
         document.getElementById('btn-prof-close').textContent = tDict.btnProfClose;
 
         updateCountdown();
+        if (typeof renderNotices === 'function') renderNotices();
         renderWishes();
         if (window.updateBarLanguage) {
           window.updateBarLanguage(curLang);
@@ -3106,10 +3278,236 @@
         mbSend.textContent = I18N[curLang].mbSend;
       });
 
+      // --- Xử lý Thông báo từ DEV & đếm số lượng chưa xem ---
+      const notiList = document.getElementById('noti-list');
+      const notiForm = document.getElementById('noti-form');
+      const notiInput = document.getElementById('noti-input');
+      const notiSend = document.getElementById('noti-send');
+      const notiCount = document.getElementById('noti-count');
+
+      let notices = [];
+      let noticesLoadedOnce = false;
+      let seenNotiSet = new Set();
+      let sessionHighlightKeys = new Set();
+
+      try {
+        const savedSeen = JSON.parse(localStorage.getItem('cgor_seen_notices') || '[]');
+        if (Array.isArray(savedSeen)) seenNotiSet = new Set(savedSeen);
+      } catch (e) {}
+
+      function saveSeenNotiSet() {
+        try {
+          localStorage.setItem('cgor_seen_notices', JSON.stringify(Array.from(seenNotiSet)));
+        } catch (e) {}
+      }
+
+      function getNoticeKey(n, idx) {
+        if (n && n.id) return 'id_' + String(n.id);
+        if (n && n.row) return 'row_' + String(n.row);
+        const t = String((n && n.time) || '');
+        const m = String((n && n.msg) || '').slice(0, 32);
+        return (t || m) ? ('tm_' + t + '_' + m) : ('idx_' + idx);
+      }
+
+      function getUnreadNoticeCount() {
+        let count = 0;
+        notices.forEach(function (n, idx) {
+          if (!seenNotiSet.has(getNoticeKey(n, idx))) count++;
+        });
+        return count;
+      }
+
+      function updateNotiBadge() {
+        const unread = getUnreadNoticeCount();
+        if (unread > 0) {
+          notiCount.textContent = unread;
+          notiCount.style.display = 'inline-block';
+        } else {
+          notiCount.textContent = '0';
+          notiCount.style.display = 'none';
+        }
+      }
+
+      function markAllNoticesSeen(highlightNew) {
+        let changed = false;
+        if (highlightNew) sessionHighlightKeys.clear();
+        notices.forEach(function (n, idx) {
+          const k = getNoticeKey(n, idx);
+          if (!seenNotiSet.has(k)) {
+            if (highlightNew) sessionHighlightKeys.add(k);
+            seenNotiSet.add(k);
+            changed = true;
+          }
+        });
+        if (changed) saveSeenNotiSet();
+        updateNotiBadge();
+      }
+
+      function renderNotices() {
+        const tDict = I18N[curLang];
+        if (!notices.length) {
+          notiList.innerHTML = '<div style="color:var(--dim);text-align:center;padding:16px 0">' +
+            (noticesLoadedOnce ? tDict.notiEmpty : tDict.notiLoading) +
+            '</div>';
+          updateNotiBadge();
+          return;
+        }
+        const canManage = isDevUser();
+        notiList.innerHTML = notices.map(function (n, idx) {
+          const key = getNoticeKey(n, idx);
+          const isNew = sessionHighlightKeys.has(key) || !seenNotiSet.has(key);
+          const badgeHtml = '<span class="user-badge">' + escapeHTML(n.badge || 'DEV') + '</span>';
+          const newTagHtml = isNew ? '<span class="noti-new-badge">' + tDict.notiNewTag + '</span>' : '';
+          const delBtnHtml = (canManage && n.row)
+            ? '<button type="button" class="noti-del-btn" data-row="' + n.row + '" title="Xóa thông báo">🗑</button>'
+            : '';
+          return (
+            '<div class="noti-item' + (isNew ? ' unread' : '') + '">' +
+              '<div class="mb-meta">' +
+                '<div class="mb-sender-wrap">' + escapeHTML(n.name || 'DEV') + badgeHtml + newTagHtml + '</div>' +
+                '<div style="display:flex;align-items:center;gap:4px">' +
+                  '<span class="mb-time">' + escapeHTML(formatTimeVN(n.time)) + '</span>' +
+                  delBtnHtml +
+                '</div>' +
+              '</div>' +
+              '<div class="mb-msg-text">' + escapeHTML(n.msg || '') + '</div>' +
+            '</div>'
+          );
+        }).join('');
+        updateNotiBadge();
+      }
+
+      async function loadNotices() {
+        try {
+          const res = await fetch(SHEET_API_URL + '?action=notices');
+          const data = await res.json();
+          noticesLoadedOnce = true;
+          if (data && Array.isArray(data.notices)) {
+            notices = data.notices;
+          } else if (Array.isArray(data)) {
+            // Chỉ nhận mảng trực tiếp nếu không phải danh sách lời chúc mặc định
+            const looksLikeWishes = data.length > 0 && ('likes' in data[0] || 'replies' in data[0]) && !data[0].isNotice;
+            if (!looksLikeWishes) notices = data;
+          }
+          if (notiBox.classList.contains('open')) {
+            markAllNoticesSeen(false);
+          }
+          renderNotices();
+        } catch (err) {
+          noticesLoadedOnce = true;
+          renderNotices();
+        }
+      }
+
+      notiBtn.addEventListener('click', function () {
+        const willOpen = !notiBox.classList.contains('open');
+        window.closeAllFloatingPanels(willOpen ? 'noti' : '');
+        if (willOpen) {
+          notiBox.classList.add('open');
+          notiBtn.classList.add('active');
+          markAllNoticesSeen(true);
+          renderNotices();
+          loadNotices();
+        } else {
+          closeNotiBox();
+        }
+      });
+
+      notiClose.addEventListener('click', closeNotiBox);
+
+      function autoResizeNotiInput() {
+        notiInput.style.height = 'auto';
+        notiInput.style.height = Math.min(notiInput.scrollHeight, 120) + 'px';
+      }
+
+      notiInput.addEventListener('input', autoResizeNotiInput);
+
+      notiInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          notiForm.dispatchEvent(new Event('submit', { cancelable: true }));
+        }
+      });
+
+      notiList.addEventListener('click', async function (e) {
+        const delBtn = e.target.closest('.noti-del-btn');
+        if (!delBtn || !isDevUser()) return;
+        const rowNum = parseInt(delBtn.getAttribute('data-row'), 10);
+        if (!rowNum) return;
+
+        notices = notices.filter(item => parseInt(item.row, 10) !== rowNum);
+        renderNotices();
+
+        try {
+          await fetch(SHEET_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+              action: 'delete_notice',
+              token: currentUser.token,
+              row: rowNum
+            })
+          });
+          await loadNotices();
+        } catch (err) {}
+      });
+
+      notiForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        if (!isDevUser()) return;
+        const rawTxt = notiInput.value.trim();
+        if (!rawTxt) return;
+
+        const nowIso = new Date().toISOString();
+        const tempNotice = {
+          id: 'tmp_' + Date.now(),
+          name: currentUser.displayName,
+          username: currentUser.username,
+          badge: currentUser.badge || 'DEV',
+          msg: rawTxt,
+          time: nowIso,
+          isNotice: true
+        };
+
+        notices.unshift(tempNotice);
+        seenNotiSet.add(getNoticeKey(tempNotice, 0));
+        saveSeenNotiSet();
+        renderNotices();
+
+        notiInput.value = '';
+        autoResizeNotiInput();
+
+        notiSend.disabled = true;
+        notiSend.textContent = '...';
+        try {
+          const res = await fetch(SHEET_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+              action: 'post_notice',
+              token: currentUser.token,
+              msg: rawTxt
+            })
+          });
+          const data = await res.json();
+          if (data && data.ok === false) {
+            alert('Không đăng được thông báo: ' + (data.error || 'Chưa cập nhật action post_notice trong Code.gs'));
+          }
+          await loadNotices();
+        } catch (err) {
+          setTimeout(loadNotices, 1500);
+        }
+
+        notiSend.disabled = false;
+        notiSend.textContent = I18N[curLang].notiSend;
+      });
+
       syncAuthUI();
       applyLanguage();
       setInterval(updateCountdown, 1000);
       loadWishes();
+      loadNotices();
+      setInterval(loadNotices, 45000);
       fetchIpAndSuggestions();
     })();
   </script>
@@ -3946,8 +4344,7 @@
         const isShuf = window.LofiXmas.isShuffle();
 
         dpSong.textContent = window.LofiXmas.getSongName() || '-';
-        dpSong.style.color = window.LofiXmas.getSongColor();
-        
+
         if (dDict) {
           document.getElementById('dp-title').textContent = dDict.title;
           document.getElementById('dp-now-label').textContent = dDict.now;
