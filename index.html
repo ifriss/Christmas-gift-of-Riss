@@ -237,6 +237,11 @@
       color: #4ef57b;
     }
 
+    #refresh-btn {
+      border-color: #ff9a3c;
+      color: #ff9a3c;
+    }
+    
     #cd-btn {
       border-color: #52f0ff;
       color: #52f0ff;
@@ -944,6 +949,7 @@
   <!-- Thanh 3 nút góc phải -->
   <div id="top-tools">
     <button id="lang-btn" class="tool-btn" type="button" title="Switch language / Đổi ngôn ngữ / 切换语言">🌐 VI</button>
+    <button id="refresh-btn" class="tool-btn" type="button" title="Làm mới trang / Reload / 刷新页面">🔄</button>
     <button id="cd-btn" class="tool-btn" type="button">⏳ <span id="cd-btn-txt">Đếm ngược</span></button>
     <button id="mail-btn" class="tool-btn" type="button">📩 <span id="mail-btn-txt">Lời chúc</span> <span id="mail-count">0</span></button>
   </div>
@@ -2026,7 +2032,10 @@
       }
 
       // --- Điều khiển đóng/mở độc quyền (Đếm ngược vs Hộp thư) ---
-      const langBtn = document.getElementById('lang-btn');
+     const langBtn = document.getElementById('lang-btn');
+      document.getElementById('refresh-btn').addEventListener('click', function () {
+        location.reload();
+      });
       const cdBtn = document.getElementById('cd-btn');
       const cdBox = document.getElementById('cd-box');
       const cdClose = document.getElementById('cd-close');
