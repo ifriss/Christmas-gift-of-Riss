@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thêm máy đĩa than vào index.html</title>
+  <style>
+    :root { --bg:#050a1a; --card:#0d1633; --fg:#cfe3ff; --dim:#7389b0; --gold:#ffd36b; --green:#4ef57b; --red:#ff6b8b; --cyan:#52f0ff; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; background:radial-gradient(circle at top,#0d1c42,var(--bg)); color:var(--fg);
+      font-family:ui-monospace,Menlo,Consolas,monospace; display:flex; justify-content:center; padding:24px 14px; }
+    .card { width:100%; max-width:520px; background:var(--card); border:1px solid #2a3b70; border-radius:16px; padding:20px; height:fit-content; }
+    h1 { margin:0 0 8px; font-size:17px; color:var(--gold); }
+    p { font-size:12px; line-height:1.6; color:var(--dim); margin:0 0 14px; }
+    input[type=file] { width:100%; padding:10px; background:#050a1a; border:1px dashed #2a3b70; border-radius:10px; color:var(--fg); margin-bottom:12px; font:inherit; font-size:12px; }
+    button, a.btn { display:block; width:100%; text-align:center; text-decoration:none; font:inherit; font-size:13px; font-weight:700;
+      padding:12px 16px; border-radius:10px; border:1px solid var(--gold); background:#1d2f63; color:var(--gold); cursor:pointer; }
+    button:disabled { opacity:.45; cursor:not-allowed; }
+    a.btn { margin-top:10px; border-color:var(--green); color:var(--green); background:rgba(78,245,123,.1); }
+    #msg { margin-top:12px; font-size:12px; line-height:1.7; white-space:pre-wrap; }
+    .ok { color:var(--green); } .err { color:var(--red); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🔧 Thêm máy đĩa than vào index.html</h1>
+    <p>Chọn file <b>index.html</b> hiện tại của bạn. Công cụ sẽ thêm máy đĩa than, bảng điều khiển nhạc và tự xóa 2 nút nhạc cũ, rồi cho bạn tải về <b>index.html</b> mới hoàn chỉnh. Mọi thứ chạy ngay trên máy bạn, file không bị gửi đi đâu.</p>
+    <input type="file" id="f" accept=".html,text/html">
+    <button id="go" disabled>Tạo index.html mới</button>
+    <div id="msg"></div>
+    <a id="dl" class="btn" style="display:none" download="index.html">⬇ Tải index.html mới</a>
+  </div>
+
+<script>
+  const ADDON = "\u003c!-- KHỐI 4: MÁY ĐĨA THAN + BẢNG ĐIỀU KHIỂN NHẠC (tự xóa 2 nút nhạc cũ) -->\n\u003cstyle>\n  #deck-canvas {\n    position: fixed;\n    z-index: 5;\n    opacity: 0;\n    pointer-events: none;\n    cursor: pointer;\n    touch-action: manipulation;\n    -webkit-tap-highlight-color: transparent;\n    transition: opacity 1.2s ease;\n  }\n  #deck-canvas.show { opacity: 1; pointer-events: auto; }\n  #deck-canvas:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 8px; }\n\n  #deck-panel {\n    position: fixed;\n    z-index: 45;\n    display: none;\n    flex-direction: column;\n    gap: 10px;\n    width: min(280px, calc(100vw - 16px));\n    background: rgba(13, 22, 51, 0.94);\n    border: 1px solid #ffd36b66;\n    border-radius: 14px;\n    padding: 12px;\n    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);\n    backdrop-filter: blur(8px);\n    -webkit-backdrop-filter: blur(8px);\n    overflow: hidden;\n  }\n  #deck-panel.open { display: flex; }\n\n  .dp-head {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    font-size: 12px;\n    font-weight: 700;\n    color: var(--gold);\n  }\n  .dp-x { background: none; border: none; color: var(--dim); font-size: 14px; padding: 2px 6px; }\n  .dp-x:hover { color: var(--fg); }\n\n  .dp-now {\n    background: #070e24;\n    border: 1px solid #1e2d59;\n    border-radius: 10px;\n    padding: 8px 10px;\n    min-width: 0;\n  }\n  .dp-label { font-size: 9.5px; color: var(--dim); margin-bottom: 3px; }\n  .dp-song {\n    font-size: 12.5px;\n    font-weight: 700;\n    color: #4ef57b;\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis;\n  }\n\n  .dp-actions { display: flex; gap: 8px; }\n  .dp-btn {\n    flex: 1;\n    font-size: 12px;\n    font-weight: 700;\n    padding: 9px 8px;\n    border-radius: 10px;\n    border: 1px solid var(--gold);\n    background: #1d2f63;\n    color: var(--gold);\n  }\n  .dp-btn:hover { background: #263d80; }\n  .dp-btn.alt { border-color: #52f0ff; color: #52f0ff; background: #101b3a; }\n  .dp-btn.alt:hover, .dp-btn.alt[aria-pressed=\"true\"] { background: #153459; }\n\n  .dp-list {\n    display: none;\n    flex-direction: column;\n    gap: 5px;\n    overflow-y: auto;\n    min-height: 0;\n    padding-right: 2px;\n  }\n  .dp-list.open { display: flex; }\n  .dp-pick { font-size: 10px; color: var(--dim); margin: 2px 0 0; }\n  .dp-item {\n    width: 100%;\n    text-align: left;\n    font-size: 11.5px;\n    border-radius: 8px;\n    padding: 7px 10px;\n    background: #070e24;\n    border: 1px solid #1e2d59;\n    color: var(--fg);\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis;\n  }\n  .dp-item:hover { border-color: #52f0ff; }\n  .dp-item.active { border-color: var(--gold); color: var(--gold); font-weight: 700; }\n\u003c/style>\n\n\u003ccanvas id=\"deck-canvas\" tabindex=\"0\" role=\"button\">\u003c/canvas>\n\n\u003cdiv id=\"deck-panel\" role=\"dialog\">\n  \u003cdiv class=\"dp-head\">\n    \u003cspan id=\"dp-title\">💿 Máy đĩa than\u003c/span>\n    \u003cbutton type=\"button\" class=\"dp-x\" id=\"dp-close\">✕\u003c/button>\n  \u003c/div>\n  \u003cdiv class=\"dp-now\">\n    \u003cdiv class=\"dp-label\" id=\"dp-now-label\">Đang phát\u003c/div>\n    \u003cdiv class=\"dp-song\" id=\"dp-song\">-\u003c/div>\n  \u003c/div>\n  \u003cdiv class=\"dp-actions\">\n    \u003cbutton type=\"button\" class=\"dp-btn\" id=\"dp-toggle\">⏸ Tắt nhạc\u003c/button>\n    \u003cbutton type=\"button\" class=\"dp-btn alt\" id=\"dp-change\" aria-pressed=\"false\">🔀 Đổi bài\u003c/button>\n  \u003c/div>\n  \u003cp class=\"dp-pick\" id=\"dp-pick\" style=\"display:none\">Chọn bài hát\u003c/p>\n  \u003cdiv class=\"dp-list\" id=\"dp-list\">\u003c/div>\n\u003c/div>\n\n\u003cscript>\n  (function () {\n    const Lofi = window.LofiXmas;\n    if (!Lofi || !Lofi.selectSong || !Lofi.getSongs || !Lofi.isPlaying) {\n      console.warn('Máy đĩa than: chưa cập nhật khối nhạc (thiếu isPlaying / getSongs / selectSong).');\n      return;\n    }\n\n    const $ = id => document.getElementById(id);\n    const deck = $('deck-canvas');\n    const dctx = deck.getContext('2d');\n    const panel = $('deck-panel');\n    const listEl = $('dp-list');\n    const bar = $('bar');\n\n    // ---------- Chữ trên bảng điều khiển (3 ngôn ngữ) ----------\n    const TXT = {\n      vi: { title: '💿 Máy đĩa than', playing: 'Đang phát', paused: 'Đang tạm dừng', off: '⏸ Tắt nhạc', on: '▶ Bật nhạc', change: '🔀 Đổi bài', pick: 'Chọn bài hát', aria: 'Máy đĩa than: bật bảng điều khiển nhạc' },\n      en: { title: '💿 Turntable', playing: 'Now playing', paused: 'Paused', off: '⏸ Stop music', on: '▶ Play music', change: '🔀 Change song', pick: 'Pick a song', aria: 'Turntable: open music controls' },\n      zh: { title: '💿 唱片机', playing: '正在播放', paused: '已暂停', off: '⏸ 关闭音乐', on: '▶ 播放音乐', change: '🔀 换歌', pick: '选择歌曲', aria: '唱片机：打开音乐控制' }\n    };\n    const lang = () => (TXT[window.getCGORLang ? window.getCGORLang() : 'vi'] ? (window.getCGORLang ? window.getCGORLang() : 'vi') : 'vi');\n    const T = () => TXT[lang()];\n\n    // ---------- Bố cục: đối xứng ông già Noel qua trục giữa, cùng đường nền ----------\n    // Công thức lấy từ khối vẽ cây thông (nếu bạn đổi bố cục cây, cần đổi theo)\n    const DECK_W = 11;       // số cột ký tự\n    const DECK_H = 9;        // 2 hàng nốt nhạc + 7 hàng máy\n    const R0 = 2;            // hàng bắt đầu của thân máy\n    let cw = 8, chh = 12, dpr = 1, cssW = 0, cssH = 0, deckLeft = 0, deckTop = 0;\n\n    function layout() {\n      const W = innerWidth, H = innerHeight;\n      const isMobile = W \u003c 520;\n      cw = Math.max(5.2, Math.min(10, W / 76));\n      chh = cw * 1.55;\n      const cols = Math.ceil(W / cw);\n      const treeH = Math.min(H * (isMobile ? 0.46 : 0.55), W * 1.25);\n      const baseY = H * (isMobile ? 0.68 : 0.72);\n      const groundRow = Math.floor(baseY / chh);\n      const c0 = (W / 2 / cw) | 0;\n      const wb = Math.round((0.37 * treeH) / cw);\n\n      const santaCol = Math.max(6, c0 - (W \u003c 640 ? wb + 9 : wb + 12));\n      const mirrorLeft = (cols - 1 - santaCol) - Math.floor(DECK_W / 2);\n      const leftCol = Math.min(Math.max(mirrorLeft, c0 + wb), cols - DECK_W);\n      const rb = groundRow + 2; // hàng chân ông già Noel\n\n      dpr = Math.min(devicePixelRatio || 1, 2);\n      cssW = DECK_W * cw;\n      cssH = DECK_H * chh;\n      deckLeft = leftCol * cw;\n      deckTop = (rb - (DECK_H - 1)) * chh;\n\n      deck.style.left = deckLeft + 'px';\n      deck.style.top = deckTop + 'px';\n      deck.style.width = cssW + 'px';\n      deck.style.height = cssH + 'px';\n      deck.width = Math.round(cssW * dpr);\n      deck.height = Math.round(cssH * dpr);\n      positionPanel();\n    }\n\n    function positionPanel() {\n      const W = innerWidth, H = innerHeight;\n      const pw = Math.min(280, W - 16);\n      const cx = deckLeft + cssW / 2;\n      panel.style.left = Math.min(Math.max(cx - pw / 2, 8), W - pw - 8) + 'px';\n      panel.style.bottom = (H - deckTop + 8) + 'px';\n      panel.style.maxHeight = Math.max(170, deckTop - 110) + 'px';\n    }\n\n    // ---------- Vẽ máy đĩa than bằng ký tự ASCII ----------\n    const C = {\n      edge: '#8aa0c8', wood: '#8b5a2b', gold: '#ffcf4a', red: '#ff3b3b',\n      white: '#eaf4ff', cyan: '#52f0ff', dim: '#46557c', green: '#4ef57b'\n    };\n    const SPIN = ['|', '/', '-', '\\\\'];\n    const EQ = '_.-=';\n\n    function draw(now) {\n      requestAnimationFrame(draw);\n      const t = now / 1000;\n      const playing = Lofi.isPlaying();\n\n      dctx.setTransform(dpr, 0, 0, dpr, 0, 0);\n      dctx.clearRect(0, 0, cssW, cssH);\n      dctx.font = '700 ' + (cw / 0.6).toFixed(1) + 'px \"JetBrains Mono\",ui-monospace,Menlo,monospace';\n      dctx.textAlign = 'center';\n      dctx.textBaseline = 'middle';\n\n      const put = (c, r, ch, color, a) => {\n        dctx.globalAlpha = a == null ? 1 : a;\n        dctx.fillStyle = color;\n        dctx.fillText(ch, (c + 0.5) * cw, (R0 + r + 0.5) * chh);\n      };\n      const str = (r, c0, s, color) => {\n        for (let i = 0; i \u003c s.length; i++) if (s[i] !== ' ') put(c0 + i, r, s[i], color);\n      };\n\n      // Đĩa\n      str(0, 0, ' .-----. ', C.edge);\n      str(2, 0, \" '-----' \", C.edge);\n      const f = Math.floor(t * 9);\n      const sA = playing ? SPIN[f % 4] : '-';\n      const sB = playing ? SPIN[(f + 2) % 4] : '-';\n      put(0, 1, '(', C.edge);\n      put(2, 1, sA, C.white);\n      put(3, 1, '.', C.dim, 0.7);\n      put(4, 1, '@', playing && Math.floor(t * 3) % 2 ? C.gold : C.red);\n      put(5, 1, '.', C.dim, 0.7);\n      put(6, 1, sB, C.white);\n      put(8, 1, ')', C.edge);\n\n      // Cần kim: nhấc lên khi dừng, hạ xuống đĩa khi phát\n      put(10, 0, 'o', C.cyan);\n      if (playing) {\n        put(9, 1, '/', C.white);\n      } else {\n        put(10, 1, '|', C.white, 0.8);\n        put(10, 2, 'v', C.white, 0.8);\n      }\n\n      // Thân máy\n      str(3, 0, '.---------.', C.wood);\n      put(0, 4, '|', C.wood);\n      put(10, 4, '|', C.wood);\n      put(2, 4, 'o', C.cyan);\n      for (let i = 0; i \u003c 3; i++) {\n        const lv = playing ? Math.floor((Math.sin(t * 7 + i * 1.7) * 0.5 + 0.5) * 3.99) : 0;\n        put(4 + i, 4, playing ? EQ[lv] : '-', C.gold, playing ? 1 : 0.6);\n      }\n      put(8, 4, '*', playing ? C.green : C.dim);\n      str(5, 0, \"'---------'\", C.wood);\n      str(6, 0, ' []     [] ', C.dim);\n\n      // Nốt nhạc bay lên khi đang phát\n      if (playing) {\n        const cols3 = [C.gold, C.cyan, C.red];\n        for (let i = 0; i \u003c 3; i++) {\n          const ph = (t * 0.7 + i * 0.33) % 1;\n          const y = (R0 - 0.3 - ph * 1.9) * chh;\n          const x = (2.5 + i * 2.6 + Math.sin(t * 2 + i * 2) * 0.6) * cw;\n          dctx.globalAlpha = 1 - ph;\n          dctx.fillStyle = cols3[i];\n          dctx.fillText(i === 1 ? '\\u266B' : '\\u266A', x, y);\n        }\n      }\n      dctx.globalAlpha = 1;\n    }\n\n    // ---------- Bảng điều khiển ----------\n    let listOpen = false;\n\n    function renderStatic() {\n      const tx = T();\n      $('dp-title').textContent = tx.title;\n      $('dp-change').textContent = tx.change;\n      $('dp-pick').textContent = tx.pick;\n      deck.setAttribute('aria-label', tx.aria);\n      deck.title = tx.title;\n    }\n\n    function renderState() {\n      const tx = T();\n      const playing = Lofi.isPlaying();\n      $('dp-now-label').textContent = playing ? tx.playing : tx.paused;\n      $('dp-song').textContent = Lofi.getSongName() || '-';\n      $('dp-toggle').textContent = playing ? tx.off : tx.on;\n      $('dp-change').setAttribute('aria-pressed', listOpen ? 'true' : 'false');\n      $('dp-pick').style.display = listOpen ? 'block' : 'none';\n      listEl.classList.toggle('open', listOpen);\n\n      if (listOpen) {\n        const cur = Lofi.getSongIdx();\n        const songs = Lofi.getSongs();\n        if (listEl.childElementCount !== songs.length) {\n          listEl.innerHTML = '';\n          songs.forEach(s => {\n            const b = document.createElement('button');\n            b.type = 'button';\n            b.className = 'dp-item';\n            b.dataset.index = s.index;\n            b.textContent = (s.index + 1) + '. ' + s.name;\n            listEl.appendChild(b);\n          });\n        }\n        Array.prototype.forEach.call(listEl.children, (b, i) => {\n          const active = i === cur;\n          b.classList.toggle('active', active);\n          const s = songs[i];\n          b.textContent = (active ? (Lofi.isPlaying() ? '\\u25B6 ' : '\\u23F8 ') : '') + (i + 1) + '. ' + (s ? s.name : '');\n        });\n      }\n    }\n\n    function closeOthers() {\n      const mb = $('mailbox'), cd = $('cd-box');\n      if (mb && mb.classList.contains('open')) $('mb-close').click();\n      if (cd && cd.classList.contains('open')) $('cd-close').click();\n    }\n\n    function openPanel(withList) {\n      closeOthers();\n      listOpen = !!withList;\n      positionPanel();\n      panel.classList.add('open');\n      renderStatic();\n      renderState();\n    }\n\n    function closePanel() {\n      panel.classList.remove('open');\n      listOpen = false;\n    }\n\n    deck.addEventListener('click', () => {\n      if (panel.classList.contains('open')) closePanel(); else openPanel(false);\n    });\n    deck.addEventListener('keydown', e => {\n      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); deck.click(); }\n    });\n\n    $('dp-close').addEventListener('click', closePanel);\n\n    $('dp-toggle').addEventListener('click', () => {\n      Lofi.toggle();\n      renderState();\n    });\n\n    $('dp-change').addEventListener('click', () => {\n      listOpen = !listOpen;\n      renderState();\n    });\n\n    listEl.addEventListener('click', e => {\n      const b = e.target.closest('.dp-item');\n      if (!b) return;\n      Lofi.selectSong(parseInt(b.dataset.index, 10));\n      renderState();\n    });\n\n    // Xóa 2 nút nhạc cũ (Nhạc, Bài) ở thanh dưới cùng: máy đĩa than thay thế cả hai\n    if (bar) {\n      const oldMusic = $('btn-music');\n      const oldSong = bar.children[1];\n      if (oldMusic) oldMusic.remove();\n      if (oldSong && oldSong !== oldMusic) oldSong.remove();\n    }\n\n    // Bấm ra ngoài hoặc nhấn Esc thì đóng bảng\n    document.addEventListener('pointerdown', e => {\n      if (!panel.classList.contains('open')) return;\n      if (panel.contains(e.target) || e.target === deck) return;\n      closePanel();\n    });\n    document.addEventListener('keydown', e => {\n      if (e.key === 'Escape') closePanel();\n    });\n\n    // Đổi ngôn ngữ: móc vào hàm cập nhật chữ của thanh nút\n    const origLang = window.updateBarLanguage;\n    window.updateBarLanguage = function (l) {\n      if (origLang) origLang(l);\n      renderStatic();\n      if (panel.classList.contains('open')) renderState();\n    };\n\n    // Làm mới trạng thái khi đang mở bảng (phòng khi nhạc đổi trạng thái từ nơi khác)\n    setInterval(() => { if (panel.classList.contains('open')) renderState(); }, 400);\n\n    addEventListener('resize', layout);\n    layout();\n    renderStatic();\n    requestAnimationFrame(draw);\n\n    // Hiện máy đĩa than sau khi cây thông dựng xong (cùng lúc ông già Noel xuất hiện)\n    setTimeout(() => deck.classList.add('show'), 6000);\n  })();\n\u003c/script>";
+
+  const NEW_FUNCS = [
+    '        isPlaying: () => playing,',
+    '        getSongs: () => SONGS.map((s, i) => ({ index: i, name: s.name, type: s.type })),',
+    '        selectSong: (i) => { if (i < 0 || i >= SONGS.length) return songIdx; songIdx = i; ytIdIdx = 0; step = 0; start(); return songIdx; },'
+  ].join('\n');
+
+  function patchHtml(src) {
+    if (src.indexOf('id="deck-canvas"') !== -1) {
+      return { error: 'File này đã có máy đĩa than rồi, không cần thêm nữa.' };
+    }
+    const steps = [];
+    let out = src;
+
+    if (/selectSong\s*:/.test(out)) {
+      steps.push('Khối nhạc đã có sẵn 3 hàm cần thiết (bỏ qua).');
+    } else {
+      const re = /getSongIdx:\s*\(\)\s*=>\s*songIdx,/;
+      if (!re.test(out)) {
+        return { error: 'Không tìm thấy dòng "getSongIdx: () => songIdx," trong khối nhạc. Đây có đúng là file index.html của cây thông không?' };
+      }
+      out = out.replace(re, function (m) { return m + '\n' + NEW_FUNCS; });
+      steps.push('Đã thêm 3 hàm vào khối nhạc.');
+    }
+
+    const i = out.lastIndexOf('</body>');
+    if (i < 0) return { error: 'Không tìm thấy thẻ </body> trong file.' };
+    out = out.slice(0, i) + ADDON + '\n' + out.slice(i);
+    steps.push('Đã chèn máy đĩa than và bảng điều khiển trước thẻ </body>.');
+    steps.push('Hai nút nhạc cũ (Nhạc, Bài) sẽ tự bị xóa khi trang chạy.');
+    return { out: out, steps: steps };
+  }
+  window.patchHtml = patchHtml;
+
+  const fileEl = document.getElementById('f');
+  const goEl = document.getElementById('go');
+  const msgEl = document.getElementById('msg');
+  const dlEl = document.getElementById('dl');
+
+  function say(text, cls) { msgEl.className = cls || ''; msgEl.textContent = text; }
+
+  fileEl.addEventListener('change', function () {
+    goEl.disabled = !fileEl.files || !fileEl.files.length;
+    dlEl.style.display = 'none';
+    say('');
+  });
+
+  goEl.addEventListener('click', async function () {
+    const file = fileEl.files && fileEl.files[0];
+    if (!file) return;
+    try {
+      const src = await file.text();
+      const res = patchHtml(src);
+      if (res.error) { dlEl.style.display = 'none'; say('❌ ' + res.error, 'err'); return; }
+      const blob = new Blob([res.out], { type: 'text/html;charset=utf-8' });
+      dlEl.href = URL.createObjectURL(blob);
+      dlEl.style.display = 'block';
+      say('✅ Xong!\n- ' + res.steps.join('\n- ') + '\n\nBấm nút xanh để tải index.html mới, rồi upload lên GitHub đè lên file cũ.', 'ok');
+    } catch (e) {
+      say('❌ Không đọc được file: ' + e.message, 'err');
+    }
+  });
+</script>
+</body>
+</html>
