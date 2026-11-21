@@ -1896,7 +1896,13 @@
         getRepeatMode: () => repeatMode,
         isShuffle: () => shuffle,
         getSongIdx: () => songIdx,
-        getSongColor: () => (SONGS[songIdx] ? SONGS[songIdx].color : '#ffd36b'),
+       getSongIdx: () => songIdx,
+      getSongColor: () => {
+        const palette = ['#ffd36b', '#ff5c7c', '#52f0ff', '#4ef57b', '#ff9a3c', '#b47aff', '#ff7ad9'];
+        const s = SONGS[songIdx];
+        return (s && s.color) ? s.color : palette[songIdx % palette.length];
+      },
+      isPlaying: () => playing,
         isPlaying: () => playing,
         getSongs: () => SONGS.map((s, i) => ({ index: i, name: s.name, type: s.type })),
         selectSong: (i) => {
@@ -3940,7 +3946,8 @@
         const isShuf = window.LofiXmas.isShuffle();
 
         dpSong.textContent = window.LofiXmas.getSongName() || '-';
-
+        dpSong.style.color = window.LofiXmas.getSongColor();
+        
         if (dDict) {
           document.getElementById('dp-title').textContent = dDict.title;
           document.getElementById('dp-now-label').textContent = dDict.now;
