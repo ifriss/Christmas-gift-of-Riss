@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quản lý nhạc Giáng Sinh - Riss</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050a1a;
+      --card: #0d1633;
+      --fg: #cfe3ff;
+      --dim: #7389b0;
+      --gold: #ffd36b;
+      --green: #4ef57b;
+      --cyan: #52f0ff;
+      --red: #ff6b8b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0d1c42, var(--bg));
+      color: var(--fg);
+      font-family: "JetBrains Mono", monospace;
+      display: flex;
+      justify-content: center;
+      padding: 24px 14px;
+    }
+    .wrap { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 16px; }
+    .card {
+      background: var(--card);
+      border: 1px solid #2a3b70;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    }
+    .hidden { display: none !important; }
+    h1 { margin: 0 0 6px; font-size: 17px; color: var(--gold); }
+    p.sub { margin: 0 0 16px; font-size: 11.5px; color: var(--dim); line-height: 1.5; }
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+    label { font-size: 11px; color: #8aa0c8; }
+    input[type="text"], input[type="password"], input:not([type]) {
+      width: 100%;
+      background: #050a1a;
+      border: 1px solid #2a3b70;
+      border-radius: 9px;
+      padding: 10px 12px;
+      color: var(--fg);
+      font: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+    input:focus { border-color: var(--gold); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    button {
+      font: inherit;
+      font-size: 12.5px;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 11px 16px;
+      cursor: pointer;
+      border: 1px solid var(--gold);
+      background: #1d2f63;
+      color: var(--gold);
+      transition: 0.15s;
+    }
+    button:hover { background: #263d80; }
+    button:disabled { opacity: 0.5; cursor: wait; }
+    .btn-full { width: 100%; }
+    .btn-sm { padding: 5px 10px; font-size: 11px; border-color: var(--cyan); color: var(--cyan); background: #101b3a; }
+    .btn-del { padding: 4px 8px; font-size: 10.5px; border-color: var(--red); color: var(--red); background: rgba(255, 59, 92, 0.12); }
+    .status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 9px;
+      font-size: 11.5px;
+      line-height: 1.5;
+      display: none;
+    }
+    .status.ok { display: block; background: rgba(78,245,123,0.12); border: 1px solid var(--green); color: var(--green); }
+    .status.err { display: block; background: rgba(255,59,92,0.12); border: 1px solid var(--red); color: var(--red); }
+    .song-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .song-item {
+      background: #070e24;
+      border: 1px solid #1e2d59;
+      border-radius: 9px;
+      padding: 9px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .song-meta { font-size: 10px; color: var(--dim); margin-top: 2px; }
+    .head-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
+    a.link { color: var(--cyan); font-size: 11px; text-decoration: none; }
+    details { margin-top: 4px; }
+    summary { cursor: pointer; font-size: 12px; color: var(--gold); font-weight: 700; margin-bottom: 10px; }
+    .note { font-size: 10.5px; color: var(--dim); line-height: 1.5; margin: 0 0 12px; }
+    .who { font-size: 11.5px; color: var(--green); }
+    .user-badge {
+      background: rgba(255, 211, 107, 0.18);
+      border: 1px solid #ffd36baa;
+      color: var(--gold);
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 0 5px;
+      border-radius: 5px;
+      margin-left: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- ĐĂNG NHẬP BẰNG TÀI KHOẢN CỦA index.html -->
+    <div class="card" id="login-card">
+      <div class="head-flex">
+        <h1>🔐 Đăng nhập quản lý nhạc</h1>
+        <a class="link" href="./index.html">← Về cây thông</a>
+      </div>
+      <p class="sub">Dùng tài khoản đã đăng ký trên trang cây thông. Chỉ tài khoản quản trị (huy hiệu DEV) mới vào được. Mật khẩu của tài khoản cũng là chìa khóa giải mã token GitHub đã lưu trong repo.</p>
+      <form id="login-form">
+        <div class="field">
+          <label for="lg-user">Tên tài khoản</label>
+          <input id="lg-user" type="text" autocomplete="username" autocapitalize="none" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="lg-pass">Mật khẩu</label>
+          <input id="lg-pass" type="password" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-full" id="btn-login">🔓 Đăng nhập</button>
+      </form>
+      <div id="login-status" class="status"></div>
+    </div>
+
+    <!-- KHU QUẢN LÝ (chỉ hiện sau khi đăng nhập) -->
+    <div id="app" class="hidden" style="display:contents">
+
+      <div class="card" id="cfg-card">
+        <div class="head-flex">
+          <h1>⚙️ Kết nối GitHub</h1>
+          <a class="link" href="#" id="btn-logout">Đăng xuất</a>
+        </div>
+        <p class="who" id="who"></p>
+        <p class="sub" id="cfg-sub"></p>
+
+        <details id="setup-box">
+          <summary>🔑 Cập nhật token GitHub (lưu mã hóa vào repo)</summary>
+          <p class="note">Token được mã hóa bằng chính mật khẩu tài khoản bạn vừa đăng nhập (AES-256, PBKDF2) rồi lưu thành <b>config.enc.json</b> trong repo. Nếu sau này bạn đổi mật khẩu tài khoản, hãy vào đây dán lại token để mã hóa lại bằng mật khẩu mới.</p>
+          <div class="row">
+            <div class="field">
+              <label>GitHub Username</label>
+              <input id="gh-owner" placeholder="vd: truongthanhthong">
+            </div>
+            <div class="field">
+              <label>Tên Repository</label>
+              <input id="gh-repo" placeholder="vd: christmas-gift">
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label>Nhánh (Branch)</label>
+              <input id="gh-branch" value="main" placeholder="main">
+            </div>
+            <div class="field">
+              <label>Personal Access Token (PAT)</label>
+              <input id="gh-token" type="password" autocomplete="off" placeholder="github_pat_...">
+            </div>
+          </div>
+          <button type="button" class="btn-full" id="btn-encrypt">🔐 Mã hóa & lưu token vào repo</button>
+          <div id="enc-status" class="status"></div>
+        </details>
+      </div>
+
+      <div class="card">
+        <h1>🎵 Thêm bài nhạc YouTube mới</h1>
+        <p class="sub">Dán link YouTube đầy đủ hoặc mã ID 11 ký tự, tool sẽ tự trích xuất mã và cập nhật thẳng vào <b>index.html</b>.</p>
+
+        <form id="add-form">
+          <div class="field">
+            <label>Tên bài hát hiển thị trên nút bấm</label>
+            <input id="song-name" required placeholder="vd: Last Christmas (Lofi)">
+          </div>
+          <div class="field">
+            <label>Link YouTube hoặc Mã Video ID (có thể nhập nhiều link cách nhau dấu phẩy để dự phòng)</label>
+            <input id="song-url" required placeholder="vd: https://youtu.be/OKK90zbS40w hoặc OKK90zbS40w">
+          </div>
+          <button type="submit" class="btn-full" id="btn-add">🚀 Thêm vào index.html & Commit</button>
+        </form>
+
+        <div id="status" class="status"></div>
+      </div>
+
+      <div class="card">
+        <div class="head-flex">
+          <h1 style="margin:0">📜 Danh sách nhạc hiện tại</h1>
+          <button type="button" class="btn-sm" id="btn-reload">🔄 Tải lại</button>
+        </div>
+        <div id="song-list" class="song-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    // Cùng máy chủ tài khoản với index.html
+    const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxrsc-RtFFOPjfbTAjcTsxFcmlUMXPCkRslxr_ZotyQ0XaXHj0TecatX7oRseX22Zs24A/exec";
+
+    // Ai được vào trang quản lý:
+    // - Để trống []  => mọi tài khoản có huy hiệu chứa chữ "DEV".
+    // - Điền tên tài khoản, vd ['riss'] => chỉ các tài khoản đó.
+    const ALLOWED_USERNAMES = [];
+
+    const ENC_FILE = 'config.enc.json';
+    const PBKDF2_ITER = 600000;
+
+    // Phiên đăng nhập chỉ nằm trong bộ nhớ, tải lại trang là mất
+    let session = null; // { user, password }
+    let encConfig = null;
+
+    function isAdmin(user) {
+      if (!user) return false;
+      if (ALLOWED_USERNAMES.length) return ALLOWED_USERNAMES.includes(String(user.username || '').toLowerCase());
+      return /dev/i.test(String(user.badge || ''));
+    }
+
+    function showStatus(msg, isOk, id) {
+      const el = $(id || 'status');
+      el.textContent = msg;
+      el.className = 'status ' + (isOk ? 'ok' : 'err');
+    }
+
+    function escapeHTML(s) {
+      return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    }
+
+    // Tự nhận diện owner/repo khi chạy trên *.github.io/ten-repo/
+    (function autoDetectRepo() {
+      const host = location.hostname;
+      const parts = location.pathname.split('/').filter(Boolean);
+      if (host.endsWith('.github.io')) {
+        $('gh-owner').value = host.replace('.github.io', '');
+        if (parts.length > 0) $('gh-repo').value = parts[0];
+      }
+      try {
+        const u = localStorage.getItem('cgor_admin_user');
+        if (u) $('lg-user').value = u;
+      } catch (e) {}
+    })();
+
+    function getCfg() {
+      return {
+        owner: $('gh-owner').value.trim(),
+        repo: $('gh-repo').value.trim(),
+        branch: $('gh-branch').value.trim() || 'main',
+        token: $('gh-token').value.trim()
+      };
+    }
+
+    // ---------- Base64 / mã hóa ----------
+    function b64DecodeUnicode(str) {
+      const bytes = Uint8Array.from(atob(str.replace(/\n/g, '')), c => c.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    }
+    function bytesToB64(bytes) {
+      let bin = '';
+      for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+      return btoa(bin);
+    }
+    function b64ToBytes(b64) { return Uint8Array.from(atob(b64), c => c.charCodeAt(0)); }
+    function b64EncodeUnicode(str) { return bytesToB64(new TextEncoder().encode(str)); }
+
+    async function deriveKey(password, salt, iterations) {
+      const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+      return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
+        base,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+      );
+    }
+
+    async function encryptToken(token, password) {
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const key = await deriveKey(password, salt, PBKDF2_ITER);
+      const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(token));
+      return { iterations: PBKDF2_ITER, salt: bytesToB64(salt), iv: bytesToB64(iv), data: bytesToB64(new Uint8Array(ct)) };
+    }
+
+    async function decryptToken(enc, password) {
+      const key = await deriveKey(password, b64ToBytes(enc.salt), enc.iterations || PBKDF2_ITER);
+      const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64ToBytes(enc.iv) }, key, b64ToBytes(enc.data));
+      return new TextDecoder().decode(pt);
+    }
+
+    async function loadEncConfig() {
+      try {
+        const res = await fetch('./' + ENC_FILE + '?t=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) return null;
+        const j = await res.json();
+        return (j && j.data && j.salt && j.iv) ? j : null;
+      } catch (e) { return null; }
+    }
+
+    // ---------- Đăng nhập ----------
+    const LOGIN_ERRORS = {
+      WRONG_PASSWORD: 'Mật khẩu không chính xác.',
+      USER_NOT_FOUND: 'Không tìm thấy tên tài khoản này.',
+      NETWORK: 'Lỗi kết nối máy chủ, vui lòng thử lại.'
+    };
+
+    $('login-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const username = $('lg-user').value.trim().toLowerCase();
+      const password = $('lg-pass').value;
+      if (!username || !password) return;
+
+      const btn = $('btn-login');
+      btn.disabled = true;
+      showStatus('⏳ Đang đăng nhập...', true, 'login-status');
+      try {
+        const res = await fetch(SHEET_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'login', username, password, ip: '' })
+        });
+        const data = await res.json();
+        if (!(data && data.ok && data.user)) {
+          const code = (data && data.error) || 'NETWORK';
+          showStatus('❌ ' + (LOGIN_ERRORS[code] || code), false, 'login-status');
+          btn.disabled = false;
+          return;
+        }
+        if (!isAdmin(data.user)) {
+          showStatus('❌ Tài khoản này không có quyền quản lý nhạc.', false, 'login-status');
+          btn.disabled = false;
+          return;
+        }
+        session = { user: data.user, password };
+        try { localStorage.setItem('cgor_admin_user', username); } catch (e2) {}
+        $('lg-pass').value = '';
+        $('login-status').className = 'status';
+        await enterApp();
+      } catch (err) {
+        showStatus('❌ ' + LOGIN_ERRORS.NETWORK, false, 'login-status');
+      }
+      btn.disabled = false;
+    });
+
+    async function enterApp() {
+      $('login-card').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      const badge = session.user.badge ? '<span class="user-badge">' + escapeHTML(session.user.badge) + '</span>' : '';
+      $('who').innerHTML = 'Đã đăng nhập: <b>' + escapeHTML(session.user.displayName || session.user.username) + '</b> (@' + escapeHTML(session.user.username) + ')' + badge;
+
+      encConfig = await loadEncConfig();
+      if (encConfig) {
+        if (encConfig.owner) $('gh-owner').value = encConfig.owner;
+        if (encConfig.repo) $('gh-repo').value = encConfig.repo;
+        if (encConfig.branch) $('gh-branch').value = encConfig.branch;
+        try {
+          $('gh-token').value = await decryptToken(encConfig, session.password);
+          $('cfg-sub').textContent = '✅ Đã giải mã token bằng mật khẩu tài khoản. Token chỉ nằm trong bộ nhớ trang này.';
+          $('setup-box').open = false;
+          renderSongList();
+          return;
+        } catch (err) {
+          $('cfg-sub').textContent = '⚠️ Không giải mã được token đã lưu (có thể bạn đã đổi mật khẩu tài khoản). Hãy dán lại token bên dưới để mã hóa lại.';
+        }
+      } else {
+        $('cfg-sub').textContent = 'Chưa có token lưu trong repo. Dán token GitHub bên dưới để mã hóa và lưu lần đầu.';
+      }
+      $('setup-box').open = true;
+      $('song-list').innerHTML = '<div style="font-size:11.5px;color:var(--dim)">Cần có token để xem danh sách bài hát.</div>';
+    }
+
+    $('btn-logout').addEventListener('click', e => {
+      e.preventDefault();
+      session = null;
+      encConfig = null;
+      $('gh-token').value = '';
+      $('song-list').innerHTML = '';
+      $('app').classList.add('hidden');
+      $('login-card').classList.remove('hidden');
+      $('login-status').className = 'status';
+      $('lg-pass').focus();
+    });
+
+    // ---------- Gọi GitHub API ----------
+    function extractYtIds(raw) {
+      const parts = raw.split(',').map(s => s.trim()).filter(Boolean);
+      const ids = [];
+      for (const p of parts) {
+        if (/^[a-zA-Z0-9_-]{11}$/.test(p)) { ids.push(p); continue; }
+        const m = p.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+        if (m && m[1]) ids.push(m[1]);
+      }
+      return [...new Set(ids)];
+    }
+
+    async function fetchIndexFile() {
+      const cfg = getCfg();
+      if (!session) throw new Error('Bạn chưa đăng nhập.');
+      if (!cfg.owner || !cfg.repo || !cfg.token) {
+        throw new Error('Vui lòng điền đầy đủ Username, Tên Repository và Token!');
+      }
+      const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/index.html?ref=${encodeURIComponent(cfg.branch)}`;
+      const res = await fetch(url, {
+        headers: { 'Authorization': 'Bearer ' + cfg.token, 'Accept': 'application/vnd.github+json' }
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error('Không đọc được index.html: ' + (err.message || res.status));
+      }
+      const data = await res.json();
+      return { sha: data.sha, content: b64DecodeUnicode(data.content) };
+    }
+
+    async function commitFile(path, newContent, sha, commitMsg) {
+      const cfg = getCfg();
+      const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}`;
+      const body = { message: commitMsg, content: b64EncodeUnicode(newContent), branch: cfg.branch };
+      if (sha) body.sha = sha;
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + cfg.token,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error('Lỗi khi Commit: ' + (err.message || res.status));
+      }
+      return await res.json();
+    }
+
+    const commitIndexFile = (content, sha, msg) => commitFile('index.html', content, sha, msg);
+
+    async function getFileSha(path) {
+      const cfg = getCfg();
+      const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}?ref=${encodeURIComponent(cfg.branch)}`;
+      const res = await fetch(url, {
+        headers: { 'Authorization': 'Bearer ' + cfg.token, 'Accept': 'application/vnd.github+json' }
+      });
+      if (res.status === 404) return null;
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error('Không kiểm tra được ' + path + ': ' + (err.message || res.status));
+      }
+      return (await res.json()).sha;
+    }
+
+    // ---------- Mã hóa & lưu token vào repo (dùng mật khẩu tài khoản) ----------
+    $('btn-encrypt').addEventListener('click', async () => {
+      if (!session) return;
+      const btn = $('btn-encrypt');
+      btn.disabled = true;
+      showStatus('⏳ Đang kiểm tra token, mã hóa và lưu vào repo...', true, 'enc-status');
+      try {
+        await fetchIndexFile(); // chắc chắn token chạy được trước khi mã hóa
+        const cfg = getCfg();
+        const enc = await encryptToken(cfg.token, session.password);
+        const payload = { v: 2, owner: cfg.owner, repo: cfg.repo, branch: cfg.branch, ...enc };
+        const sha = await getFileSha(ENC_FILE);
+        await commitFile(ENC_FILE, JSON.stringify(payload, null, 2) + '\n', sha, 'Update encrypted config');
+        showStatus('✅ Đã lưu ' + ENC_FILE + '. Sau 1-2 phút, đăng nhập trên máy khác là dùng được.', true, 'enc-status');
+        $('cfg-sub').textContent = '✅ Token đang dùng trong bộ nhớ trang này.';
+        renderSongList();
+      } catch (err) {
+        showStatus('❌ ' + err.message, false, 'enc-status');
+      }
+      btn.disabled = false;
+    });
+
+    // ---------- Danh sách / thêm / xóa bài hát ----------
+    function parseSongsFromHtml(html) {
+      const m = html.match(/const\s+SONGS\s*=\s*\[([\s\S]*?)\n\s*\];/);
+      if (!m) return [];
+      const block = m[1];
+      const itemRegex = /\{\s*id:\s*'([^']+)'\s*,\s*name:\s*'([^']+)'\s*,\s*type:\s*'([^']+)'[\s\S]*?\}/g;
+      const list = [];
+      let match;
+      while ((match = itemRegex.exec(block)) !== null) {
+        const ytMatch = match[0].match(/ytIds:\s*\[([^\]]*)\]/);
+        list.push({
+          raw: match[0],
+          id: match[1],
+          name: match[2],
+          type: match[3],
+          ytIds: ytMatch ? ytMatch[1].replace(/['"\s]/g, '') : 'Web Audio'
+        });
+      }
+      return list;
+    }
+
+    async function renderSongList() {
+      const box = $('song-list');
+      try {
+        box.innerHTML = '<div style="font-size:11.5px;color:var(--dim)">Đang tải từ GitHub...</div>';
+        const { content } = await fetchIndexFile();
+        const songs = parseSongsFromHtml(content);
+        if (!songs.length) {
+          box.innerHTML = '<div style="font-size:11.5px;color:var(--red)">Không tìm thấy mảng SONGS trong index.html</div>';
+          return;
+        }
+        box.innerHTML = songs.map((s, idx) => `
+          <div class="song-item">
+            <div>
+              <div><b>${idx + 1}. ${s.name}</b></div>
+              <div class="song-meta">${s.type === 'youtube' ? 'YouTube ID: ' + s.ytIds : 'Nhạc hộp nhạc tích hợp'}</div>
+            </div>
+            ${s.type === 'youtube' ? `<button type="button" class="btn-del" data-id="${s.id}" data-name="${s.name}">Xóa</button>` : ''}
+          </div>
+        `).join('');
+      } catch (e) {
+        box.innerHTML = `<div style="font-size:11.5px;color:var(--red)">${e.message}</div>`;
+      }
+    }
+
+    $('btn-reload').addEventListener('click', renderSongList);
+
+    $('add-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const name = $('song-name').value.trim().replace(/'/g, "\\'");
+      const ids = extractYtIds($('song-url').value);
+      if (!ids.length) {
+        showStatus('Link hoặc mã YouTube không hợp lệ! Hãy kiểm tra lại.', false);
+        return;
+      }
+
+      const btn = $('btn-add');
+      btn.disabled = true;
+      showStatus('⏳ Đang đọc index.html và đẩy lên GitHub...', true);
+
+      try {
+        const { sha, content } = await fetchIndexFile();
+        const songsBlockRegex = /(const\s+SONGS\s*=\s*\[[\s\S]*?)(\n\s*\];)/;
+        if (!songsBlockRegex.test(content)) {
+          throw new Error('Không tìm thấy mảng SONGS trong index.html');
+        }
+
+        const slug = 'yt_' + Date.now().toString(36);
+        const idsStr = ids.map(i => `'${i}'`).join(', ');
+        const newEntry = `,\n        {\n          id: '${slug}',\n          name: '${name}',\n          type: 'youtube',\n          ytIds: [${idsStr}]\n        }`;
+
+        const updatedHtml = content.replace(songsBlockRegex, `$1${newEntry}$2`);
+        await commitIndexFile(updatedHtml, sha, `Add song: ${$('song-name').value.trim()}`);
+
+        $('song-name').value = '';
+        $('song-url').value = '';
+        showStatus(`✅ Đã thêm "${name}" thành công! GitHub Pages sẽ cập nhật sau khoảng 1-2 phút.`, true);
+        renderSongList();
+      } catch (err) {
+        showStatus('❌ ' + err.message, false);
+      }
+      btn.disabled = false;
+    });
+
+    $('song-list').addEventListener('click', async e => {
+      const btn = e.target.closest('.btn-del');
+      if (!btn) return;
+      const targetId = btn.getAttribute('data-id');
+      const targetName = btn.getAttribute('data-name');
+      if (!confirm(`Xóa bài "${targetName}" khỏi trang web?`)) return;
+
+      btn.disabled = true;
+      try {
+        const { sha, content } = await fetchIndexFile();
+        const entryRegex = new RegExp(`\\s*,?\\s*\\{\\s*id:\\s*'${targetId}'[\\s\\S]*?\\}\\s*,?`);
+        const updatedHtml = content
+          .replace(entryRegex, m => (m.trim().startsWith(',') && m.trim().endsWith(',') ? ',' : ''))
+          .replace(/,\s*\n\s*\];/, '\n      ];');
+
+        await commitIndexFile(updatedHtml, sha, `Remove song: ${targetName}`);
+        showStatus(`🗑️ Đã xóa bài "${targetName}".`, true);
+        renderSongList();
+      } catch (err) {
+        showStatus('❌ ' + err.message, false);
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
