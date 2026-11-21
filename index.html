@@ -6,6 +6,9 @@
   <title>Christmas gift of Riss</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    /* ===================================================================== */
+    /* 1. BIẾN MÀU CHỦ ĐẠO & THIẾT LẬP TOÀN TRANG                            */
+    /* ===================================================================== */
     :root {
       --bg: #050a1a;
       --fg: #cfe3ff;
@@ -28,6 +31,7 @@
       color: var(--fg);
     }
 
+    /* Canvas hiển thị cây thông 3D ASCII toàn màn hình */
     #c {
       position: fixed;
       inset: 0;
@@ -54,7 +58,7 @@
       overflow: hidden;
     }
 
-    /* Gợi ý và bộ đếm thời gian góc trên */
+    /* Gợi ý thao tác & bộ đếm thời gian góc trên */
     #hint {
       position: fixed;
       left: max(14px, env(safe-area-inset-left, 0px) + 10px);
@@ -75,7 +79,7 @@
       z-index: 10;
     }
 
-    /* Tên người nhận quà ở trên cùng chính giữa */
+    /* Tên hiển thị người dùng / tiêu đề chính giữa phía trên */
     #name {
       position: fixed;
       left: 50%;
@@ -115,7 +119,7 @@
       }
     }
 
-    /* Bảng thông số kỹ thuật góc trái dưới */
+    /* Bảng thông số kỹ thuật (góc xoay, số đèn, số ký tự, FPS) góc trái dưới */
     #hud {
       position: fixed;
       left: max(14px, env(safe-area-inset-left, 0px) + 12px);
@@ -162,7 +166,7 @@
       font-weight: 600;
     }
 
-    /* Thanh nút bấm điều khiển phía dưới */
+    /* Thanh nút bấm điều khiển hiệu ứng & âm nhạc phía dưới */
     #bar {
       position: fixed;
       left: 0;
@@ -200,7 +204,7 @@
       outline-offset: 2px;
     }
 
-    /* Cụm nút chức năng góc trên bên phải */
+    /* Cụm nút chức năng góc trên bên phải (Ngôn ngữ, Tải lại, Đếm ngược, Lời chúc) */
     #top-tools {
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
@@ -265,7 +269,9 @@
       border-radius: 99px;
     }
 
-    /* Box Đếm ngược Giáng Sinh */
+    /* ===================================================================== */
+    /* 2. HỘP ĐẾM NGƯỢC GIÁNG SINH & HỘP THƯ LỜI CHÚC                        */
+    /* ===================================================================== */
     #cd-box {
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
@@ -409,6 +415,7 @@
       box-shadow: 0 0 12px rgba(255, 211, 107, 0.16);
     }
 
+    /* Viền màu phân loại theo chủ đề lời chúc */
     .mb-item.tag-gift { border-left: 3px solid #ff7ad9; }
     .mb-item.tag-story { border-left: 3px solid #52f0ff; }
     .mb-item.tag-wish { border-left: 3px solid #4ef57b; }
@@ -611,7 +618,7 @@
       padding: 6px 11px;
     }
 
-    /* Thanh chọn nhãn cảm xúc & ô nhập thư */
+    /* Thanh chọn chủ đề (Category Chips) & ô nhập thư */
     .mb-compose {
       border-top: 1px solid #2a3b70;
       background: #09112b;
@@ -695,7 +702,7 @@
     }
 
     /* ===================================================================== */
-    /* MODAL 3 TÙY CHỌN (KHÁCH TRUY CẬP / ĐĂNG NHẬP / ĐĂNG KÝ) + HỒ SƠ USER  */
+    /* 3. MODAL 3 TÙY CHỌN (KHÁCH / ĐĂNG NHẬP / ĐĂNG KÝ) + HỒ SƠ CÁ NHÂN    */
     /* ===================================================================== */
     #modal {
       position: fixed;
@@ -730,7 +737,6 @@
       line-height: 1.4;
     }
 
-    /* Thanh 3 Tab chuyển chế độ */
     .auth-tabs {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -879,7 +885,6 @@
     .auth-submit:hover { background: #263d80; }
     .auth-submit:disabled { opacity: 0.6; cursor: wait; }
 
-    /* Giao diện Quản lý hồ sơ khi đã đăng nhập */
     #profile-pane {
       display: none;
       flex-direction: column;
@@ -923,15 +928,18 @@
   </style>
 </head>
 <body>
+  <!-- Vùng vẽ cây thông 3D ASCII -->
   <canvas id="c"></canvas>
 
   <!-- Container ẩn cho YouTube IFrame API -->
   <div id="yt-hidden-wrap"><div id="yt-player"></div></div>
 
+  <!-- Thanh thông tin phía trên -->
   <div id="name" title="Nhấn để quản lý tài khoản / đổi tên">Christmas gift of Riss</div>
   <div id="hint">Kéo để xoay. Chạm để bắn pháo hoa.</div>
   <div id="tt">t 00.00</div>
 
+  <!-- Thông số kỹ thuật góc trái -->
   <div id="hud">
     <div><span id="lbl-rot">góc xoay</span> <b id="hr">0</b>&deg;</div>
     <div><span id="lbl-lights">đèn</span> <b id="hl">0</b></div>
@@ -939,14 +947,16 @@
     <div>fps <b id="hf">0</b></div>
   </div>
 
+  <!-- Chữ ký Dev góc phải dưới -->
   <div id="dev-credit">
     <span class="dc-role">DEV:</span> <span class="dc-name">RISS - Trương Thành Thông</span><br>
     <span class="dc-wish" id="dc-wish-text">chúc mọi người giáng sinh vui vẻ 🎄</span>
   </div>
 
+  <!-- Thanh nút bấm điều khiển phía dưới (tự động tạo bằng JS) -->
   <div id="bar"></div>
 
-  <!-- Thanh nút góc phải -->
+  <!-- Cụm nút chức năng góc trên bên phải -->
   <div id="top-tools">
     <button id="lang-btn" class="tool-btn" type="button" title="Switch language / Đổi ngôn ngữ / 切换语言">🌐 VI</button>
     <button id="refresh-btn" class="tool-btn" type="button" title="Làm mới trang / Reload / 刷新页面">🔄</button>
@@ -954,7 +964,7 @@
     <button id="mail-btn" class="tool-btn" type="button">📩 <span id="mail-btn-txt">Lời chúc</span> <span id="mail-count">0</span></button>
   </div>
 
-  <!-- Box Đếm ngược Giáng Sinh -->
+  <!-- Hộp Đếm ngược Giáng Sinh -->
   <div id="cd-box">
     <div class="cd-head">
       <span id="cd-title">⏳ Đếm ngược Giáng Sinh (GMT+7)</span>
@@ -983,7 +993,7 @@
     </div>
   </div>
 
-  <!-- Box Hộp thư lời chúc -->
+  <!-- Hộp thư lời chúc -->
   <div id="mailbox">
     <div class="mb-head">
       <span id="mb-title">🎄 Hộp thư Giáng Sinh</span>
@@ -1092,7 +1102,7 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 1: HỘP NHẠC LAI + GIỌNG "HO HO HO!" CỦA ÔNG GIÀ NOEL             -->
+  <!-- KHỐI 1: HỘP NHẠC LAI (LOFI WEB AUDIO + YOUTUBE) & TIẾNG "HO HO HO!"   -->
   <!-- ===================================================================== -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
@@ -1105,15 +1115,93 @@
       let step = 0;
       let songIdx = 0;
 
-      const YT_IDS = ['SEsMhb74jTI', 'j8U06veqxdU', '6t-MjBZspmA'];
+      // Trạng thái trình phát YouTube
       let ytIdIdx = 0;
+      let currentLoadedVid = '';
       let ytPlayer = null;
       let ytReady = false;
       let wantYtPlay = false;
 
+      // DANH SÁCH BÀI HÁT
+      // Muốn thêm bài YouTube mới: chỉ cần thêm 1 object vào cuối mảng SONGS này,
+      // tên trong thuộc tính "name" sẽ tự động giữ nguyên gốc ở mọi ngôn ngữ!
+      const SONGS = [
+        {
+          id: 'jingle',
+          name: 'Jingle Bells',
+          type: 'bell', // Nhạc hộp nhạc Lofi tự tổng hợp bằng Web Audio
+          beatSec: 0.34,
+          seq: [
+            { chord: [174.61, 220.00, 261.63, 329.63], mel: [659.25, null, 659.25, 659.25] },
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [659.25, null, 659.25, 659.25] },
+            { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 783.99, 523.25, 587.33] },
+            { chord: [220.00, 261.63, 329.63, 392.00], mel: [659.25, null, null, null] },
+            { chord: [146.83, 174.61, 220.00, 261.63], mel: [698.46, 698.46, 698.46, 698.46] },
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [698.46, 659.25, 659.25, 659.25] },
+            { chord: [130.81, 196.00, 246.94, 293.66], mel: [587.33, 587.33, 659.25, 587.33] },
+            { chord: [130.81, 196.00, 233.08, 293.66], mel: [783.99, null, 659.25, 523.25] }
+          ]
+        },
+        {
+          id: 'wewish',
+          name: 'We Wish You',
+          type: 'bell',
+          beatSec: 0.36,
+          seq: [
+            { chord: [130.81, 164.81, 196.00, 246.94], mel: [392.00, 523.25, 587.33, 523.25] },
+            { chord: [174.61, 220.00, 261.63, 329.63], mel: [493.88, 440.00, 440.00, 440.00] },
+            { chord: [146.83, 174.61, 220.00, 261.63], mel: [587.33, 659.25, 587.33, 523.25] },
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [493.88, 392.00, 392.00, null] },
+            { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 698.46, 659.25, 587.33] },
+            { chord: [220.00, 261.63, 329.63, 392.00], mel: [523.25, 440.00, 392.00, 392.00] },
+            { chord: [146.83, 174.61, 220.00, 261.63], mel: [440.00, 587.33, 493.88, 523.25] },
+            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, null, null, null] }
+          ]
+        },
+        {
+          id: 'silent',
+          name: 'Silent Night',
+          type: 'bell',
+          beatSec: 0.42,
+          seq: [
+            { chord: [130.81, 196.00, 246.94, 329.63], mel: [392.00, 440.00, 392.00, 329.63] },
+            { chord: [130.81, 196.00, 246.94, 329.63], mel: [392.00, 440.00, 392.00, 329.63] },
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [587.33, null, 587.33, 493.88] },
+            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, null, 523.25, 392.00] },
+            { chord: [174.61, 220.00, 261.63, 329.63], mel: [440.00, null, 440.00, 523.25] },
+            { chord: [164.81, 196.00, 246.94, 293.66], mel: [493.88, 440.00, 392.00, 440.00] },
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [587.33, 698.46, 587.33, 493.88] },
+            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, 659.25, 523.25, null] }
+          ]
+        },
+        {
+          id: 'songgio',
+          name: 'Sóng Gió',
+          type: 'youtube', // Nhạc phát từ YouTube (có danh sách ID dự phòng nếu link chính bị chặn nhúng)
+          ytIds: ['SEsMhb74jTI', 'j8U06veqxdU', '6t-MjBZspmA']
+        },
+        {
+          id: 'changgiangsinh',
+          name: 'Chẳng Giống Giáng Sinh',
+          type: 'youtube',
+          ytIds: ['OKK90zbS40w'] // Chẳng Giống Giáng Sinh (Lofi Ver.)
+        }
+      ];
+
+      // Lấy danh sách Video ID YouTube của bài đang chọn
+      function getActiveYtIds() {
+        const song = SONGS[songIdx];
+        return (song && Array.isArray(song.ytIds) && song.ytIds.length)
+          ? song.ytIds
+          : ['SEsMhb74jTI'];
+      }
+
+      // Khởi tạo trình phát YouTube ẩn
       function createYTPlayer() {
         if (ytPlayer || !window.YT || !window.YT.Player) return;
-        const vid = YT_IDS[ytIdIdx];
+        const ids = getActiveYtIds();
+        const vid = ids[ytIdIdx] || ids[0];
+        currentLoadedVid = vid;
         ytPlayer = new YT.Player('yt-player', {
           height: '220',
           width: '220',
@@ -1136,6 +1224,12 @@
               ytPlayer.unMute();
               ytPlayer.setVolume(80);
               if (wantYtPlay && SONGS[songIdx].type === 'youtube') {
+                const targetIds = getActiveYtIds();
+                const targetVid = targetIds[ytIdIdx] || targetIds[0];
+                if (currentLoadedVid !== targetVid) {
+                  currentLoadedVid = targetVid;
+                  ytPlayer.loadVideoById({ videoId: targetVid });
+                }
                 ytPlayer.playVideo();
               }
             },
@@ -1152,13 +1246,16 @@
                 playing = false;
                 syncBtn();
               } else if (e.data === YT.PlayerState.ENDED) {
-                ytPlayer.playVideo();
+                ytPlayer.playVideo(); // Tự động lặp lại khi hết bài
               }
             },
             onError: function (e) {
-              if ((e.data === 101 || e.data === 150 || e.data === 100) && ytIdIdx + 1 < YT_IDS.length) {
+              // Nếu video bị chủ kênh chặn nhúng (lỗi 100/101/150), tự chuyển sang ID dự phòng kế tiếp
+              const ids = getActiveYtIds();
+              if ((e.data === 101 || e.data === 150 || e.data === 100) && ytIdIdx + 1 < ids.length) {
                 ytIdIdx++;
-                const nextVid = YT_IDS[ytIdIdx];
+                const nextVid = ids[ytIdIdx];
+                currentLoadedVid = nextVid;
                 ytPlayer.loadVideoById({ videoId: nextVid });
                 if (wantYtPlay && SONGS[songIdx].type === 'youtube') {
                   ytPlayer.playVideo();
@@ -1177,58 +1274,7 @@
         createYTPlayer();
       }
 
-      const SONGS = [
-        {
-          id: 'jingle',
-          type: 'bell',
-          beatSec: 0.34,
-          seq: [
-            { chord: [174.61, 220.00, 261.63, 329.63], mel: [659.25, null, 659.25, 659.25] },
-            { chord: [196.00, 246.94, 293.66, 349.23], mel: [659.25, null, 659.25, 659.25] },
-            { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 783.99, 523.25, 587.33] },
-            { chord: [220.00, 261.63, 329.63, 392.00], mel: [659.25, null, null, null] },
-            { chord: [146.83, 174.61, 220.00, 261.63], mel: [698.46, 698.46, 698.46, 698.46] },
-            { chord: [196.00, 246.94, 293.66, 349.23], mel: [698.46, 659.25, 659.25, 659.25] },
-            { chord: [130.81, 196.00, 246.94, 293.66], mel: [587.33, 587.33, 659.25, 587.33] },
-            { chord: [130.81, 196.00, 233.08, 293.66], mel: [783.99, null, 659.25, 523.25] }
-          ]
-        },
-        {
-          id: 'wewish',
-          type: 'bell',
-          beatSec: 0.36,
-          seq: [
-            { chord: [130.81, 164.81, 196.00, 246.94], mel: [392.00, 523.25, 587.33, 523.25] },
-            { chord: [174.61, 220.00, 261.63, 329.63], mel: [493.88, 440.00, 440.00, 440.00] },
-            { chord: [146.83, 174.61, 220.00, 261.63], mel: [587.33, 659.25, 587.33, 523.25] },
-            { chord: [196.00, 246.94, 293.66, 349.23], mel: [493.88, 392.00, 392.00, null] },
-            { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 698.46, 659.25, 587.33] },
-            { chord: [220.00, 261.63, 329.63, 392.00], mel: [523.25, 440.00, 392.00, 392.00] },
-            { chord: [146.83, 174.61, 220.00, 261.63], mel: [440.00, 587.33, 493.88, 523.25] },
-            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, null, null, null] }
-          ]
-        },
-        {
-          id: 'silent',
-          type: 'bell',
-          beatSec: 0.42,
-          seq: [
-            { chord: [130.81, 196.00, 246.94, 329.63], mel: [392.00, 440.00, 392.00, 329.63] },
-            { chord: [130.81, 196.00, 246.94, 329.63], mel: [392.00, 440.00, 392.00, 329.63] },
-            { chord: [196.00, 246.94, 293.66, 349.23], mel: [587.33, null, 587.33, 493.88] },
-            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, null, 523.25, 392.00] },
-            { chord: [174.61, 220.00, 261.63, 329.63], mel: [440.00, null, 440.00, 523.25] },
-            { chord: [164.81, 196.00, 246.94, 293.66], mel: [493.88, 440.00, 392.00, 440.00] },
-            { chord: [196.00, 246.94, 293.66, 349.23], mel: [587.33, 698.46, 587.33, 493.88] },
-            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, 659.25, 523.25, null] }
-          ]
-        },
-        {
-          id: 'songgio',
-          type: 'youtube'
-        }
-      ];
-
+      // Khởi tạo bộ tổng hợp âm thanh Web Audio cho 3 bài hộp nhạc
       function initWebAudio() {
         if (ctx) return;
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -1239,6 +1285,7 @@
         startVinylCrackle();
       }
 
+      // Hiệu ứng tiếng đĩa than lách tách nhẹ
       function startVinylCrackle() {
         const bufSize = ctx.sampleRate * 3;
         const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
@@ -1403,6 +1450,7 @@
         timer = setTimeout(tick, beatSec * 1000);
       }
 
+      // Bắt đầu phát bài hát đang chọn (tự động chuyển đổi giữa Web Audio và YouTube)
       function start() {
         const song = SONGS[songIdx];
         clearTimeout(timer);
@@ -1412,8 +1460,14 @@
           wantYtPlay = true;
           createYTPlayer();
           if (ytReady && ytPlayer && typeof ytPlayer.playVideo === 'function') {
+            const ids = getActiveYtIds();
+            const targetVid = ids[ytIdIdx] || ids[0];
             ytPlayer.unMute();
             ytPlayer.setVolume(80);
+            if (currentLoadedVid !== targetVid && typeof ytPlayer.loadVideoById === 'function') {
+              currentLoadedVid = targetVid;
+              ytPlayer.loadVideoById({ videoId: targetVid });
+            }
             ytPlayer.playVideo();
           }
           playing = true;
@@ -1431,6 +1485,7 @@
         }
       }
 
+      // Tạm dừng nhạc
       function stop() {
         playing = false;
         wantYtPlay = false;
@@ -1442,8 +1497,10 @@
         syncBtn();
       }
 
+      // Chuyển sang bài kế tiếp trong danh sách SONGS
       function nextSong() {
         songIdx = (songIdx + 1) % SONGS.length;
+        ytIdIdx = 0;
         step = 0;
         start();
         return songIdx;
@@ -1454,7 +1511,7 @@
         if (b) b.setAttribute('aria-pressed', playing ? 'true' : 'false');
       }
 
-      // Tổng hợp âm thanh trầm ấm "Ho! Ho! Ho!" khi chạm vào ông già Noel
+      // Tổng hợp giọng cười trầm ấm "Ho! Ho! Ho!" khi chạm vào ông già Noel
       function playHoHoHo() {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
@@ -1510,18 +1567,21 @@
         nextSong,
         playHoHoHo,
         getSongIdx: () => songIdx,
+        getSongName: () => (SONGS[songIdx] ? SONGS[songIdx].name : ''),
         toggle: () => (playing ? stop() : start())
       };
     })();
   </script>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 2: ĐA NGÔN NGỮ (VI/EN/中文), AUTH 3 TÙY CHỌN, MAILBOX & REPLY    -->
+  <!-- KHỐI 2: ĐA NGÔN NGỮ (VI/EN/中文), ĐĂNG NHẬP 3 CHẾ ĐỘ & HỘP THƯ        -->
   <!-- ===================================================================== -->
   <script>
     (function () {
+      // Đường dẫn Web App của Google Apps Script kết nối tới Google Sheets
       const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxrsc-RtFFOPjfbTAjcTsxFcmlUMXPCkRslxr_ZotyQ0XaXHj0TecatX7oRseX22Zs24A/exec";
 
+      // Từ điển đa ngôn ngữ (tên bài hát được lấy trực tiếp từ mảng SONGS nên không cần dịch ở đây)
       const I18N = {
         vi: {
           langBadge: '🌐 VI',
@@ -1591,7 +1651,6 @@
           bar: {
             music: 'Nhạc',
             song: 'Bài',
-            songs: ['Jingle Bells', 'We Wish You', 'Silent Night', 'Sóng Gió'],
             replay: 'Chạy lại',
             style: 'Kiểu',
             modes: ['Dâng lên', 'Xoắn ốc', 'Quét ngang', 'Nở hoa'],
@@ -1676,7 +1735,6 @@
           bar: {
             music: 'Music',
             song: 'Song',
-            songs: ['Jingle Bells', 'We Wish You', 'Silent Night', 'Sóng Gió'],
             replay: 'Replay',
             style: 'Style',
             modes: ['Rise', 'Spiral', 'Sweep', 'Bloom'],
@@ -1761,7 +1819,6 @@
           bar: {
             music: '音乐',
             song: '曲目',
-            songs: ['Jingle Bells', 'We Wish You', 'Silent Night', 'Sóng Gió'],
             replay: '重播动画',
             style: '出场',
             modes: ['升起', '螺旋', '横扫', '绽放'],
@@ -1790,6 +1847,7 @@
       window.CGOR_I18N = I18N;
       window.getCGORLang = () => curLang;
 
+      // Quản lý phiên đăng nhập lưu cục bộ
       let currentUser = null;
       let cachedUserIP = '';
 
@@ -1916,6 +1974,7 @@
           .slice(0, 20);
       }
 
+      // Quét IP và gợi ý nhận lại lời chúc cũ chưa có tài khoản
       async function fetchIpAndSuggestions() {
         try {
           const ipRes = await fetch('https://api.ipify.org?format=json');
@@ -1948,6 +2007,7 @@
         regPassInput.focus();
       });
 
+      // Xử lý vào xem ở chế độ Khách
       paneGuest.addEventListener('submit', function (e) {
         e.preventDefault();
         const val = guestNameInput.value.trim();
@@ -1960,6 +2020,7 @@
         if (window.LofiXmas) window.LofiXmas.start();
       });
 
+      // Xử lý Đăng nhập
       paneLogin.addEventListener('submit', async function (e) {
         e.preventDefault();
         showError('');
@@ -1996,6 +2057,7 @@
         btnLogin.disabled = false;
       });
 
+      // Xử lý Đăng ký tài khoản mới
       paneRegister.addEventListener('submit', async function (e) {
         e.preventDefault();
         showError('');
@@ -2036,6 +2098,7 @@
         btnReg.disabled = false;
       });
 
+      // Xử lý đổi tên hiển thị trong Hồ sơ
       profilePane.addEventListener('submit', async function (e) {
         e.preventDefault();
         if (!currentUser) return;
@@ -2084,7 +2147,7 @@
         modal.style.display = 'none';
       }
 
-      // --- Điều khiển đóng/mở độc quyền (Đếm ngược vs Hộp thư) ---
+      // --- Điều khiển đóng/mở độc quyền giữa hộp Đếm ngược & Hộp thư ---
       const langBtn = document.getElementById('lang-btn');
       document.getElementById('refresh-btn').addEventListener('click', function () {
         location.reload();
@@ -2181,7 +2244,7 @@
         cdNote.style.color = '#4ef57b';
       }
 
-      // --- Mailbox Lời Chúc: Badge tùy chỉnh, Reply sổ xuống, Ghim, Thả tim ---
+      // --- Xử lý Hộp thư lời chúc (Badge, Reply, Ghim, Thả tim) ---
       const mbList = document.getElementById('mb-list');
       const mbForm = document.getElementById('mb-form');
       const mbInput = document.getElementById('mb-input');
@@ -2305,7 +2368,7 @@
         if (/Edg\//.test(ua)) browser = 'Edge';
         else if (/Chrome\//.test(ua)) browser = 'Chrome';
         else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) browser = 'Safari';
-        else if (/Firefox\//.test(ua)) browser = 'Firefox';
+        else if (/Firefox/.test(ua)) browser = 'Firefox';
 
         return os + ' - ' + browser + ' (' + screen.width + 'x' + screen.height + ')';
       }
@@ -2452,7 +2515,7 @@
         }
       }
 
-      // --- Áp dụng ngôn ngữ toàn trang ---
+      // --- Cập nhật giao diện khi đổi ngôn ngữ ---
       function applyLanguage() {
         const tDict = I18N[curLang];
         document.documentElement.lang = curLang === 'zh' ? 'zh-CN' : curLang;
@@ -2660,6 +2723,7 @@
       const cv = $('c');
       const ctx = cv.getContext('2d');
 
+      // Bảng 18 mã màu cho cây thông, đèn, quả châu, tuyết, cực quang và ông già Noel
       const PAL = [
         '#0d7a33', '#17b848', '#35e866', '#b4ffbe',
         '#ff3b3b', '#ffcf4a', '#4aa3ff', '#ffffff',
@@ -2734,6 +2798,7 @@
         msg = m.length * 2 < cols - 4 ? m.split('').join(' ').replace(/ {3}/, '   ') : m;
       }
 
+      // Vẽ 1 ký tự vào lưới Z-buffer
       function put(c, r, ch, k, z, a = 1) {
         const lv = Math.round(a * 8);
         if (lv <= 0 || c < 0 || r < 0 || c >= cols || r >= rows) return;
@@ -2830,6 +2895,7 @@
         }
       }
 
+      // Vẽ Ông già Noel vẫy tay bên trái cây thông
       let santaZone = null;
       let hohoTimer = 0;
       let glowsRef = null;
@@ -2849,25 +2915,19 @@
           }
         };
 
-        // Chỏm mũ len trắng lắc nhẹ & thân mũ đỏ
         sp(2 + pomShift, 0, '@', 7, 16);
         sp(0, 1, '/', 4); sp(1, 1, '#', 4); sp(2, 1, '\\', 4);
         sp(-1, 2, '/', 4); sp(0, 2, '#', 4); sp(1, 2, '#', 4); sp(2, 2, '\\', 4);
-        // Viền lông mũ trắng
         for (let dx = -2; dx <= 2; dx++) sp(dx, 3, '=', 7);
 
-        // Khuôn mặt & mắt
         sp(-2, 4, '(', 15); sp(-1, 4, '^', 7); sp(0, 4, '_', 15); sp(1, 4, '^', 7); sp(2, 4, ')', 15);
 
-        // Bộ râu trắng xốp
         for (let dx = -2; dx <= 2; dx++) sp(dx, 5, dx === 0 ? 'w' : '~', 10);
         for (let dx = -1; dx <= 1; dx++) sp(dx, 6, '~', 10);
 
-        // Thân áo đỏ + viền trắng + cánh tay phải vẫy chào
         sp(-2, 7, '/', 4); sp(-1, 7, '#', 4); sp(0, 7, '|', 7); sp(1, 7, '#', 4); sp(2, 7, '\\', 4);
         sp(-2, 8, '|', 4); sp(-1, 8, '#', 4); sp(0, 8, '@', 5); sp(1, 8, '#', 4);
 
-        // Cánh tay vẫy chào hướng về phía người xem / cây thông
         if (wavePhase > 0.35) {
           sp(3, 6, '/', 4);
           sp(4, 5, 'o', 15);
@@ -2881,25 +2941,20 @@
           sp(4, 7, 'o', 15);
         }
 
-        // Thắt lưng vàng & khóa vuông
         sp(-2, 9, '=', 13); sp(-1, 9, '=', 13); sp(0, 9, '#', 5); sp(1, 9, '=', 13); sp(2, 9, '=', 13);
 
-        // Ủng đứng trên mặt đất (không nhún theo thân)
         if (hs(sc - 1, rb) <= al) {
           put(sc - 2, rb, '[', 13, 15); put(sc - 1, rb, '#', 13, 15);
           put(sc + 1, rb, '#', 13, 15); put(sc + 2, rb, ']', 13, 15);
         }
 
-        // Túi quà nhỏ bên cạnh chân trái
         if (hs(sc - 4, rb) <= al) {
           put(sc - 4, rb - 1, '@', 5, 14);
           put(sc - 5, rb, '(', 6, 14); put(sc - 4, rb, '#', 6, 14); put(sc - 3, rb, ')', 6, 14);
         }
 
-        // Hào quang ấm áp quanh ông già Noel
         if (glowsRef) glowsRef.push((sc + 0.5) * cw, (r0 + 5) * chh, 4, al * 0.55);
 
-        // Dòng chữ HO HO HO! bay lên khi chạm vào ông già Noel
         if (hohoTimer > 0) {
           const txt = 'HO HO HO!';
           const lift = Math.floor((2.2 - hohoTimer) * 2.2);
@@ -2913,6 +2968,7 @@
         }
       }
 
+      // Vẽ các hộp quà dưới gốc cây
       function box(c0, w, h, rb, k, al) {
         const r0 = rb - h + 1;
         const B = '%#X@';
@@ -2933,6 +2989,7 @@
       let ang = 0, angV = 0, t = 0, drag = false, lastX = 0, lastT = 0, moved = 0;
       let spawnAcc = 0, ss = null, nextSS = 2.5, fps = 60, hudT = 0, litCount = 0, fw = 2;
 
+      // Vòng lặp render chính 60fps
       function frame(now) {
         requestAnimationFrame(frame);
         const dt = Math.min(0.05, (now - (frame.l || now)) / 1000);
@@ -2966,11 +3023,13 @@
         const c0 = (cx / cw) | 0;
         const wb = Math.round((0.37 * treeH) / cw);
 
+        // Sao trời lấp lánh
         for (const s of BG) {
           const v = Math.sin(t * s.sp + s.ph);
           put((s.fx * cols) | 0, (s.fy * rows) | 0, v > 0.5 ? '+' : v > -0.3 ? '.' : '*', v > 0.2 ? 7 : 13, -9);
         }
 
+        // Cực quang (Aurora)
         if (F.aurora > 0.02) {
           const hb = (rows * 0.4) | 0;
           for (let c = 0; c < cols; c++) {
@@ -2983,6 +3042,7 @@
           }
         }
 
+        // Sao băng
         nextSS -= dt;
         if (!ss && nextSS <= 0) {
           ss = { x: rnd() * cols * 0.5, y: rnd() * rows * 0.18, t: 0 };
@@ -2998,6 +3058,7 @@
           if (hx > cols + 14 || hy > rows) ss = null;
         }
 
+        // Nền tuyết dưới đất
         for (let r = groundRow; r < rows; r++) {
           for (let c = 0; c < cols; c++) {
             const h = hs(c, r * 3);
@@ -3007,6 +3068,7 @@
           }
         }
 
+        // Thân tán lá cây thông 3D
         const rTop = Math.floor((baseY - treeH) / chh) - 1;
         const rBot = Math.floor(baseY / chh);
         for (let r = rTop; r <= rBot; r++) {
@@ -3056,6 +3118,7 @@
           }
         }
 
+        // Quả châu trang trí
         for (const o of OR) {
           const psi = wrap(o.th + ang);
           const cs = Math.cos(psi);
@@ -3083,6 +3146,7 @@
           glows.push(px, py, o.k, a * 0.6);
         }
 
+        // Dây đèn nhấp nháy
         litCount = 0;
         for (const l of LT) {
           const s = cl(F.lights * 1.4 - l.f * 0.4);
@@ -3112,6 +3176,7 @@
           glows.push(px, py, l.k, v * a);
         }
 
+        // Ngôi sao trên đỉnh cây thông
         const sA = F.star;
         if (sA > 0.03) {
           const Ro = treeH * 0.06;
@@ -3152,6 +3217,7 @@
           glows.push(sx, sy, 11, (0.9 + 0.2 * pu) * sA * 1.3);
         }
 
+        // Hộp quà & Ông già Noel
         for (const [o, w, h, k, i] of [[-wb - 1, 9, 5, 6, 0], [-6, 13, 3, 4, 1], [wb - 9, 9, 3, 17, 2]]) {
           const a = cl(F.gifts * 1.4 - i * 0.12);
           if (a > 0.03) box(c0 + o, w, h, groundRow + 2, k, a);
@@ -3165,6 +3231,7 @@
           santaZone = null;
         }
 
+        // Tuyết rơi
         for (const f of SN) {
           if (!f.on && f.f < F.snow) {
             f.on = true;
@@ -3185,6 +3252,7 @@
           put(((c % cols) + cols) % cols, (f.fy * rows) | 0, f.z > 0.3 ? '+' : f.z > -0.2 ? '*' : '.', f.z > 0.3 ? 7 : f.z > -0.2 ? 10 : 9, f.z);
         }
 
+        // Hạt lấp lánh & Pháo hoa
         spawnAcc += dt * 24 * F.sparkle * cl(bp - 0.6);
         while (spawnAcc > 1) {
           spawnAcc--;
@@ -3214,6 +3282,7 @@
           put(p.c | 0, p.r | 0, SPC[Math.min(4, (Math.sin((Math.PI * p.a) / p.l) * 4.99) | 0)], p.k, 12);
         }
 
+        // Dòng chữ MERRY CHRISTMAS chạy dưới chân cây
         const shown = Math.min(msg.length, (mT * 9) | 0);
         const mr = groundRow + 4;
         if (mr < rows - 1) {
@@ -3225,6 +3294,7 @@
           }
         }
 
+        // Xuất khung hình lên Canvas
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.globalCompositeOperation = 'source-over';
         ctx.globalAlpha = 1;
@@ -3277,6 +3347,7 @@
         }
       }
 
+      // Tương tác kéo xoay cây thông & chạm bắn pháo hoa / chạm ông già Noel
       cv.addEventListener('pointerdown', e => {
         drag = true;
         moved = 0;
@@ -3326,6 +3397,7 @@
       addEventListener('blur', () => { drag = false; });
       document.addEventListener('visibilitychange', () => { drag = false; });
 
+      // Tạo thanh nút bấm điều khiển phía dưới màn hình
       const bar = $('bar');
       const barRefs = {};
 
@@ -3352,9 +3424,8 @@
 
       mk('song', b => {
         if (window.LofiXmas) {
-          const idx = window.LofiXmas.nextSong();
-          const bDict = window.CGOR_I18N[window.getCGORLang()].bar;
-          b.textContent = '🎵 ' + bDict.songs[idx];
+          window.LofiXmas.nextSong();
+          b.textContent = '🎵 ' + window.LofiXmas.getSongName();
         }
       });
 
@@ -3379,12 +3450,11 @@
 
       window.updateBarLanguage = function (lang) {
         const bDict = window.CGOR_I18N[lang].bar;
-        const sIdx = window.LofiXmas ? window.LofiXmas.getSongIdx() : 0;
         for (const k in barRefs) {
           if (k === 'style') {
             barRefs[k].textContent = bDict.style + ': ' + bDict.modes[MODE];
           } else if (k === 'song') {
-            barRefs[k].textContent = '🎵 ' + bDict.songs[sIdx];
+            barRefs[k].textContent = '🎵 ' + (window.LofiXmas ? window.LofiXmas.getSongName() : '');
           } else {
             barRefs[k].textContent = bDict[k];
           }
