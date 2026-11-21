@@ -241,7 +241,7 @@
       border-color: #ff9a3c;
       color: #ff9a3c;
     }
-    
+
     #cd-btn {
       border-color: #52f0ff;
       color: #52f0ff;
@@ -946,7 +946,7 @@
 
   <div id="bar"></div>
 
-  <!-- Thanh 3 nút góc phải -->
+  <!-- Thanh nút góc phải -->
   <div id="top-tools">
     <button id="lang-btn" class="tool-btn" type="button" title="Switch language / Đổi ngôn ngữ / 切换语言">🌐 VI</button>
     <button id="refresh-btn" class="tool-btn" type="button" title="Làm mới trang / Reload / 刷新页面">🔄</button>
@@ -1115,22 +1115,26 @@
       function createYTPlayer() {
         if (ytPlayer || !window.YT || !window.YT.Player) return;
         const vid = YT_IDS[ytIdIdx];
+        const playerVars = {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          iv_load_policy: 3,
+          loop: 1,
+          playlist: vid,
+          modestbranding: 1,
+          playsinline: 1
+        };
+        if (window.location.protocol && window.location.protocol.startsWith('http')) {
+          playerVars.origin = window.location.origin;
+        }
+
         ytPlayer = new YT.Player('yt-player', {
           height: '220',
           width: '220',
           videoId: vid,
-          playerVars: {
-            autoplay: 0,
-            controls: 0,
-            disablekb: 1,
-            fs: 0,
-            iv_load_policy: 3,
-            loop: 1,
-            playlist: vid,
-            modestbranding: 1,
-            playsinline: 1,
-            origin: window.location.origin
-          },
+          playerVars: playerVars,
           events: {
             onReady: function () {
               ytReady = true;
@@ -2005,6 +2009,10 @@
           if (data && data.ok && data.user) {
             saveCurrentUser(data.user);
             modal.style.display = 'none';
+            await loadWishes();
+          } else if (data && data.error === 'UNAUTHORIZED') {
+            saveCurrentUser(null);
+            switchAuthTab('login');
           }
         } catch (err) {}
         btnSave.disabled = false;
@@ -2032,7 +2040,7 @@
       }
 
       // --- Điều khiển đóng/mở độc quyền (Đếm ngược vs Hộp thư) ---
-     const langBtn = document.getElementById('lang-btn');
+      const langBtn = document.getElementById('lang-btn');
       document.getElementById('refresh-btn').addEventListener('click', function () {
         location.reload();
       });
@@ -2235,7 +2243,7 @@
           .replace(/^\[🎁[^\]]*\]/, '[' + tags.gift + ']')
           .replace(/^\[❄️[^\]]*\]/, '[' + tags.story + ']');
       }
-      
+
       function getDeviceInfo() {
         const ua = navigator.userAgent;
         let os = 'Khác';
@@ -2343,7 +2351,12 @@
           const rowNum = parseInt(btnRepWrite.getAttribute('data-row'), 10);
           const idx = parseInt(btnRepWrite.getAttribute('data-idx'), 10);
           if (!rowNum || isNaN(idx) || !wishes[idx]) return;
-          setReplyTarget({ row: rowNum, idx: idx, name: wishes[idx].name });
+          setReplyTarget({
+            row: rowNum,
+            idx: idx,
+            name: wishes[idx].name,
+            msg: wishes[idx].msg
+          });
           return;
         }
 
@@ -2358,6 +2371,7 @@
         const idx = parseInt(btnLike.getAttribute('data-idx'), 10);
         if (!rowNum || isNaN(idx) || !wishes[idx]) return;
 
+        const targetWish = wishes[idx];
         const rowKey = String(rowNum);
         const alreadyLiked = likedSet.has(rowKey);
         const delta = alreadyLiked ? -1 : 1;
@@ -2366,21 +2380,30 @@
         else likedSet.add(rowKey);
         saveLikedSet();
 
-        wishes[idx].likes = Math.max(0, (parseInt(wishes[idx].likes, 10) || 0) + delta);
+        targetWish.likes = Math.max(0, (parseInt(targetWish.likes, 10) || 0) + delta);
         renderWishes();
 
         try {
-          await fetch(SHEET_API_URL, {
+          const res = await fetch(SHEET_API_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
               action: 'like',
               token: currentUser.token,
               row: rowNum,
+              targetName: targetWish.name,
+              targetMsg: targetWish.msg,
               delta: delta
             })
           });
+          const data = await res.json();
+          if (data && data.ok && typeof data.likes === 'number') {
+            targetWish.likes = data.likes;
+            renderWishes();
+          } else if (data && data.error === 'UNAUTHORIZED') {
+            saveCurrentUser(null);
+            openAuthModal('login');
+          }
         } catch (err) {}
       });
 
@@ -2522,18 +2545,25 @@
           mbSend.disabled = true;
           mbSend.textContent = '...';
           try {
-            await fetch(SHEET_API_URL, {
+            const res = await fetch(SHEET_API_URL, {
               method: 'POST',
-              mode: 'no-cors',
               headers: { 'Content-Type': 'text/plain' },
               body: JSON.stringify({
                 action: 'reply',
                 token: currentUser.token,
                 row: target.row,
+                targetName: target.name,
+                targetMsg: target.msg,
                 msg: rawTxt
               })
             });
-            setTimeout(loadWishes, 1200);
+            const data = await res.json();
+            if (data && data.ok) {
+              await loadWishes();
+            } else if (data && data.error === 'UNAUTHORIZED') {
+              saveCurrentUser(null);
+              openAuthModal('login');
+            }
           } catch (err) {}
 
           mbSend.disabled = false;
@@ -2565,9 +2595,8 @@
         mbSend.disabled = true;
         mbSend.textContent = '...';
         try {
-          await fetch(SHEET_API_URL, {
+          const res = await fetch(SHEET_API_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
               action: 'wish',
@@ -2577,7 +2606,13 @@
               device: getDeviceInfo()
             })
           });
-          setTimeout(loadWishes, 1200);
+          const data = await res.json();
+          if (data && data.ok) {
+            await loadWishes();
+          } else if (data && data.error === 'UNAUTHORIZED') {
+            saveCurrentUser(null);
+            openAuthModal('login');
+          }
         } catch (err) {}
 
         mbSend.disabled = false;
