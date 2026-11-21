@@ -324,8 +324,8 @@
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
       top: calc(env(safe-area-inset-top, 0px) + 104px);
-      width: min(340px, calc(100vw - 28px));
-      max-height: min(460px, calc(100dvh - 230px));
+      width: min(350px, calc(100vw - 28px));
+      max-height: min(490px, calc(100dvh - 225px));
       background: rgba(13, 22, 51, 0.94);
       border: 1px solid #2a3b70;
       border-radius: 14px;
@@ -375,13 +375,33 @@
       font-size: 11.5px;
     }
 
+    /* Các kiểu thẻ lời chúc: mặc định, ghim, hoặc theo nhãn cảm xúc */
     .mb-item {
       background: #070e24;
       border: 1px solid #1e2d59;
-      border-radius: 8px;
+      border-radius: 9px;
       padding: 9px 11px;
       line-height: 1.5;
       word-break: break-word;
+      transition: border-color 0.2s;
+    }
+
+    .mb-item.pinned {
+      background: linear-gradient(135deg, rgba(29, 47, 99, 0.75), rgba(7, 14, 36, 0.95));
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(255, 211, 107, 0.16);
+    }
+
+    .mb-item.tag-gift {
+      border-left: 3px solid #ff7ad9;
+    }
+
+    .mb-item.tag-story {
+      border-left: 3px solid #52f0ff;
+    }
+
+    .mb-item.tag-wish {
+      border-left: 3px solid #4ef57b;
     }
 
     .mb-msg-text {
@@ -391,26 +411,109 @@
     .mb-meta {
       display: flex;
       justify-content: space-between;
-      gap: 8px;
+      align-items: center;
+      gap: 6px;
       color: var(--gold);
       font-weight: 700;
       font-size: 10px;
       margin-bottom: 4px;
     }
 
-    .mb-meta span {
+    .mb-sender-wrap {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .pin-badge {
+      background: rgba(255, 211, 107, 0.16);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 9px;
+      padding: 0 5px;
+      border-radius: 4px;
+    }
+
+    .mb-meta span.mb-time {
       color: var(--dim);
       font-weight: 400;
       white-space: nowrap;
+      font-size: 9.5px;
+    }
+
+    .mb-foot {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 6px;
+    }
+
+    .like-btn {
+      background: rgba(16, 27, 58, 0.8);
+      border: 1px solid #2a3b70;
+      color: var(--dim);
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.12s, border-color 0.2s, color 0.2s;
+    }
+
+    .like-btn:hover {
+      border-color: #ff6b8b;
+      color: #ff8fa8;
+    }
+
+    .like-btn.liked {
+      background: rgba(255, 59, 92, 0.18);
+      border-color: #ff5c7c;
+      color: #ff8fa8;
+      font-weight: 700;
+    }
+
+    .like-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Thanh chọn nhãn cảm xúc & ô nhập thư */
+    .mb-compose {
+      border-top: 1px solid #2a3b70;
+      background: #09112b;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mb-tags {
+      display: flex;
+      gap: 5px;
+      padding: 7px 8px 0;
+      overflow-x: auto;
+    }
+
+    .tag-pill {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #050a1a;
+      border: 1px solid #2a3b70;
+      color: var(--dim);
+      white-space: nowrap;
+    }
+
+    .tag-pill.active {
+      background: #1d2f63;
+      border-color: var(--gold);
+      color: var(--gold);
+      font-weight: 700;
     }
 
     .mb-form {
-      padding: 8px;
-      border-top: 1px solid #2a3b70;
+      padding: 7px 8px 8px;
       display: flex;
       align-items: flex-end;
       gap: 6px;
-      background: #09112b;
     }
 
     #mb-input {
@@ -627,10 +730,17 @@
     <div id="mb-list">
       <div style="color:var(--dim);text-align:center;padding:16px 0">Đang tải lời chúc...</div>
     </div>
-    <form class="mb-form" id="mb-form">
-      <textarea id="mb-input" rows="1" placeholder="Viết thư chúc Giáng Sinh... (Shift+Enter xuống dòng)"></textarea>
-      <button type="submit" id="mb-send">Gửi</button>
-    </form>
+    <div class="mb-compose">
+      <div class="mb-tags" id="mb-tags">
+        <button type="button" class="tag-pill active" data-tag="wish" id="tag-wish">🎅 Lời chúc</button>
+        <button type="button" class="tag-pill" data-tag="gift" id="tag-gift">🎁 Đòi quà Riss</button>
+        <button type="button" class="tag-pill" data-tag="story" id="tag-story">❄️ Tâm sự</button>
+      </div>
+      <form class="mb-form" id="mb-form">
+        <textarea id="mb-input" rows="1" placeholder="Viết thư chúc Giáng Sinh... (Shift+Enter xuống dòng)"></textarea>
+        <button type="submit" id="mb-send">Gửi</button>
+      </form>
+    </div>
   </div>
 
   <!-- Modal nhập tên khi mới vào trang -->
@@ -646,7 +756,7 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 1: BỘ TỔNG HỢP NHẠC GIÁNG SINH LOFI (WEB AUDIO API)              -->
+  <!-- KHỐI 1: HỘP NHẠC GIÁNG SINH LOFI 3 GIAI ĐIỆU (WEB AUDIO API)          -->
   <!-- ===================================================================== -->
   <script>
     window.LofiXmas = (function () {
@@ -656,17 +766,52 @@
       let playing = false;
       let timer = null;
       let step = 0;
+      let songIdx = 0;
 
-      // Vòng hòa âm Jazz/Lofi 8 ô nhịp + giai điệu chuông Jingle Bells
-      const SEQ = [
-        { chord: [174.61, 220.00, 261.63, 329.63], mel: [659.25, null, 659.25, 659.25] }, // Fmaj7
-        { chord: [196.00, 246.94, 293.66, 349.23], mel: [659.25, null, 659.25, 659.25] }, // G7
-        { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 783.99, 523.25, 587.33] }, // Em7
-        { chord: [220.00, 261.63, 329.63, 392.00], mel: [659.25, null, null, null] },     // Am7
-        { chord: [146.83, 174.61, 220.00, 261.63], mel: [698.46, 698.46, 698.46, 698.46] }, // Dm7
-        { chord: [196.00, 246.94, 293.66, 349.23], mel: [698.46, 659.25, 659.25, 659.25] }, // G7
-        { chord: [130.81, 196.00, 246.94, 293.66], mel: [587.33, 587.33, 659.25, 587.33] }, // Cmaj7
-        { chord: [130.81, 196.00, 233.08, 293.66], mel: [783.99, null, 659.25, 523.25] }  // C9
+      // 3 bản phối Lofi Giáng sinh: Jingle Bells, We Wish You a Merry Christmas, Silent Night
+      const SONGS = [
+        {
+          id: 'jingle',
+          beatSec: 0.34, // ~88 BPM vui tươi
+          seq: [
+            { chord: [174.61, 220.00, 261.63, 329.63], mel: [659.25, null, 659.25, 659.25] }, // Fmaj7
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [659.25, null, 659.25, 659.25] }, // G7
+            { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 783.99, 523.25, 587.33] }, // Em7
+            { chord: [220.00, 261.63, 329.63, 392.00], mel: [659.25, null, null, null] },     // Am7
+            { chord: [146.83, 174.61, 220.00, 261.63], mel: [698.46, 698.46, 698.46, 698.46] }, // Dm7
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [698.46, 659.25, 659.25, 659.25] }, // G7
+            { chord: [130.81, 196.00, 246.94, 293.66], mel: [587.33, 587.33, 659.25, 587.33] }, // Cmaj7
+            { chord: [130.81, 196.00, 233.08, 293.66], mel: [783.99, null, 659.25, 523.25] }  // C9
+          ]
+        },
+        {
+          id: 'wewish',
+          beatSec: 0.36, // ~83 BPM ấm áp
+          seq: [
+            { chord: [130.81, 164.81, 196.00, 246.94], mel: [392.00, 523.25, 587.33, 523.25] }, // Cmaj7
+            { chord: [174.61, 220.00, 261.63, 329.63], mel: [493.88, 440.00, 440.00, 440.00] }, // Fmaj7
+            { chord: [146.83, 174.61, 220.00, 261.63], mel: [587.33, 659.25, 587.33, 523.25] }, // Dm7
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [493.88, 392.00, 392.00, null] },   // G7
+            { chord: [164.81, 196.00, 246.94, 293.66], mel: [659.25, 698.46, 659.25, 587.33] }, // Em7
+            { chord: [220.00, 261.63, 329.63, 392.00], mel: [523.25, 440.00, 392.00, 392.00] }, // Am7
+            { chord: [146.83, 174.61, 220.00, 261.63], mel: [440.00, 587.33, 493.88, 523.25] }, // Dm7 -> G7
+            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, null, null, null] }        // Cmaj7
+          ]
+        },
+        {
+          id: 'silent',
+          beatSec: 0.42, // ~72 BPM chill đêm khuya
+          seq: [
+            { chord: [130.81, 196.00, 246.94, 329.63], mel: [392.00, 440.00, 392.00, 329.63] }, // Cmaj7
+            { chord: [130.81, 196.00, 246.94, 329.63], mel: [392.00, 440.00, 392.00, 329.63] }, // Cmaj7
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [587.33, null, 587.33, 493.88] },   // G7
+            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, null, 523.25, 392.00] },   // Cmaj7
+            { chord: [174.61, 220.00, 261.63, 329.63], mel: [440.00, null, 440.00, 523.25] },   // Fmaj7
+            { chord: [164.81, 196.00, 246.94, 293.66], mel: [493.88, 440.00, 392.00, 440.00] }, // Em7
+            { chord: [196.00, 246.94, 293.66, 349.23], mel: [587.33, 698.46, 587.33, 493.88] }, // G7
+            { chord: [130.81, 164.81, 196.00, 246.94], mel: [523.25, 659.25, 523.25, null] }    // Cmaj7
+          ]
+        }
       ];
 
       function init() {
@@ -679,7 +824,6 @@
         startVinylCrackle();
       }
 
-      // Tạo tiếng đĩa than lách tách nhẹ ở nền
       function startVinylCrackle() {
         const bufSize = ctx.sampleRate * 3;
         const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
@@ -708,7 +852,6 @@
         crackleNode.start();
       }
 
-      // Đánh hợp âm đệm ấm áp
       function playChord(freqs, dur) {
         const now = ctx.currentTime;
         const lpf = ctx.createBiquadFilter();
@@ -734,7 +877,6 @@
         });
       }
 
-      // Nốt giai điệu kiểu chuông / Rhodes
       function playBell(freq, dur) {
         if (!freq) return;
         const now = ctx.currentTime;
@@ -769,7 +911,6 @@
         sub.stop(now + dur + 0.05);
       }
 
-      // Bộ trống Lofi (Kick / Snare / Hi-hat)
       function playDrum(type) {
         const now = ctx.currentTime;
         if (type === 'kick') {
@@ -811,13 +952,13 @@
         }
       }
 
-      // Vòng lặp nhịp điệu (~88 BPM vui tươi)
       function tick() {
         if (!playing) return;
-        const barIdx = Math.floor(step / 4) % SEQ.length;
+        const song = SONGS[songIdx];
+        const barIdx = Math.floor(step / 4) % song.seq.length;
         const beat = step % 4;
-        const item = SEQ[barIdx];
-        const beatSec = 0.34;
+        const item = song.seq[barIdx];
+        const beatSec = song.beatSec;
 
         if (beat === 0) {
           playChord(item.chord, beatSec * 3.9);
@@ -862,6 +1003,18 @@
         syncBtn();
       }
 
+      function nextSong() {
+        songIdx = (songIdx + 1) % SONGS.length;
+        step = 0;
+        if (!playing) {
+          start();
+        } else {
+          clearTimeout(timer);
+          tick();
+        }
+        return songIdx;
+      }
+
       function syncBtn() {
         const b = document.getElementById('btn-music');
         if (b) b.setAttribute('aria-pressed', playing ? 'true' : 'false');
@@ -870,13 +1023,15 @@
       return {
         start,
         stop,
+        nextSong,
+        getSongIdx: () => songIdx,
         toggle: () => (playing ? stop() : start())
       };
     })();
   </script>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 2: ĐA NGÔN NGỮ ANH-VIỆT, ĐẾM NGƯỢC GMT+7 & MAILBOX GOOGLE SHEETS -->
+  <!-- KHỐI 2: ĐA NGÔN NGỮ ANH-VIỆT, ĐẾM NGƯỢC GMT+7 & MAILBOX THẢ TIM/TAG   -->
   <!-- ===================================================================== -->
   <script>
     (function () {
@@ -906,6 +1061,12 @@
           mbEmpty: 'Chưa có lời chúc nào. Hãy là người đầu tiên!',
           mbPlaceholder: 'Viết thư chúc Giáng Sinh... (Shift+Enter xuống dòng)',
           mbSend: 'Gửi',
+          pinLabel: '📌 Đã ghim',
+          tags: {
+            wish: '🎅 Lời chúc',
+            gift: '🎁 Đòi quà Riss',
+            story: '❄️ Tâm sự'
+          },
           modalTitle: 'MÓN QUÀ GIÁNG SINH TỪ RISS ❤️',
           modalSub: 'Nhập tên của bạn để nhận quà',
           modalPlaceholder: 'Nhập tên của bạn...',
@@ -913,6 +1074,8 @@
           anon: 'Ẩn danh',
           bar: {
             music: 'Nhạc',
+            song: 'Bài',
+            songs: ['Jingle Bells', 'We Wish You', 'Silent Night'],
             replay: 'Chạy lại',
             style: 'Kiểu',
             modes: ['Dâng lên', 'Xoắn ốc', 'Quét ngang', 'Nở hoa'],
@@ -950,6 +1113,12 @@
           mbEmpty: 'No wishes yet. Be the first to send one!',
           mbPlaceholder: 'Write a Christmas wish... (Shift+Enter for new line)',
           mbSend: 'Send',
+          pinLabel: '📌 Pinned',
+          tags: {
+            wish: '🎅 Wish',
+            gift: '🎁 Gift Request',
+            story: '❄️ Holiday Note'
+          },
           modalTitle: 'CHRISTMAS GIFT FROM RISS ❤️',
           modalSub: 'Enter your name to receive your gift',
           modalPlaceholder: 'Enter your name...',
@@ -957,6 +1126,8 @@
           anon: 'Anonymous',
           bar: {
             music: 'Music',
+            song: 'Song',
+            songs: ['Jingle Bells', 'We Wish You', 'Silent Night'],
             replay: 'Replay',
             style: 'Style',
             modes: ['Rise', 'Spiral', 'Sweep', 'Bloom'],
@@ -1083,7 +1254,6 @@
       const cdNote = document.getElementById('cd-note');
 
       function getVietnamNow() {
-        // Quy đổi thời gian hiện tại sang múi giờ chuẩn UTC+7 (Việt Nam) bất kể máy ở nước nào
         const now = new Date();
         const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
         return new Date(utcMs + 7 * 3600000);
@@ -1123,15 +1293,38 @@
         cdNote.style.color = '#4ef57b';
       }
 
-      // --- Mailbox Lời Chúc & Chuẩn hóa giờ Việt Nam (GMT+7) ---
+      // --- Mailbox Lời Chúc: Tag cảm xúc, Ghim (PIN), Thả tim (Like) & Giờ GMT+7 ---
       const mbList = document.getElementById('mb-list');
       const mbForm = document.getElementById('mb-form');
       const mbInput = document.getElementById('mb-input');
       const mbSend = document.getElementById('mb-send');
       const mailCount = document.getElementById('mail-count');
+      const tagBtns = document.querySelectorAll('.tag-pill');
 
       let wishes = [];
       let loadedOnce = false;
+      let selectedTag = 'wish';
+      let likedSet = new Set();
+
+      try {
+        const savedLikes = JSON.parse(localStorage.getItem('cgor_liked_rows') || '[]');
+        if (Array.isArray(savedLikes)) likedSet = new Set(savedLikes);
+      } catch (e) {}
+
+      function saveLikedSet() {
+        try {
+          localStorage.setItem('cgor_liked_rows', JSON.stringify(Array.from(likedSet)));
+        } catch (e) {}
+      }
+
+      tagBtns.forEach(btnTag => {
+        btnTag.addEventListener('click', function () {
+          tagBtns.forEach(b => b.classList.remove('active'));
+          btnTag.classList.add('active');
+          selectedTag = btnTag.getAttribute('data-tag') || 'wish';
+          mbInput.focus();
+        });
+      });
 
       function escapeHTML(str) {
         return String(str).replace(/[&<>"']/g, function (m) {
@@ -1167,6 +1360,13 @@
         return str.includes('GMT+7') ? str : str + ' (GMT+7)';
       }
 
+      function detectTagClass(msg) {
+        if (msg.startsWith('[🎁')) return 'tag-gift';
+        if (msg.startsWith('[❄️')) return 'tag-story';
+        if (msg.startsWith('[🎅')) return 'tag-wish';
+        return '';
+      }
+
       function getDeviceInfo() {
         const ua = navigator.userAgent;
         let os = 'Khác';
@@ -1197,15 +1397,69 @@
             '</div>';
           return;
         }
-        mbList.innerHTML = wishes.map(function (w) {
+        mbList.innerHTML = wishes.map(function (w, idx) {
+          const rowKey = w.row ? String(w.row) : ('tmp_' + idx);
+          const isLiked = likedSet.has(rowKey);
+          const likesCount = parseInt(w.likes, 10) || 0;
+          const tagCls = detectTagClass(String(w.msg || ''));
+          const pinCls = w.pinned ? ' pinned' : '';
+          const pinHtml = w.pinned ? '<span class="pin-badge">' + tDict.pinLabel + '</span>' : '';
+
           return (
-            '<div class="mb-item">' +
-              '<div class="mb-meta">' + escapeHTML(w.name) + '<span>' + escapeHTML(formatTimeVN(w.time)) + '</span></div>' +
+            '<div class="mb-item ' + tagCls + pinCls + '">' +
+              '<div class="mb-meta">' +
+                '<div class="mb-sender-wrap">' + escapeHTML(w.name) + pinHtml + '</div>' +
+                '<span class="mb-time">' + escapeHTML(formatTimeVN(w.time)) + '</span>' +
+              '</div>' +
               '<div class="mb-msg-text">' + escapeHTML(w.msg) + '</div>' +
+              (w.row
+                ? '<div class="mb-foot">' +
+                    '<button type="button" class="like-btn' + (isLiked ? ' liked' : '') + '" data-row="' + w.row + '" data-idx="' + idx + '">' +
+                      (isLiked ? '❤️' : '🤍') + ' <span>' + likesCount + '</span>' +
+                    '</button>' +
+                  '</div>'
+                : '') +
             '</div>'
           );
         }).join('');
       }
+
+      // Xử lý bấm thả tim lời chúc
+      mbList.addEventListener('click', async function (e) {
+        const btnLike = e.target.closest('.like-btn');
+        if (!btnLike) return;
+
+        const rowNum = parseInt(btnLike.getAttribute('data-row'), 10);
+        const idx = parseInt(btnLike.getAttribute('data-idx'), 10);
+        if (!rowNum || isNaN(idx) || !wishes[idx]) return;
+
+        const rowKey = String(rowNum);
+        const alreadyLiked = likedSet.has(rowKey);
+        const delta = alreadyLiked ? -1 : 1;
+
+        if (alreadyLiked) {
+          likedSet.delete(rowKey);
+        } else {
+          likedSet.add(rowKey);
+        }
+        saveLikedSet();
+
+        wishes[idx].likes = Math.max(0, (parseInt(wishes[idx].likes, 10) || 0) + delta);
+        renderWishes();
+
+        try {
+          await fetch(SHEET_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+              action: 'like',
+              row: rowNum,
+              delta: delta
+            })
+          });
+        } catch (err) {}
+      });
 
       async function loadWishes() {
         try {
@@ -1243,6 +1497,9 @@
         document.getElementById('cd-lbl-s').textContent = tDict.cdSecs;
 
         document.getElementById('mb-title').textContent = tDict.mbTitle;
+        document.getElementById('tag-wish').textContent = tDict.tags.wish;
+        document.getElementById('tag-gift').textContent = tDict.tags.gift;
+        document.getElementById('tag-story').textContent = tDict.tags.story;
         mbInput.placeholder = tDict.mbPlaceholder;
         mbSend.textContent = tDict.mbSend;
 
@@ -1266,7 +1523,6 @@
         applyLanguage();
       });
 
-      // Tự động giãn chiều cao ô nhập khi viết thư dài
       function autoResizeInput() {
         mbInput.style.height = 'auto';
         mbInput.style.height = Math.min(mbInput.scrollHeight, 120) + 'px';
@@ -1274,7 +1530,6 @@
 
       mbInput.addEventListener('input', autoResizeInput);
 
-      // Nhấn Enter để gửi, nhấn Shift + Enter để xuống dòng
       mbInput.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
@@ -1284,13 +1539,24 @@
 
       mbForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        const txt = mbInput.value.trim();
-        if (!txt) return;
+        const rawTxt = mbInput.value.trim();
+        if (!rawTxt) return;
+
+        const tagPrefix = '[' + I18N[curLang].tags[selectedTag] + '] ';
+        const fullMsg = tagPrefix + rawTxt;
 
         const sender = nameLabel.textContent.trim() || I18N[curLang].anon;
         const nowStr = formatTimeVN(new Date().toISOString());
 
-        wishes.unshift({ name: sender, msg: txt, time: nowStr });
+        // Chèn ngay sau các bài được ghim (nếu có)
+        const firstNormalIdx = wishes.findIndex(item => !item.pinned);
+        const newWishObj = { name: sender, msg: fullMsg, time: nowStr, pinned: false, likes: 0 };
+        if (firstNormalIdx === -1) {
+          wishes.push(newWishObj);
+        } else {
+          wishes.splice(firstNormalIdx, 0, newWishObj);
+        }
+
         renderWishes();
         mbInput.value = '';
         autoResizeInput();
@@ -1311,7 +1577,7 @@
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
               name: sender,
-              msg: txt,
+              msg: fullMsg,
               ip: userIP,
               device: getDeviceInfo()
             })
@@ -1908,7 +2174,7 @@
       addEventListener('blur', () => { drag = false; });
       document.addEventListener('visibilitychange', () => { drag = false; });
 
-      // Khởi tạo thanh nút bấm điều khiển (hỗ trợ dịch song ngữ)
+      // Khởi tạo thanh nút bấm điều khiển (hỗ trợ dịch song ngữ + đổi bài nhạc)
       const bar = $('bar');
       const barRefs = {};
 
@@ -1933,6 +2199,14 @@
       musicBtn.id = 'btn-music';
       musicBtn.setAttribute('aria-pressed', 'false');
 
+      mk('song', b => {
+        if (window.LofiXmas) {
+          const idx = window.LofiXmas.nextSong();
+          const bDict = window.CGOR_I18N[window.getCGORLang()].bar;
+          b.textContent = '🎵 ' + bDict.songs[idx];
+        }
+      });
+
       const replay = () => { bp = -0.25; mT = 0; };
       mk('replay', replay);
       mk('style', b => {
@@ -1954,9 +2228,12 @@
 
       window.updateBarLanguage = function (lang) {
         const bDict = window.CGOR_I18N[lang].bar;
+        const sIdx = window.LofiXmas ? window.LofiXmas.getSongIdx() : 0;
         for (const k in barRefs) {
           if (k === 'style') {
             barRefs[k].textContent = bDict.style + ': ' + bDict.modes[MODE];
+          } else if (k === 'song') {
+            barRefs[k].textContent = '🎵 ' + bDict.songs[sIdx];
           } else {
             barRefs[k].textContent = bDict[k];
           }
