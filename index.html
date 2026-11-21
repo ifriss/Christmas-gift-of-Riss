@@ -14,8 +14,13 @@
       --fg: #cfe3ff;
       --dim: #7389b0;
       --gold: #ffd36b;
+      --top-note: #8aa6d6;
       color-scheme: dark;
       box-sizing: border-box;
+    }
+
+    *, *::before, *::after {
+      box-sizing: inherit;
     }
 
     html, body {
@@ -58,30 +63,26 @@
       overflow: hidden;
     }
 
-    /* Gợi ý thao tác & bộ đếm thời gian góc trên */
-    #hint {
+    /* Chú thích góc trên bên trái & bên phải (đồng bộ màu & kích thước chữ) */
+    #hint, #tt {
       position: fixed;
-      left: max(14px, env(safe-area-inset-left, 0px) + 10px);
       top: calc(env(safe-area-inset-top, 0px) + 10px);
       font-size: 11px;
-      line-height: 1.45;
-      color: var(--dim);
+      line-height: 1.4;
+      color: var(--top-note);
       pointer-events: none;
       z-index: 10;
     }
 
-    #hint-2 {
-      color: #8aa6d6;
+    #hint {
+      left: max(14px, env(safe-area-inset-left, 0px) + 10px);
+      text-align: left;
     }
 
     #tt {
-      position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
-      top: calc(env(safe-area-inset-top, 0px) + 10px);
-      font-size: 11px;
-      color: #ff8a8a;
-      pointer-events: none;
-      z-index: 10;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
     }
 
     /* Tên hiển thị người dùng / tiêu đề chính giữa phía trên */
@@ -89,7 +90,7 @@
       position: fixed;
       left: 50%;
       transform: translateX(-50%);
-      top: calc(env(safe-area-inset-top, 0px) + 38px);
+      top: calc(env(safe-area-inset-top, 0px) + 34px);
       text-align: center;
       font-size: clamp(14px, 4.5vw, 18px);
       font-weight: 700;
@@ -171,7 +172,7 @@
       font-weight: 600;
     }
 
-    /* Thanh nút bấm điều khiển hiệu ứng & âm nhạc phía dưới */
+    /* Thanh nút bấm điều khiển hiệu ứng phía dưới */
     #bar {
       position: fixed;
       left: 0;
@@ -213,7 +214,7 @@
     #top-tools {
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
-      top: calc(env(safe-area-inset-top, 0px) + 72px);
+      top: calc(env(safe-area-inset-top, 0px) + 68px);
       z-index: 30;
       display: flex;
       align-items: center;
@@ -280,7 +281,7 @@
     #cd-box {
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
-      top: calc(env(safe-area-inset-top, 0px) + 108px);
+      top: calc(env(safe-area-inset-top, 0px) + 104px);
       width: min(310px, calc(100vw - 28px));
       background: rgba(13, 22, 51, 0.94);
       border: 1px solid #52f0ff88;
@@ -352,7 +353,7 @@
     #mailbox {
       position: fixed;
       right: max(14px, env(safe-area-inset-right, 0px) + 10px);
-      top: calc(env(safe-area-inset-top, 0px) + 108px);
+      top: calc(env(safe-area-inset-top, 0px) + 104px);
       width: min(355px, calc(100vw - 28px));
       max-height: min(500px, calc(100dvh - 225px));
       background: rgba(13, 22, 51, 0.94);
@@ -420,7 +421,6 @@
       box-shadow: 0 0 12px rgba(255, 211, 107, 0.16);
     }
 
-    /* Viền màu phân loại theo chủ đề lời chúc */
     .mb-item.tag-gift { border-left: 3px solid #ff7ad9; }
     .mb-item.tag-story { border-left: 3px solid #52f0ff; }
     .mb-item.tag-wish { border-left: 3px solid #4ef57b; }
@@ -445,7 +445,6 @@
       flex-wrap: wrap;
     }
 
-    /* Huy hiệu danh hiệu tùy chỉnh (VD: DEV🎄) */
     .user-badge {
       background: linear-gradient(135deg, rgba(255, 211, 107, 0.22), rgba(82, 240, 255, 0.18));
       border: 1px solid #ffd36baa;
@@ -509,7 +508,6 @@
     .rep-toggle-btn:hover, .rep-toggle-btn.open { border-color: #52f0ff; color: #52f0ff; }
     .like-btn:active, .rep-toggle-btn:active { transform: scale(0.92); }
 
-    /* Khu vực danh sách phản hồi (Reply) sổ xuống */
     .rep-list {
       display: none;
       margin-top: 8px;
@@ -576,7 +574,6 @@
 
     .rep-write-link:hover { background: rgba(82, 240, 255, 0.12); }
 
-    /* Thanh báo trạng thái đang trả lời tin nhắn */
     #reply-banner {
       display: none;
       align-items: center;
@@ -599,7 +596,6 @@
       padding: 0 4px;
     }
 
-    /* Thanh khóa gửi thư dành cho Khách */
     #mb-guest-lock {
       display: none;
       padding: 10px 12px;
@@ -623,7 +619,6 @@
       padding: 6px 11px;
     }
 
-    /* Thanh chọn chủ đề (Category Chips) & ô nhập thư */
     .mb-compose {
       border-top: 1px solid #2a3b70;
       background: #09112b;
@@ -678,7 +673,6 @@
       font-size: 11.5px;
       line-height: 1.4;
       outline: none;
-      box-sizing: border-box;
     }
 
     #mb-input:focus { border-color: var(--gold); }
@@ -691,20 +685,6 @@
       padding: 8px 14px;
       white-space: nowrap;
       height: 34px;
-    }
-
-    /* Tối ưu giao diện trên màn hình điện thoại */
-    @media (max-width: 640px) {
-      #hint { font-size: 9.5px; line-height: 1.35; top: calc(env(safe-area-inset-top, 0px) + 8px); max-width: calc(100vw - 95px); }
-      #tt { font-size: 10px; top: calc(env(safe-area-inset-top, 0px) + 8px); }
-      #name { top: calc(env(safe-area-inset-top, 0px) + 36px); }
-      #hud { font-size: 9.5px; bottom: calc(env(safe-area-inset-bottom, 0px) + 106px); }
-      #dev-credit { font-size: 10.5px; bottom: calc(env(safe-area-inset-bottom, 0px) + 106px); max-width: 225px; }
-      button { font-size: 10px; padding: 5px 8px; }
-      #top-tools { top: calc(env(safe-area-inset-top, 0px) + 66px); gap: 4px; }
-      .tool-btn { padding: 5px 8px; }
-      #cd-box, #mailbox { top: calc(env(safe-area-inset-top, 0px) + 100px); }
-      #mailbox { max-height: calc(100dvh - 245px); }
     }
 
     /* ===================================================================== */
@@ -803,7 +783,6 @@
 
     .auth-input {
       width: 100%;
-      box-sizing: border-box;
       background: #050a1a;
       border: 1px solid #2a3b70;
       border-radius: 8px;
@@ -819,7 +798,6 @@
       box-shadow: 0 0 10px #ffd36b28;
     }
 
-    /* Hộp gợi ý tên cũ theo IP */
     #ip-suggest-box {
       display: none;
       flex-direction: column;
@@ -931,6 +909,221 @@
       color: var(--dim);
       padding: 9px 14px;
     }
+
+    /* ===================================================================== */
+    /* 4. MÁY ĐĨA THAN HI-FI & BẢNG TÙY CHỌN NHẠC                            */
+    /* ===================================================================== */
+    #deck-canvas {
+      position: fixed;
+      right: max(18px, env(safe-area-inset-right, 0px) + 14px);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 132px);
+      width: 132px;
+      height: 132px;
+      z-index: 16;
+      opacity: 0;
+      pointer-events: none;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.9s ease, transform 0.2s ease;
+    }
+    #deck-canvas.show { opacity: 1; pointer-events: auto; }
+    #deck-canvas:hover { transform: scale(1.04); }
+    #deck-canvas:active { transform: scale(0.97); }
+    #deck-canvas:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 14px; }
+
+    #deck-panel {
+      position: fixed;
+      right: max(18px, env(safe-area-inset-right, 0px) + 14px);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 272px);
+      z-index: 60;
+      display: none;
+      flex-direction: column;
+      gap: 9px;
+      width: min(315px, calc(100vw - 24px));
+      max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 300px);
+      background: rgba(13, 22, 51, 0.96);
+      border: 1px solid #ffd36b77;
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+    #deck-panel.open { display: flex; }
+
+    .dp-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .dp-x { background: none; border: none; color: var(--dim); font-size: 14px; padding: 2px 6px; }
+    .dp-x:hover { color: var(--fg); }
+
+    .dp-now {
+      background: #070e24;
+      border: 1px solid #1e2d59;
+      border-radius: 10px;
+      padding: 8px 10px;
+      min-width: 0;
+      flex-shrink: 0;
+    }
+    .dp-label { font-size: 9.5px; color: var(--dim); margin-bottom: 3px; }
+    .dp-song {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #4ef57b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dp-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .dp-btn {
+      flex: 1;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 8px 6px;
+      border-radius: 10px;
+      border: 1px solid var(--gold);
+      background: #1d2f63;
+      color: var(--gold);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dp-btn:hover { background: #263d80; }
+    .dp-btn.alt { border-color: #52f0ff; color: #52f0ff; background: #101b3a; }
+    .dp-btn.alt:hover, .dp-btn.alt[aria-pressed="true"] { background: #153459; box-shadow: 0 0 10px rgba(82, 240, 255, 0.25); }
+
+    .dp-modes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .dp-mode-btn {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid #2a3b70;
+      background: #09112b;
+      color: var(--dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dp-mode-btn:hover { border-color: #52f0ff; color: var(--fg); }
+    .dp-mode-btn.active {
+      background: #162b5c;
+      border-color: #4ef57b;
+      color: #4ef57b;
+      font-weight: 700;
+    }
+
+    .dp-list {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      overflow-y: auto;
+      min-height: 0;
+      max-height: 175px;
+      padding-right: 2px;
+      flex: 1;
+    }
+    .dp-list.open { display: flex; }
+    .dp-pick { font-size: 10px; color: var(--dim); margin: 2px 0 0; flex-shrink: 0; }
+    .dp-item {
+      width: 100%;
+      text-align: left;
+      font-size: 11px;
+      border-radius: 8px;
+      padding: 7px 10px;
+      background: #070e24;
+      border: 1px solid #1e2d59;
+      color: var(--fg);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
+    }
+    .dp-item:hover { border-color: #52f0ff; }
+    .dp-item.active { border-color: var(--gold); color: var(--gold); font-weight: 700; }
+
+    /* ===================================================================== */
+    /* 5. TỐI ƯU GIAO DIỆN MOBILE (<= 640PX)                                 */
+    /* ===================================================================== */
+    @media (max-width: 640px) {
+      #hint, #tt {
+        font-size: 10px;
+        top: calc(env(safe-area-inset-top, 0px) + 8px);
+      }
+      #hint {
+        max-width: calc(100vw - 95px);
+      }
+      #name {
+        top: calc(env(safe-area-inset-top, 0px) + 34px);
+      }
+      #hud {
+        font-size: 9.5px;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 98px);
+      }
+      #dev-credit {
+        font-size: 10px;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 98px);
+        max-width: 215px;
+      }
+      button {
+        font-size: 10px;
+        padding: 5px 8px;
+      }
+      #top-tools {
+        top: calc(env(safe-area-inset-top, 0px) + 64px);
+        gap: 4px;
+      }
+      .tool-btn {
+        padding: 5px 8px;
+      }
+      #cd-box, #mailbox {
+        top: calc(env(safe-area-inset-top, 0px) + 98px);
+      }
+      #mailbox {
+        max-height: calc(100dvh - 220px);
+      }
+
+      /* Máy đĩa than nhỏ gọn bên phải, phía trên chữ ký Dev */
+      #deck-canvas {
+        right: max(10px, env(safe-area-inset-right, 0px) + 8px);
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 136px);
+        width: 86px;
+        height: 86px;
+      }
+
+      /* Bảng điều khiển nhạc căn giữa an toàn trên Mobile, không bao giờ bị che top/bottom */
+      #deck-panel {
+        left: 50%;
+        right: auto;
+        top: 50%;
+        bottom: auto;
+        transform: translate(-50%, -50%);
+        width: min(330px, calc(100vw - 24px));
+        max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 110px);
+        padding: 11px;
+      }
+      .dp-list {
+        max-height: 150px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -942,10 +1135,7 @@
 
   <!-- Thanh thông tin phía trên -->
   <div id="name" title="Nhấn để quản lý tài khoản / đổi tên">Christmas gift of Riss</div>
-  <div id="hint">
-    <div id="hint-1">Kéo để xoay. Chạm để bắn pháo hoa.</div>
-    <div id="hint-2">Chạm máy đĩa than bên phải để bật/đổi nhạc.</div>
-  </div>
+  <div id="hint">Kéo để xoay. Chạm để bắn pháo hoa.</div>
   <div id="tt">t 00.00</div>
 
   <!-- Thông số kỹ thuật góc trái -->
@@ -1041,7 +1231,6 @@
     <div class="modal-box">
       <h3 id="modal-title">MÓN QUÀ GIÁNG SINH TỪ RISS ❤️</h3>
 
-      <!-- Thanh 3 Tab khi chưa đăng nhập -->
       <div class="auth-tabs" id="auth-tabs">
         <button type="button" class="auth-tab active" data-tab="guest" id="tab-guest">Khách</button>
         <button type="button" class="auth-tab" data-tab="login" id="tab-login">Đăng nhập</button>
@@ -1110,6 +1299,31 @@
     </div>
   </div>
 
+  <!-- Máy đĩa than Hi-Fi & Bảng tùy chọn nhạc -->
+  <canvas id="deck-canvas" tabindex="0" role="button" aria-label="Máy đĩa than"></canvas>
+
+  <div id="deck-panel" role="dialog" aria-labelledby="dp-title">
+    <div class="dp-head">
+      <span id="dp-title">💿 Máy đĩa than</span>
+      <button type="button" class="dp-x" id="dp-close">✕</button>
+    </div>
+    <div class="dp-now">
+      <div class="dp-label" id="dp-now-label">Đang phát</div>
+      <div class="dp-song" id="dp-song">-</div>
+    </div>
+    <div class="dp-actions">
+      <button type="button" class="dp-btn" id="dp-toggle">▶ Phát nhạc</button>
+      <button type="button" class="dp-btn alt" id="dp-next">⏭ Bài tiếp</button>
+      <button type="button" class="dp-btn alt" id="dp-change" aria-pressed="false">📋 Danh sách</button>
+    </div>
+    <div class="dp-modes">
+      <button type="button" class="dp-mode-btn active" id="dp-repeat">🔁 Cả danh sách</button>
+      <button type="button" class="dp-mode-btn" id="dp-shuffle" aria-pressed="false">🔀 Trộn: Tắt</button>
+    </div>
+    <p class="dp-pick" id="dp-pick" style="display:none">Chọn bài hát</p>
+    <div class="dp-list" id="dp-list"></div>
+  </div>
+
   <!-- ===================================================================== -->
   <!-- KHỐI 1: HỘP NHẠC LAI (LOFI WEB AUDIO + YOUTUBE) & TIẾNG "HO HO HO!"   -->
   <!-- ===================================================================== -->
@@ -1124,6 +1338,18 @@
       let step = 0;
       let songIdx = 0;
 
+      // Chế độ phát lại ('all': cả danh sách | 'one': lặp 1 bài) & Trộn bài
+      let repeatMode = 'all';
+      let shuffle = false;
+      let playHistory = [];
+      const listeners = [];
+
+      try {
+        const savedRep = localStorage.getItem('cgor_repeat_mode');
+        if (savedRep === 'one' || savedRep === 'all') repeatMode = savedRep;
+        shuffle = localStorage.getItem('cgor_shuffle') === 'true';
+      } catch (e) {}
+
       // Trạng thái trình phát YouTube
       let ytIdIdx = 0;
       let currentLoadedVid = '';
@@ -1131,14 +1357,12 @@
       let ytReady = false;
       let wantYtPlay = false;
 
-      // DANH SÁCH BÀI HÁT
-      // Muốn thêm bài YouTube mới: chỉ cần thêm 1 object vào cuối mảng SONGS này,
-      // tên trong thuộc tính "name" sẽ tự động giữ nguyên gốc ở mọi ngôn ngữ!
       const SONGS = [
         {
           id: 'jingle',
           name: 'Jingle Bells',
-          type: 'bell', // Nhạc hộp nhạc Lofi tự tổng hợp bằng Web Audio
+          type: 'bell',
+          color: '#ffd36b',
           beatSec: 0.34,
           seq: [
             { chord: [174.61, 220.00, 261.63, 329.63], mel: [659.25, null, 659.25, 659.25] },
@@ -1155,6 +1379,7 @@
           id: 'wewish',
           name: 'We Wish You',
           type: 'bell',
+          color: '#ff5c7c',
           beatSec: 0.36,
           seq: [
             { chord: [130.81, 164.81, 196.00, 246.94], mel: [392.00, 523.25, 587.33, 523.25] },
@@ -1171,6 +1396,7 @@
           id: 'silent',
           name: 'Silent Night',
           type: 'bell',
+          color: '#52f0ff',
           beatSec: 0.42,
           seq: [
             { chord: [130.81, 196.00, 246.94, 329.63], mel: [392.00, 440.00, 392.00, 329.63] },
@@ -1186,30 +1412,43 @@
         {
           id: 'songgio',
           name: 'Sóng Gió',
-          type: 'youtube', // Nhạc phát từ YouTube (có danh sách ID dự phòng nếu link chính bị chặn nhúng)
+          type: 'youtube',
+          color: '#4ef57b',
           ytIds: ['SEsMhb74jTI', 'j8U06veqxdU', '6t-MjBZspmA']
         },
         {
           id: 'changgiangsinh',
           name: 'Chẳng Giống Giáng Sinh',
           type: 'youtube',
-          ytIds: ['OKK90zbS40w'] // Chẳng Giống Giáng Sinh (Lofi Ver.)
+          color: '#ff9a3c',
+          ytIds: ['OKK90zbS40w']
         },
         {
           id: 'yt_mwq7merx',
           name: 'Người Dưng - J97',
           type: 'youtube',
+          color: '#b47aff',
           ytIds: ['vLa5jvCJMGk']
         },
         {
           id: 'yt_mwq9yd9g',
           name: '12345 x TIM EM x XIN LOI VI DA XUAT HIEN',
           type: 'youtube',
+          color: '#ff7ad9',
           ytIds: ['0OWK5yy-7lM']
         }
       ];
 
-      // Lấy danh sách Video ID YouTube của bài đang chọn
+      function notifyListeners() {
+        listeners.forEach(fn => {
+          try { fn(); } catch (e) {}
+        });
+      }
+
+      function onChange(fn) {
+        if (typeof fn === 'function') listeners.push(fn);
+      }
+
       function getActiveYtIds() {
         const song = SONGS[songIdx];
         return (song && Array.isArray(song.ytIds) && song.ytIds.length)
@@ -1217,7 +1456,33 @@
           : ['SEsMhb74jTI'];
       }
 
-      // Khởi tạo trình phát YouTube ẩn
+      function pickNextIndex() {
+        if (SONGS.length <= 1) return 0;
+        if (!shuffle) {
+          return (songIdx + 1) % SONGS.length;
+        }
+        if (!playHistory.includes(songIdx)) playHistory.push(songIdx);
+        if (playHistory.length >= SONGS.length) {
+          playHistory = [songIdx];
+        }
+        const candidates = [];
+        for (let i = 0; i < SONGS.length; i++) {
+          if (!playHistory.includes(i)) candidates.push(i);
+        }
+        const pool = candidates.length ? candidates : SONGS.map((_, i) => i).filter(i => i !== songIdx);
+        const chosen = pool[Math.floor(Math.random() * pool.length)];
+        playHistory.push(chosen);
+        return chosen;
+      }
+
+      function advanceTrack() {
+        songIdx = pickNextIndex();
+        ytIdIdx = 0;
+        step = 0;
+        start();
+        return songIdx;
+      }
+
       function createYTPlayer() {
         if (ytPlayer || !window.YT || !window.YT.Player) return;
         const ids = getActiveYtIds();
@@ -1229,8 +1494,6 @@
           disablekb: 1,
           fs: 0,
           iv_load_policy: 3,
-          loop: 1,
-          playlist: vid,
           modestbranding: 1,
           playsinline: 1
         };
@@ -1270,11 +1533,15 @@
                 playing = false;
                 syncBtn();
               } else if (e.data === YT.PlayerState.ENDED) {
-                ytPlayer.playVideo(); // Tự động lặp lại khi hết bài
+                if (repeatMode === 'one') {
+                  ytPlayer.seekTo(0, true);
+                  ytPlayer.playVideo();
+                } else {
+                  advanceTrack();
+                }
               }
             },
             onError: function (e) {
-              // Nếu video bị chủ kênh chặn nhúng (lỗi 100/101/150), tự chuyển sang ID dự phòng kế tiếp
               const ids = getActiveYtIds();
               if ((e.data === 101 || e.data === 150 || e.data === 100) && ytIdIdx + 1 < ids.length) {
                 ytIdIdx++;
@@ -1284,6 +1551,10 @@
                 if (wantYtPlay && SONGS[songIdx].type === 'youtube') {
                   ytPlayer.playVideo();
                 }
+              } else {
+                playing = false;
+                wantYtPlay = false;
+                syncBtn();
               }
             }
           }
@@ -1298,7 +1569,6 @@
         createYTPlayer();
       }
 
-      // Khởi tạo bộ tổng hợp âm thanh Web Audio cho 3 bài hộp nhạc
       function initWebAudio() {
         if (ctx) return;
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -1309,7 +1579,6 @@
         startVinylCrackle();
       }
 
-      // Hiệu ứng tiếng đĩa than lách tách nhẹ
       function startVinylCrackle() {
         const bufSize = ctx.sampleRate * 3;
         const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
@@ -1442,6 +1711,17 @@
         const song = SONGS[songIdx];
         if (!playing || song.type === 'youtube') return;
 
+        // 2 vòng điệp khúc trọn vẹn cho mỗi bài hộp nhạc trước khi chuyển bài
+        const totalStepsPerPlay = song.seq.length * 4 * 2;
+        if (step >= totalStepsPerPlay) {
+          if (repeatMode === 'one') {
+            step = 0;
+          } else {
+            advanceTrack();
+            return;
+          }
+        }
+
         const barIdx = Math.floor(step / 4) % song.seq.length;
         const beat = step % 4;
         const item = song.seq[barIdx];
@@ -1474,7 +1754,6 @@
         timer = setTimeout(tick, beatSec * 1000);
       }
 
-      // Bắt đầu phát bài hát đang chọn (tự động chuyển đổi giữa Web Audio và YouTube)
       function start() {
         const song = SONGS[songIdx];
         clearTimeout(timer);
@@ -1509,7 +1788,6 @@
         }
       }
 
-      // Tạm dừng nhạc
       function stop() {
         playing = false;
         wantYtPlay = false;
@@ -1521,21 +1799,31 @@
         syncBtn();
       }
 
-      // Chuyển sang bài kế tiếp trong danh sách SONGS
       function nextSong() {
-        songIdx = (songIdx + 1) % SONGS.length;
-        ytIdIdx = 0;
-        step = 0;
-        start();
-        return songIdx;
+        return advanceTrack();
+      }
+
+      function toggleRepeatMode() {
+        repeatMode = repeatMode === 'all' ? 'one' : 'all';
+        try { localStorage.setItem('cgor_repeat_mode', repeatMode); } catch (e) {}
+        notifyListeners();
+        return repeatMode;
+      }
+
+      function toggleShuffle() {
+        shuffle = !shuffle;
+        playHistory = shuffle ? [songIdx] : [];
+        try { localStorage.setItem('cgor_shuffle', shuffle ? 'true' : 'false'); } catch (e) {}
+        notifyListeners();
+        return shuffle;
       }
 
       function syncBtn() {
         const b = document.getElementById('btn-music');
         if (b) b.setAttribute('aria-pressed', playing ? 'true' : 'false');
+        notifyListeners();
       }
 
-      // Tổng hợp giọng cười trầm ấm "Ho! Ho! Ho!" khi chạm vào ông già Noel
       function playHoHoHo() {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
@@ -1590,10 +1878,24 @@
         stop,
         nextSong,
         playHoHoHo,
+        onChange,
+        toggleRepeatMode,
+        toggleShuffle,
+        getRepeatMode: () => repeatMode,
+        isShuffle: () => shuffle,
         getSongIdx: () => songIdx,
+        getSongColor: () => (SONGS[songIdx] ? SONGS[songIdx].color : '#ffd36b'),
         isPlaying: () => playing,
         getSongs: () => SONGS.map((s, i) => ({ index: i, name: s.name, type: s.type })),
-        selectSong: (i) => { if (i < 0 || i >= SONGS.length) return songIdx; songIdx = i; ytIdIdx = 0; step = 0; start(); return songIdx; },
+        selectSong: (i) => {
+          if (i < 0 || i >= SONGS.length) return songIdx;
+          songIdx = i;
+          ytIdIdx = 0;
+          step = 0;
+          if (shuffle && !playHistory.includes(i)) playHistory.push(i);
+          start();
+          return songIdx;
+        },
         getSongName: () => (SONGS[songIdx] ? SONGS[songIdx].name : ''),
         toggle: () => (playing ? stop() : start())
       };
@@ -1605,16 +1907,13 @@
   <!-- ===================================================================== -->
   <script>
     (function () {
-      // Đường dẫn Web App của Google Apps Script kết nối tới Google Sheets
       const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxrsc-RtFFOPjfbTAjcTsxFcmlUMXPCkRslxr_ZotyQ0XaXHj0TecatX7oRseX22Zs24A/exec";
 
-      // Từ điển đa ngôn ngữ (tên bài hát được lấy trực tiếp từ mảng SONGS nên không cần dịch ở đây)
       const I18N = {
         vi: {
           langBadge: '🌐 VI',
           nameTitle: 'Nhấn để quản lý tài khoản / đổi tên',
           hint: 'Kéo để xoay. Chạm để bắn pháo hoa.',
-          hint2: 'Chạm máy đĩa than bên phải để bật/đổi nhạc.',
           rot: 'góc xoay',
           lights: 'đèn',
           chars: 'ký tự',
@@ -1644,6 +1943,19 @@
             wish: '🎅 Lời chúc',
             gift: '🎁 Đòi quà Riss',
             story: '❄️ Tâm sự'
+          },
+          deck: {
+            title: '💿 Máy đĩa than',
+            now: 'Đang phát',
+            play: '▶ Phát nhạc',
+            pause: '⏸ Tắt nhạc',
+            next: '⏭ Bài tiếp',
+            list: '📋 Danh sách',
+            pick: 'Chọn bài hát',
+            repAll: '🔁 Cả danh sách',
+            repOne: '🔂 Lặp 1 bài',
+            shufOn: '🔀 Trộn: Bật',
+            shufOff: '🔀 Trộn: Tắt'
           },
           modalTitle: 'MÓN QUÀ GIÁNG SINH TỪ RISS ❤️',
           tabs: { guest: 'Khách', login: 'Đăng nhập', register: 'Đăng ký' },
@@ -1699,7 +2011,6 @@
           langBadge: '🌐 EN',
           nameTitle: 'Click to manage account / change name',
           hint: 'Drag to rotate. Tap for sparkles.',
-          hint2: 'Tap the turntable on the right for music.',
           rot: 'rotation',
           lights: 'lights',
           chars: 'letters',
@@ -1729,6 +2040,19 @@
             wish: '🎅 Wish',
             gift: '🎁 Gift Request',
             story: '❄️ Holiday Note'
+          },
+          deck: {
+            title: '💿 Vinyl Turntable',
+            now: 'Now Playing',
+            play: '▶ Play',
+            pause: '⏸ Pause',
+            next: '⏭ Next',
+            list: '📋 Playlist',
+            pick: 'Select a track',
+            repAll: '🔁 Repeat All',
+            repOne: '🔂 Repeat One',
+            shufOn: '🔀 Shuffle: On',
+            shufOff: '🔀 Shuffle: Off'
           },
           modalTitle: 'CHRISTMAS GIFT FROM RISS ❤️',
           tabs: { guest: 'Guest', login: 'Log In', register: 'Sign Up' },
@@ -1784,7 +2108,6 @@
           langBadge: '🌐 中文',
           nameTitle: '点击管理账号 / 修改名字',
           hint: '拖动旋转，点击绽放烟花。',
-          hint2: '点击右侧唱片机播放或切换音乐。',
           rot: '旋转角度',
           lights: '彩灯',
           chars: '字符数',
@@ -1814,6 +2137,19 @@
             wish: '🎅 圣诞祝福',
             gift: '🎁 向 Riss 讨礼物',
             story: '❄️ 悄悄话'
+          },
+          deck: {
+            title: '💿 黑胶唱片机',
+            now: '正在播放',
+            play: '▶ 播放',
+            pause: '⏸ 暂停',
+            next: '⏭ 下一首',
+            list: '📋 歌单',
+            pick: '选择歌曲',
+            repAll: '🔁 列表循环',
+            repOne: '🔂 单曲循环',
+            shufOn: '🔀 随机：开',
+            shufOff: '🔀 随机：关'
           },
           modalTitle: '来自 RISS 的圣诞礼物 ❤️',
           tabs: { guest: '游客访问', login: '登录', register: '注册' },
@@ -1877,7 +2213,6 @@
       window.CGOR_I18N = I18N;
       window.getCGORLang = () => curLang;
 
-      // Quản lý phiên đăng nhập lưu cục bộ
       let currentUser = null;
       let cachedUserIP = '';
 
@@ -2004,7 +2339,6 @@
           .slice(0, 20);
       }
 
-      // Quét IP và gợi ý nhận lại lời chúc cũ chưa có tài khoản
       async function fetchIpAndSuggestions() {
         try {
           const ipRes = await fetch('https://api.ipify.org?format=json');
@@ -2037,7 +2371,6 @@
         regPassInput.focus();
       });
 
-      // Xử lý vào xem ở chế độ Khách
       paneGuest.addEventListener('submit', function (e) {
         e.preventDefault();
         const val = guestNameInput.value.trim();
@@ -2050,7 +2383,6 @@
         if (window.LofiXmas) window.LofiXmas.start();
       });
 
-      // Xử lý Đăng nhập
       paneLogin.addEventListener('submit', async function (e) {
         e.preventDefault();
         showError('');
@@ -2087,7 +2419,6 @@
         btnLogin.disabled = false;
       });
 
-      // Xử lý Đăng ký tài khoản mới
       paneRegister.addEventListener('submit', async function (e) {
         e.preventDefault();
         showError('');
@@ -2128,7 +2459,6 @@
         btnReg.disabled = false;
       });
 
-      // Xử lý đổi tên hiển thị trong Hồ sơ
       profilePane.addEventListener('submit', async function (e) {
         e.preventDefault();
         if (!currentUser) return;
@@ -2177,7 +2507,7 @@
         modal.style.display = 'none';
       }
 
-      // --- Điều khiển đóng/mở độc quyền giữa hộp Đếm ngược & Hộp thư ---
+      // --- Điều khiển đóng/mở độc quyền giữa Đếm ngược, Hộp thư & Máy đĩa than ---
       const langBtn = document.getElementById('lang-btn');
       document.getElementById('refresh-btn').addEventListener('click', function () {
         location.reload();
@@ -2200,9 +2530,15 @@
         mailBtn.classList.remove('active');
       }
 
+      window.closeAllFloatingPanels = function (except) {
+        if (except !== 'cd') closeCountdown();
+        if (except !== 'mail') closeMailbox();
+        if (except !== 'deck' && window.closeDeckPanel) window.closeDeckPanel();
+      };
+
       cdBtn.addEventListener('click', function () {
         const willOpen = !cdBox.classList.contains('open');
-        closeMailbox();
+        window.closeAllFloatingPanels(willOpen ? 'cd' : '');
         if (willOpen) {
           cdBox.classList.add('open');
           cdBtn.classList.add('active');
@@ -2215,7 +2551,7 @@
 
       mailBtn.addEventListener('click', function () {
         const willOpen = !mailbox.classList.contains('open');
-        closeCountdown();
+        window.closeAllFloatingPanels(willOpen ? 'mail' : '');
         if (willOpen) {
           mailbox.classList.add('open');
           mailBtn.classList.add('active');
@@ -2398,7 +2734,7 @@
         if (/Edg\//.test(ua)) browser = 'Edge';
         else if (/Chrome\//.test(ua)) browser = 'Chrome';
         else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) browser = 'Safari';
-        else if (/Firefox/.test(ua)) browser = 'Firefox';
+        else if (/Firefox\//.test(ua)) browser = 'Firefox';
 
         return os + ' - ' + browser + ' (' + screen.width + 'x' + screen.height + ')';
       }
@@ -2516,9 +2852,8 @@
         renderWishes();
 
         try {
-          await fetch(SHEET_API_URL, {
+          const res = await fetch(SHEET_API_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
               action: 'like',
@@ -2527,6 +2862,15 @@
               delta: delta
             })
           });
+          const data = await res.json();
+          if (data && data.ok === false) {
+            // Hoàn tác nếu token hết hạn hoặc server từ chối
+            if (alreadyLiked) likedSet.add(rowKey);
+            else likedSet.delete(rowKey);
+            saveLikedSet();
+            wishes[idx].likes = Math.max(0, (parseInt(wishes[idx].likes, 10) || 0) - delta);
+            renderWishes();
+          }
         } catch (err) {}
       });
 
@@ -2551,8 +2895,7 @@
         document.documentElement.lang = curLang === 'zh' ? 'zh-CN' : curLang;
         langBtn.textContent = tDict.langBadge;
         nameLabel.title = tDict.nameTitle;
-        document.getElementById('hint-1').textContent = tDict.hint;
-        document.getElementById('hint-2').textContent = tDict.hint2;
+        document.getElementById('hint').textContent = tDict.hint;
         document.getElementById('lbl-rot').textContent = tDict.rot;
         document.getElementById('lbl-lights').textContent = tDict.lights;
         document.getElementById('lbl-chars').textContent = tDict.chars;
@@ -2609,6 +2952,9 @@
         renderWishes();
         if (window.updateBarLanguage) {
           window.updateBarLanguage(curLang);
+        }
+        if (window.updateDeckLanguage) {
+          window.updateDeckLanguage();
         }
       }
 
@@ -2718,9 +3064,8 @@
         mbSend.disabled = true;
         mbSend.textContent = '...';
         try {
-          await fetch(SHEET_API_URL, {
+          const res = await fetch(SHEET_API_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
               action: 'wish',
@@ -2730,8 +3075,14 @@
               device: getDeviceInfo()
             })
           });
+          const data = await res.json();
+          if (data && data.ok === false) {
+            alert((I18N[curLang].errors && I18N[curLang].errors[data.error]) || data.error || I18N[curLang].errors.NETWORK);
+          }
+          await loadWishes();
+        } catch (err) {
           setTimeout(loadWishes, 1500);
-        } catch (err) {}
+        }
 
         mbSend.disabled = false;
         mbSend.textContent = I18N[curLang].mbSend;
@@ -2754,7 +3105,6 @@
       const cv = $('c');
       const ctx = cv.getContext('2d');
 
-      // Bảng 18 mã màu cho cây thông, đèn, quả châu, tuyết, cực quang và ông già Noel
       const PAL = [
         '#0d7a33', '#17b848', '#35e866', '#b4ffbe',
         '#ff3b3b', '#ffcf4a', '#4aa3ff', '#ffffff',
@@ -2804,8 +3154,8 @@
         cv.width = W * dpr;
         cv.height = H * dpr;
 
-        const isMobile = W < 520;
-        cw = Math.max(5.2, Math.min(10, W / 76));
+        const isMobile = W < 640;
+        cw = Math.max(5.0, Math.min(10, W / 76));
         chh = cw * 1.55;
         cols = Math.ceil(W / cw);
         rows = Math.ceil(H / chh);
@@ -2815,9 +3165,10 @@
         colr = new Int16Array(N);
         zb = new Float32Array(N);
 
-        treeH = Math.min(H * (isMobile ? 0.46 : 0.55), W * 1.25);
+        // Thu nhỏ nhẹ cây thông trên mobile để thoáng không gian cho ông già Noel & máy đĩa than
+        treeH = Math.min(H * (isMobile ? 0.39 : 0.55), W * (isMobile ? 1.05 : 1.25));
         cx = W / 2;
-        baseY = H * (isMobile ? 0.68 : 0.72);
+        baseY = H * (isMobile ? 0.64 : 0.72);
         groundRow = Math.floor(baseY / chh);
 
         sky = ctx.createLinearGradient(0, 0, 0, H);
@@ -2829,7 +3180,6 @@
         msg = m.length * 2 < cols - 4 ? m.split('').join(' ').replace(/ {3}/, '   ') : m;
       }
 
-      // Vẽ 1 ký tự vào lưới Z-buffer
       function put(c, r, ch, k, z, a = 1) {
         const lv = Math.round(a * 8);
         if (lv <= 0 || c < 0 || r < 0 || c >= cols || r >= rows) return;
@@ -2926,7 +3276,6 @@
         }
       }
 
-      // Vẽ Ông già Noel vẫy tay bên trái cây thông
       let santaZone = null;
       let hohoTimer = 0;
       let glowsRef = null;
@@ -2999,7 +3348,6 @@
         }
       }
 
-      // Vẽ các hộp quà dưới gốc cây
       function box(c0, w, h, rb, k, al) {
         const r0 = rb - h + 1;
         const B = '%#X@';
@@ -3020,7 +3368,6 @@
       let ang = 0, angV = 0, t = 0, drag = false, lastX = 0, lastT = 0, moved = 0;
       let spawnAcc = 0, ss = null, nextSS = 2.5, fps = 60, hudT = 0, litCount = 0, fw = 2;
 
-      // Vòng lặp render chính 60fps
       function frame(now) {
         requestAnimationFrame(frame);
         const dt = Math.min(0.05, (now - (frame.l || now)) / 1000);
@@ -3054,13 +3401,11 @@
         const c0 = (cx / cw) | 0;
         const wb = Math.round((0.37 * treeH) / cw);
 
-        // Sao trời lấp lánh
         for (const s of BG) {
           const v = Math.sin(t * s.sp + s.ph);
           put((s.fx * cols) | 0, (s.fy * rows) | 0, v > 0.5 ? '+' : v > -0.3 ? '.' : '*', v > 0.2 ? 7 : 13, -9);
         }
 
-        // Cực quang (Aurora)
         if (F.aurora > 0.02) {
           const hb = (rows * 0.4) | 0;
           for (let c = 0; c < cols; c++) {
@@ -3073,7 +3418,6 @@
           }
         }
 
-        // Sao băng
         nextSS -= dt;
         if (!ss && nextSS <= 0) {
           ss = { x: rnd() * cols * 0.5, y: rnd() * rows * 0.18, t: 0 };
@@ -3089,7 +3433,6 @@
           if (hx > cols + 14 || hy > rows) ss = null;
         }
 
-        // Nền tuyết dưới đất
         for (let r = groundRow; r < rows; r++) {
           for (let c = 0; c < cols; c++) {
             const h = hs(c, r * 3);
@@ -3099,7 +3442,6 @@
           }
         }
 
-        // Thân tán lá cây thông 3D
         const rTop = Math.floor((baseY - treeH) / chh) - 1;
         const rBot = Math.floor(baseY / chh);
         for (let r = rTop; r <= rBot; r++) {
@@ -3149,7 +3491,6 @@
           }
         }
 
-        // Quả châu trang trí
         for (const o of OR) {
           const psi = wrap(o.th + ang);
           const cs = Math.cos(psi);
@@ -3177,7 +3518,6 @@
           glows.push(px, py, o.k, a * 0.6);
         }
 
-        // Dây đèn nhấp nháy
         litCount = 0;
         for (const l of LT) {
           const s = cl(F.lights * 1.4 - l.f * 0.4);
@@ -3207,7 +3547,6 @@
           glows.push(px, py, l.k, v * a);
         }
 
-        // Ngôi sao trên đỉnh cây thông
         const sA = F.star;
         if (sA > 0.03) {
           const Ro = treeH * 0.06;
@@ -3248,21 +3587,19 @@
           glows.push(sx, sy, 11, (0.9 + 0.2 * pu) * sA * 1.3);
         }
 
-        // Hộp quà & Ông già Noel
         for (const [o, w, h, k, i] of [[-wb - 1, 9, 5, 6, 0], [-6, 13, 3, 4, 1], [wb - 9, 9, 3, 17, 2]]) {
           const a = cl(F.gifts * 1.4 - i * 0.12);
           if (a > 0.03) box(c0 + o, w, h, groundRow + 2, k, a);
         }
 
         if (F.santa > 0.03) {
-          const santaOffset = W < 640 ? wb + 9 : wb + 12;
-          const santaCol = Math.max(6, c0 - santaOffset);
+          const santaOffset = W < 640 ? wb + 6 : wb + 12;
+          const santaCol = Math.max(5, c0 - santaOffset);
           drawSanta(santaCol, groundRow + 2, F.santa);
         } else {
           santaZone = null;
         }
 
-        // Tuyết rơi
         for (const f of SN) {
           if (!f.on && f.f < F.snow) {
             f.on = true;
@@ -3283,7 +3620,6 @@
           put(((c % cols) + cols) % cols, (f.fy * rows) | 0, f.z > 0.3 ? '+' : f.z > -0.2 ? '*' : '.', f.z > 0.3 ? 7 : f.z > -0.2 ? 10 : 9, f.z);
         }
 
-        // Hạt lấp lánh & Pháo hoa
         spawnAcc += dt * 24 * F.sparkle * cl(bp - 0.6);
         while (spawnAcc > 1) {
           spawnAcc--;
@@ -3313,7 +3649,6 @@
           put(p.c | 0, p.r | 0, SPC[Math.min(4, (Math.sin((Math.PI * p.a) / p.l) * 4.99) | 0)], p.k, 12);
         }
 
-        // Dòng chữ MERRY CHRISTMAS chạy dưới chân cây
         const shown = Math.min(msg.length, (mT * 9) | 0);
         const mr = groundRow + 4;
         if (mr < rows - 1) {
@@ -3325,7 +3660,6 @@
           }
         }
 
-        // Xuất khung hình lên Canvas
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.globalCompositeOperation = 'source-over';
         ctx.globalAlpha = 1;
@@ -3378,7 +3712,6 @@
         }
       }
 
-      // Tương tác kéo xoay cây thông & chạm bắn pháo hoa / chạm ông già Noel
       cv.addEventListener('pointerdown', e => {
         drag = true;
         moved = 0;
@@ -3428,7 +3761,6 @@
       addEventListener('blur', () => { drag = false; });
       document.addEventListener('visibilitychange', () => { drag = false; });
 
-      // Tạo thanh nút bấm điều khiển phía dưới màn hình
       const bar = $('bar');
       const barRefs = {};
 
@@ -3447,18 +3779,17 @@
         return b;
       }
 
+      // Ẩn 2 nút nhạc cũ dưới #bar vì đã có máy đĩa than điều khiển trực quan bên phải
       const musicBtn = mk('music', () => {
         if (window.LofiXmas) window.LofiXmas.toggle();
       });
       musicBtn.id = 'btn-music';
-      musicBtn.setAttribute('aria-pressed', 'false');
+      musicBtn.style.display = 'none';
 
-      mk('song', b => {
-        if (window.LofiXmas) {
-          window.LofiXmas.nextSong();
-          b.textContent = '🎵 ' + window.LofiXmas.getSongName();
-        }
+      const songBtn = mk('song', () => {
+        if (window.LofiXmas) window.LofiXmas.nextSong();
       });
+      songBtn.style.display = 'none';
 
       const replay = () => { bp = -0.25; mT = 0; };
       mk('replay', replay);
@@ -3501,486 +3832,273 @@
   </script>
 
   <!-- ===================================================================== -->
-  <!-- KHỐI 4: MÁY ĐĨA THAN HI-FI + BẢNG ĐIỀU KHIỂN NHẠC (tự xóa 2 nút cũ)   -->
+  <!-- KHỐI 4: MÁY ĐĨA THAN HI-FI & BẢNG TÙY CHỌN DANH SÁCH NHẠC             -->
   <!-- ===================================================================== -->
-  <style>
-    #deck-canvas {
-      position: fixed;
-      z-index: 5;
-      opacity: 0;
-      pointer-events: none;
-      cursor: pointer;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-      transition: opacity 1.2s ease, transform 0.2s ease;
-    }
-    #deck-canvas.show { opacity: 1; pointer-events: auto; }
-    #deck-canvas:hover { transform: scale(1.04); }
-    #deck-canvas:active { transform: scale(0.98); }
-    #deck-canvas:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 8px; }
-
-    #deck-panel {
-      position: fixed;
-      z-index: 45;
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-      width: min(280px, calc(100vw - 16px));
-      background: rgba(13, 22, 51, 0.94);
-      border: 1px solid #ffd36b66;
-      border-radius: 14px;
-      padding: 12px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      overflow: hidden;
-    }
-    #deck-panel.open { display: flex; }
-
-    .dp-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--gold);
-    }
-    .dp-x { background: none; border: none; color: var(--dim); font-size: 14px; padding: 2px 6px; }
-    .dp-x:hover { color: var(--fg); }
-
-    .dp-now {
-      background: #070e24;
-      border: 1px solid #1e2d59;
-      border-radius: 10px;
-      padding: 8px 10px;
-      min-width: 0;
-    }
-    .dp-label { font-size: 9.5px; color: var(--dim); margin-bottom: 3px; }
-    .dp-song {
-      font-size: 12.5px;
-      font-weight: 700;
-      color: #4ef57b;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .dp-actions { display: flex; gap: 8px; }
-    .dp-btn {
-      flex: 1;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 9px 8px;
-      border-radius: 10px;
-      border: 1px solid var(--gold);
-      background: #1d2f63;
-      color: var(--gold);
-    }
-    .dp-btn:hover { background: #263d80; }
-    .dp-btn.alt { border-color: #52f0ff; color: #52f0ff; background: #101b3a; }
-    .dp-btn.alt:hover, .dp-btn.alt[aria-pressed="true"] { background: #153459; }
-
-    .dp-list {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      overflow-y: auto;
-      min-height: 0;
-      padding-right: 2px;
-    }
-    .dp-list.open { display: flex; }
-    .dp-pick { font-size: 10px; color: var(--dim); margin: 2px 0 0; }
-    .dp-item {
-      width: 100%;
-      text-align: left;
-      font-size: 11.5px;
-      border-radius: 8px;
-      padding: 7px 10px;
-      background: #070e24;
-      border: 1px solid #1e2d59;
-      color: var(--fg);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .dp-item:hover { border-color: #52f0ff; }
-    .dp-item.active { border-color: var(--gold); color: var(--gold); font-weight: 700; }
-  </style>
-
-  <canvas id="deck-canvas" tabindex="0" role="button"></canvas>
-
-  <div id="deck-panel" role="dialog">
-    <div class="dp-head">
-      <span id="dp-title">💿 Máy đĩa than</span>
-      <button type="button" class="dp-x" id="dp-close">✕</button>
-    </div>
-    <div class="dp-now">
-      <div class="dp-label" id="dp-now-label">Đang phát</div>
-      <div class="dp-song" id="dp-song">-</div>
-    </div>
-    <div class="dp-actions">
-      <button type="button" class="dp-btn" id="dp-toggle">⏸ Tắt nhạc</button>
-      <button type="button" class="dp-btn alt" id="dp-change" aria-pressed="false">🔀 Đổi bài</button>
-    </div>
-    <p class="dp-pick" id="dp-pick" style="display:none">Chọn bài hát</p>
-    <div class="dp-list" id="dp-list"></div>
-  </div>
-
   <script>
     (function () {
-      const Lofi = window.LofiXmas;
-      if (!Lofi || !Lofi.selectSong || !Lofi.getSongs || !Lofi.isPlaying) {
-        console.warn('Máy đĩa than: chưa cập nhật khối nhạc (thiếu isPlaying / getSongs / selectSong).');
-        return;
-      }
+      const deckCanvas = document.getElementById('deck-canvas');
+      const dCtx = deckCanvas.getContext('2d');
+      const deckPanel = document.getElementById('deck-panel');
+      const dpClose = document.getElementById('dp-close');
+      const dpSong = document.getElementById('dp-song');
+      const dpToggle = document.getElementById('dp-toggle');
+      const dpNext = document.getElementById('dp-next');
+      const dpChange = document.getElementById('dp-change');
+      const dpRepeat = document.getElementById('dp-repeat');
+      const dpShuffle = document.getElementById('dp-shuffle');
+      const dpPick = document.getElementById('dp-pick');
+      const dpList = document.getElementById('dp-list');
 
-      const $ = id => document.getElementById(id);
-      const deck = $('deck-canvas');
-      const dctx = deck.getContext('2d');
-      const panel = $('deck-panel');
-      const listEl = $('dp-list');
-      const bar = $('bar');
+      let discAngle = 0;
+      let armAngle = 0;
+      let lastT = performance.now();
 
-      // ---------- Chữ trên bảng điều khiển (3 ngôn ngữ) ----------
-      const TXT = {
-        vi: { title: '💿 Máy đĩa than', playing: 'Đang phát', paused: 'Đang tạm dừng', off: '⏸ Tắt nhạc', on: '▶ Bật nhạc', change: '🔀 Đổi bài', pick: 'Chọn bài hát', aria: 'Máy đĩa than: bật bảng điều khiển nhạc' },
-        en: { title: '💿 Turntable', playing: 'Now playing', paused: 'Paused', off: '⏸ Stop music', on: '▶ Play music', change: '🔀 Change song', pick: 'Pick a song', aria: 'Turntable: open music controls' },
-        zh: { title: '💿 唱片机', playing: '正在播放', paused: '已暂停', off: '⏸ 关闭音乐', on: '▶ 播放音乐', change: '🔀 换歌', pick: '选择歌曲', aria: '唱片机：打开音乐控制' }
+      setTimeout(() => deckCanvas.classList.add('show'), 350);
+
+      window.closeDeckPanel = function () {
+        deckPanel.classList.remove('open');
       };
-      const lang = () => (TXT[window.getCGORLang ? window.getCGORLang() : 'vi'] ? (window.getCGORLang ? window.getCGORLang() : 'vi') : 'vi');
-      const T = () => TXT[lang()];
 
-      // ---------- Bố cục: đối xứng ông già Noel qua trục giữa, cùng đường nền ----------
-      const DECK_W = 15;       // 15 cột ký tự cho mâm đĩa, cần kim, loa & đèn equalizer
-      const DECK_H = 12;       // 3 hàng nốt nhạc/hào quang + 9 hàng thân máy
-      const R0 = 3;            // hàng bắt đầu của máy đĩa than
-      let cw = 8, chh = 12, dpr = 1, cssW = 0, cssH = 0, deckLeft = 0, deckTop = 0;
-
-      function layout() {
-        const W = innerWidth, H = innerHeight;
-        const isMobile = W < 520;
-        cw = Math.max(5.2, Math.min(10, W / 76));
-        chh = cw * 1.55;
-        const cols = Math.ceil(W / cw);
-        const treeH = Math.min(H * (isMobile ? 0.46 : 0.55), W * 1.25);
-        const baseY = H * (isMobile ? 0.68 : 0.72);
-        const groundRow = Math.floor(baseY / chh);
-        const c0 = (W / 2 / cw) | 0;
-        const wb = Math.round((0.37 * treeH) / cw);
-
-        const santaCol = Math.max(6, c0 - (W < 640 ? wb + 9 : wb + 12));
-        const mirrorLeft = (cols - 1 - santaCol) - Math.floor(DECK_W / 2);
-        const leftCol = Math.min(Math.max(mirrorLeft, c0 + wb - 1), cols - DECK_W);
-        const rb = groundRow + 2; // thẳng hàng với chân ông già Noel & hộp quà
-
-        dpr = Math.min(devicePixelRatio || 1, 2);
-        cssW = DECK_W * cw;
-        cssH = DECK_H * chh;
-        deckLeft = leftCol * cw;
-        deckTop = (rb - (DECK_H - 1)) * chh;
-
-        deck.style.left = deckLeft + 'px';
-        deck.style.top = deckTop + 'px';
-        deck.style.width = cssW + 'px';
-        deck.style.height = cssH + 'px';
-        deck.width = Math.round(cssW * dpr);
-        deck.height = Math.round(cssH * dpr);
-        positionPanel();
+      function toggleDeckPanel() {
+        const willOpen = !deckPanel.classList.contains('open');
+        if (window.closeAllFloatingPanels) {
+          window.closeAllFloatingPanels(willOpen ? 'deck' : '');
+        }
+        deckPanel.classList.toggle('open', willOpen);
+        if (willOpen) syncDeckUI();
       }
 
-      function positionPanel() {
-        const W = innerWidth, H = innerHeight;
-        const pw = Math.min(280, W - 16);
-        const cx = deckLeft + cssW / 2;
-        panel.style.left = Math.min(Math.max(cx - pw / 2, 8), W - pw - 8) + 'px';
-        panel.style.bottom = (H - deckTop + 8) + 'px';
-        panel.style.maxHeight = Math.max(170, deckTop - 110) + 'px';
-      }
-
-      // ---------- Vẽ máy đĩa than Hi-Fi cổ điển bằng ký tự ASCII ----------
-      const C = {
-        rim: '#eaf4ff',
-        edge: '#8aa0c8',
-        wood: '#a46834',
-        woodDark: '#c4301f',
-        gold: '#ffcf4a',
-        amber: '#ff9a3c',
-        red: '#ff3b3b',
-        white: '#ffffff',
-        cyan: '#52f0ff',
-        pink: '#ff7ad9',
-        dim: '#586c99',
-        green: '#4ef57b'
-      };
-      const GLINT_L = ['/', '|', '\\', '~'];
-      const GLINT_R = ['\\', '|', '/', '~'];
-      const EQ_BARS = ['_', '.', '-', '=', '^', '#'];
-
-      function draw(now) {
-        requestAnimationFrame(draw);
-        const t = now / 1000;
-        const playing = Lofi.isPlaying();
-
-        dctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        dctx.clearRect(0, 0, cssW, cssH);
-
-        // Ánh sáng tỏa nhẹ quanh đĩa than và bệ gỗ
-        const gX = 6.5 * cw;
-        const gY = (R0 + 3.2) * chh;
-        const gR = 7.2 * cw;
-        const pulse = playing ? (0.34 + 0.1 * Math.sin(t * 4.5)) : 0.16;
-        const rad = dctx.createRadialGradient(gX, gY, cw * 0.5, gX, gY, gR);
-        rad.addColorStop(0, playing ? 'rgba(255, 207, 74, ' + pulse.toFixed(2) + ')' : 'rgba(82, 240, 255, 0.14)');
-        rad.addColorStop(0.55, playing ? 'rgba(82, 240, 255, 0.14)' : 'rgba(138, 160, 200, 0.05)');
-        rad.addColorStop(1, 'rgba(5, 10, 26, 0)');
-        dctx.fillStyle = rad;
-        dctx.fillRect(0, 0, cssW, cssH);
-
-        dctx.font = '700 ' + (cw / 0.6).toFixed(1) + 'px "JetBrains Mono",ui-monospace,Menlo,monospace';
-        dctx.textAlign = 'center';
-        dctx.textBaseline = 'middle';
-
-        const put = (c, r, ch, color, a) => {
-          dctx.globalAlpha = a == null ? 1 : a;
-          dctx.fillStyle = color;
-          dctx.fillText(ch, (c + 0.5) * cw, (R0 + r + 0.5) * chh);
-        };
-        const str = (r, c0, s, color, a) => {
-          for (let i = 0; i < s.length; i++) if (s[i] !== ' ') put(c0 + i, r, s[i], color, a);
-        };
-
-        const f = Math.floor(t * 8);
-
-        // --- Hàng 0: Viền trên đĩa than + đối trọng cần kim ---
-        str(0, 3, '.-----.', C.rim);
-        put(13, 0, 'o', C.amber);
-
-        // --- Hàng 1: Rãnh đĩa trên + trục xoay cần kim (Gimbal) ---
-        put(2, 1, '/', C.rim);
-        str(1, 4, '.---.', playing ? C.cyan : C.edge, playing ? 0.95 : 0.75);
-        put(10, 1, '\\', C.rim);
-        put(12, 1, '(', C.gold);
-        put(13, 1, 'O', playing ? C.red : C.amber);
-        put(14, 1, ')', C.gold);
-
-        // --- Hàng 2: Tâm đĩa than quay, nhãn đĩa & cần kim hạ xuống rãnh ---
-        put(1, 2, '(', C.rim);
-        put(2, 2, playing ? GLINT_L[f % 4] : ':', playing ? C.cyan : C.dim);
-        put(3, 2, playing ? GLINT_R[(f + 1) % 4] : '.', C.rim, playing ? 0.95 : 0.55);
-        put(4, 2, '(', C.red);
-        put(5, 2, playing && (f % 2 === 0) ? '*' : '@', C.gold);
-        put(6, 2, 'o', C.white);
-        put(7, 2, playing && (f % 2 === 1) ? '*' : '@', C.gold);
-        put(8, 2, ')', C.red);
-        put(9, 2, playing ? GLINT_L[(f + 2) % 4] : '.', C.rim, playing ? 0.95 : 0.55);
-        put(10, 2, ')', C.rim);
-
-        if (playing) {
-          // Cần kim hạ xuống rãnh đĩa + đầu kim phát sáng
-          put(10, 2, '*', C.gold);
-          put(11, 2, '=', C.cyan);
-          put(12, 2, '/', C.white);
-        } else {
-          // Cần kim gác trên giá đỡ bên phải
-          put(13, 2, '|', C.edge, 0.85);
+      deckCanvas.addEventListener('click', toggleDeckPanel);
+      deckCanvas.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleDeckPanel();
         }
+      });
 
-        // --- Hàng 3: Viền dưới đĩa + mặt trên thân gỗ ---
-        str(3, 0, '.-', C.wood);
-        put(2, 3, "'", C.rim);
-        str(3, 4, "'---'", playing ? C.cyan : C.edge, playing ? 0.9 : 0.75);
-        put(10, 3, playing ? "'" : 'v', playing ? C.rim : C.cyan);
-        str(3, 11, '-.-.', C.wood);
+      dpClose.addEventListener('click', () => {
+        deckPanel.classList.remove('open');
+      });
 
-        // --- Hàng 4: Vành đèn Strobe chạy quanh mâm đĩa + nút chỉnh tốc độ ---
-        put(0, 4, '|', C.wood);
-        for (let i = 0; i < 9; i++) {
-          const lit = playing && ((i + f) % 2 === 0);
-          put(2 + i, 4, lit ? ':' : '.', lit ? C.gold : C.dim, lit ? 1 : 0.65);
-        }
-        put(12, 4, '|', C.wood);
-        put(13, 4, 'o', playing ? C.cyan : C.dim);
-        put(14, 4, '|', C.wood);
+      dpToggle.addEventListener('click', () => {
+        if (window.LofiXmas) window.LofiXmas.toggle();
+      });
 
-        // --- Hàng 5: Bảng điều khiển mặt trước (Loa lưới đồng + Equalizer + Đèn LED) ---
-        put(0, 5, '|', C.wood);
-        put(2, 5, '[', C.gold);
-        for (let i = 0; i < 3; i++) {
-          const spk = playing && ((f + i) % 2 === 0);
-          put(3 + i, 5, spk ? '#' : ':', spk ? C.amber : C.gold, spk ? 0.95 : 0.7);
-        }
-        put(6, 5, ']', C.gold);
+      dpNext.addEventListener('click', () => {
+        if (window.LofiXmas) window.LofiXmas.nextSong();
+      });
 
-        for (let i = 0; i < 3; i++) {
-          const lv = playing ? Math.floor((Math.sin(t * 8.5 + i * 1.9) * 0.5 + 0.5) * 5.99) : 0;
-          const eqCol = lv >= 4 ? C.red : lv >= 2 ? C.gold : C.green;
-          put(8 + i, 5, playing ? EQ_BARS[lv] : '_', eqCol, playing ? 1 : 0.55);
-        }
+      dpChange.addEventListener('click', () => {
+        const isOpen = dpList.classList.toggle('open');
+        dpChange.setAttribute('aria-pressed', isOpen ? 'true' : 'false');
+        dpPick.style.display = isOpen ? 'block' : 'none';
+      });
 
-        put(12, 5, playing ? '@' : '*', playing ? C.green : C.red);
-        put(13, 5, 'o', C.rim, 0.85);
-        put(14, 5, '|', C.wood);
+      dpRepeat.addEventListener('click', () => {
+        if (window.LofiXmas) window.LofiXmas.toggleRepeatMode();
+      });
 
-        // --- Hàng 6: Nẹp gỗ đỏ gụ & chỉ vàng trang trí ---
-        put(0, 6, '|', C.wood);
-        for (let i = 1; i <= 13; i++) {
-          put(i, 6, i % 4 === 0 ? '+' : '=', i % 4 === 0 ? C.gold : C.woodDark, 0.95);
-        }
-        put(14, 6, '|', C.wood);
+      dpShuffle.addEventListener('click', () => {
+        if (window.LofiXmas) window.LofiXmas.toggleShuffle();
+      });
 
-        // --- Hàng 7: Đáy khung gỗ ---
-        str(7, 0, "'-------------'", C.wood);
-
-        // --- Hàng 8: Chân đế chống rung mạ vàng ---
-        str(8, 2, '[=]', C.gold, 0.9);
-        str(8, 10, '[=]', C.gold, 0.9);
-
-        // --- Nốt nhạc & tia sáng bay lên khi đang phát ---
-        if (playing) {
-          const noteCols = [C.gold, C.cyan, C.pink, C.green];
-          const glyphs = ['\u266A', '\u266B', '\u266C', '\u266A'];
-          for (let i = 0; i < 4; i++) {
-            const ph = (t * 0.68 + i * 0.25) % 1;
-            const y = (R0 - 0.15 - ph * 2.55) * chh;
-            const x = (2.6 + i * 2.7 + Math.sin(t * 2.4 + i * 1.8) * 0.75) * cw;
-            dctx.globalAlpha = Math.sin(ph * Math.PI);
-            dctx.fillStyle = noteCols[i];
-            dctx.fillText(glyphs[i], x, y);
-          }
-          // Tia lấp lánh nhỏ quanh đĩa
-          if (Math.sin(t * 6) > 0.2) put(1, 0, '*', C.gold, 0.85);
-          if (Math.cos(t * 5) > 0.2) put(11, 0, '+', C.cyan, 0.85);
-        }
-        dctx.globalAlpha = 1;
-      }
-
-      // ---------- Bảng điều khiển ----------
-      let listOpen = false;
-
-      function renderStatic() {
-        const tx = T();
-        $('dp-title').textContent = tx.title;
-        $('dp-change').textContent = tx.change;
-        $('dp-pick').textContent = tx.pick;
-        deck.setAttribute('aria-label', tx.aria);
-        deck.title = tx.title;
-      }
-
-      function renderState() {
-        const tx = T();
-        const playing = Lofi.isPlaying();
-        $('dp-now-label').textContent = playing ? tx.playing : tx.paused;
-        $('dp-song').textContent = Lofi.getSongName() || '-';
-        $('dp-toggle').textContent = playing ? tx.off : tx.on;
-        $('dp-change').setAttribute('aria-pressed', listOpen ? 'true' : 'false');
-        $('dp-pick').style.display = listOpen ? 'block' : 'none';
-        listEl.classList.toggle('open', listOpen);
-
-        if (listOpen) {
-          const cur = Lofi.getSongIdx();
-          const songs = Lofi.getSongs();
-          if (listEl.childElementCount !== songs.length) {
-            listEl.innerHTML = '';
-            songs.forEach(s => {
-              const b = document.createElement('button');
-              b.type = 'button';
-              b.className = 'dp-item';
-              b.dataset.index = s.index;
-              b.textContent = (s.index + 1) + '. ' + s.name;
-              listEl.appendChild(b);
-            });
-          }
-          Array.prototype.forEach.call(listEl.children, (b, i) => {
-            const active = i === cur;
-            b.classList.toggle('active', active);
-            const s = songs[i];
-            b.textContent = (active ? (Lofi.isPlaying() ? '\u25B6 ' : '\u23F8 ') : '') + (i + 1) + '. ' + (s ? s.name : '');
+      function buildPlaylistItems() {
+        if (!window.LofiXmas) return;
+        const songs = window.LofiXmas.getSongs();
+        const curIdx = window.LofiXmas.getSongIdx();
+        dpList.innerHTML = '';
+        songs.forEach(s => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'dp-item' + (s.index === curIdx ? ' active' : '');
+          btn.textContent = (s.index + 1) + '. ' + s.name;
+          btn.addEventListener('click', () => {
+            window.LofiXmas.selectSong(s.index);
           });
+          dpList.appendChild(btn);
+        });
+      }
+
+      function syncDeckUI() {
+        if (!window.LofiXmas) return;
+        const lang = window.getCGORLang ? window.getCGORLang() : 'vi';
+        const dDict = (window.CGOR_I18N && window.CGOR_I18N[lang]) ? window.CGOR_I18N[lang].deck : null;
+        const isPlaying = window.LofiXmas.isPlaying();
+        const repMode = window.LofiXmas.getRepeatMode();
+        const isShuf = window.LofiXmas.isShuffle();
+
+        dpSong.textContent = window.LofiXmas.getSongName() || '-';
+
+        if (dDict) {
+          document.getElementById('dp-title').textContent = dDict.title;
+          document.getElementById('dp-now-label').textContent = dDict.now;
+          dpToggle.textContent = isPlaying ? dDict.pause : dDict.play;
+          dpNext.textContent = dDict.next;
+          dpChange.textContent = dDict.list;
+          dpPick.textContent = dDict.pick;
+          dpRepeat.textContent = repMode === 'one' ? dDict.repOne : dDict.repAll;
+          dpShuffle.textContent = isShuf ? dDict.shufOn : dDict.shufOff;
         }
+
+        dpRepeat.classList.toggle('active', repMode === 'one');
+        dpShuffle.classList.toggle('active', isShuf);
+        dpShuffle.setAttribute('aria-pressed', isShuf ? 'true' : 'false');
+
+        buildPlaylistItems();
       }
 
-      function closeOthers() {
-        const mb = $('mailbox'), cd = $('cd-box');
-        if (mb && mb.classList.contains('open')) $('mb-close').click();
-        if (cd && cd.classList.contains('open')) $('cd-close').click();
+      window.updateDeckLanguage = syncDeckUI;
+      if (window.LofiXmas && window.LofiXmas.onChange) {
+        window.LofiXmas.onChange(syncDeckUI);
+      }
+      syncDeckUI();
+
+      // Đóng bảng điều khiển nhạc khi chạm ra ngoài vùng máy đĩa than & bảng
+      document.addEventListener('pointerdown', (e) => {
+        if (!deckPanel.classList.contains('open')) return;
+        if (deckPanel.contains(e.target) || e.target === deckCanvas) return;
+        deckPanel.classList.remove('open');
+      });
+
+      function drawDeck(now) {
+        const dt = Math.min(0.05, (now - lastT) / 1000);
+        lastT = now;
+
+        const rect = deckCanvas.getBoundingClientRect();
+        const size = Math.max(80, Math.round(rect.width || 132));
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        if (deckCanvas.width !== size * dpr || deckCanvas.height !== size * dpr) {
+          deckCanvas.width = size * dpr;
+          deckCanvas.height = size * dpr;
+        }
+
+        dCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        dCtx.clearRect(0, 0, size, size);
+
+        const isPlaying = window.LofiXmas ? window.LofiXmas.isPlaying() : false;
+        const labelCol = window.LofiXmas ? window.LofiXmas.getSongColor() : '#ffd36b';
+
+        if (isPlaying) {
+          discAngle = (discAngle + dt * 2.4) % (Math.PI * 2);
+          armAngle += (1 - armAngle) * 0.1;
+        } else {
+          armAngle += (0 - armAngle) * 0.1;
+        }
+
+        const pad = size * 0.06;
+        const box = size - pad * 2;
+        const rCorner = size * 0.14;
+
+        dCtx.save();
+        dCtx.beginPath();
+        dCtx.roundRect(pad, pad, box, box, rCorner);
+        dCtx.fillStyle = 'rgba(13, 22, 51, 0.92)';
+        dCtx.fill();
+        dCtx.lineWidth = 1.5;
+        dCtx.strokeStyle = isPlaying ? '#ffd36b' : '#2a3b70';
+        if (isPlaying) {
+          dCtx.shadowColor = 'rgba(255, 211, 107, 0.35)';
+          dCtx.shadowBlur = 12;
+        }
+        dCtx.stroke();
+        dCtx.restore();
+
+        const cx = size * 0.45;
+        const cy = size * 0.52;
+        const discR = size * 0.33;
+
+        dCtx.save();
+        dCtx.translate(cx, cy);
+        dCtx.rotate(discAngle);
+
+        dCtx.beginPath();
+        dCtx.arc(0, 0, discR, 0, Math.PI * 2);
+        dCtx.fillStyle = '#090d16';
+        dCtx.fill();
+        dCtx.lineWidth = 1.2;
+        dCtx.strokeStyle = '#36497a';
+        dCtx.stroke();
+
+        [0.84, 0.70, 0.56].forEach(ratio => {
+          dCtx.beginPath();
+          dCtx.arc(0, 0, discR * ratio, 0, Math.PI * 2);
+          dCtx.strokeStyle = 'rgba(207, 227, 255, 0.14)';
+          dCtx.lineWidth = 0.8;
+          dCtx.stroke();
+        });
+
+        dCtx.beginPath();
+        dCtx.arc(0, 0, discR * 0.78, -0.5, 0.35);
+        dCtx.strokeStyle = 'rgba(82, 240, 255, 0.32)';
+        dCtx.lineWidth = 2;
+        dCtx.stroke();
+
+        dCtx.beginPath();
+        dCtx.arc(0, 0, discR * 0.34, 0, Math.PI * 2);
+        dCtx.fillStyle = labelCol;
+        dCtx.fill();
+
+        dCtx.beginPath();
+        dCtx.arc(discR * 0.18, 0, discR * 0.055, 0, Math.PI * 2);
+        dCtx.fillStyle = '#050a1a';
+        dCtx.fill();
+
+        dCtx.beginPath();
+        dCtx.arc(0, 0, discR * 0.075, 0, Math.PI * 2);
+        dCtx.fillStyle = '#eaf4ff';
+        dCtx.fill();
+        dCtx.restore();
+
+        dCtx.beginPath();
+        dCtx.arc(pad + size * 0.11, pad + size * 0.11, size * 0.026, 0, Math.PI * 2);
+        dCtx.fillStyle = isPlaying ? '#4ef57b' : '#ff5c7c';
+        dCtx.fill();
+
+        const pivotX = pad + box * 0.82;
+        const pivotY = pad + box * 0.22;
+        const armLen = box * 0.50;
+        const theta = 0.18 + armAngle * 0.44;
+
+        dCtx.save();
+        dCtx.translate(pivotX, pivotY);
+        dCtx.rotate(theta);
+
+        dCtx.beginPath();
+        dCtx.arc(0, 0, size * 0.052, 0, Math.PI * 2);
+        dCtx.fillStyle = '#243668';
+        dCtx.fill();
+        dCtx.strokeStyle = '#ffd36b';
+        dCtx.lineWidth = 1.2;
+        dCtx.stroke();
+
+        dCtx.beginPath();
+        dCtx.moveTo(0, 0);
+        dCtx.lineTo(-armLen * 0.22, armLen);
+        dCtx.strokeStyle = '#dce8ff';
+        dCtx.lineWidth = Math.max(1.8, size * 0.018);
+        dCtx.lineCap = 'round';
+        dCtx.stroke();
+
+        dCtx.fillStyle = '#ffd36b';
+        dCtx.fillRect(-armLen * 0.22 - size * 0.025, armLen - size * 0.02, size * 0.05, size * 0.065);
+        dCtx.restore();
+
+        if (isPlaying) {
+          const floatPhase = (now / 1000) % 1;
+          const noteY = cy - discR * 0.5 - floatPhase * (size * 0.24);
+          const noteX = cx + Math.sin(now / 320) * (size * 0.07);
+          dCtx.globalAlpha = 1 - floatPhase;
+          dCtx.fillStyle = '#52f0ff';
+          dCtx.font = '700 ' + Math.round(size * 0.12) + 'px "JetBrains Mono", monospace';
+          dCtx.fillText('♪', noteX, noteY);
+          dCtx.globalAlpha = 1;
+        }
+
+        requestAnimationFrame(drawDeck);
       }
 
-      function openPanel(withList) {
-        closeOthers();
-        listOpen = !!withList;
-        positionPanel();
-        panel.classList.add('open');
-        renderStatic();
-        renderState();
-      }
-
-      function closePanel() {
-        panel.classList.remove('open');
-        listOpen = false;
-      }
-
-      deck.addEventListener('click', () => {
-        if (panel.classList.contains('open')) closePanel(); else openPanel(false);
-      });
-      deck.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); deck.click(); }
-      });
-
-      $('dp-close').addEventListener('click', closePanel);
-
-      $('dp-toggle').addEventListener('click', () => {
-        Lofi.toggle();
-        renderState();
-      });
-
-      $('dp-change').addEventListener('click', () => {
-        listOpen = !listOpen;
-        renderState();
-      });
-
-      listEl.addEventListener('click', e => {
-        const b = e.target.closest('.dp-item');
-        if (!b) return;
-        Lofi.selectSong(parseInt(b.dataset.index, 10));
-        renderState();
-      });
-
-      // Xóa 2 nút nhạc cũ (Nhạc, Bài) ở thanh dưới cùng: máy đĩa than thay thế cả hai
-      if (bar) {
-        const oldMusic = $('btn-music');
-        const oldSong = bar.children[1];
-        if (oldMusic) oldMusic.remove();
-        if (oldSong && oldSong !== oldMusic) oldSong.remove();
-      }
-
-      // Bấm ra ngoài hoặc nhấn Esc thì đóng bảng
-      document.addEventListener('pointerdown', e => {
-        if (!panel.classList.contains('open')) return;
-        if (panel.contains(e.target) || e.target === deck) return;
-        closePanel();
-      });
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') closePanel();
-      });
-
-      // Đổi ngôn ngữ: móc vào hàm cập nhật chữ của thanh nút
-      const origLang = window.updateBarLanguage;
-      window.updateBarLanguage = function (l) {
-        if (origLang) origLang(l);
-        renderStatic();
-        if (panel.classList.contains('open')) renderState();
-      };
-
-      // Làm mới trạng thái khi đang mở bảng (phòng khi nhạc đổi trạng thái từ nơi khác)
-      setInterval(() => { if (panel.classList.contains('open')) renderState(); }, 400);
-
-      addEventListener('resize', layout);
-      layout();
-      renderStatic();
-      requestAnimationFrame(draw);
-
-      // Hiện máy đĩa than sau khi cây thông dựng xong (cùng lúc ông già Noel xuất hiện)
-      setTimeout(() => deck.classList.add('show'), 6000);
+      requestAnimationFrame(drawDeck);
     })();
   </script>
 </body>
