@@ -149,9 +149,9 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
   // Tỉnh neo nhãn lên trên một công trình cụ thể: Cần Thơ neo trên icon Cầu Cần Thơ & Chợ Nổi
   const AT = { cantho: 'cauCanTho' };
   const UI = {
-    vi: { close: 'Đóng', load: 'Đang tải bản đồ…', err: 'Không tải được bản đồ', merged: 'Sáp nhập từ: ', same: 'Giữ nguyên địa giới hành chính', reset: 'Đặt lại góc nhìn', eco: 'Kinh tế chủ yếu: ', zin: 'Phóng to', zout: 'Thu nhỏ' },
-    en: { close: 'Close', load: 'Loading map…', err: 'Could not load the map', merged: 'Merged from: ', same: 'Administrative boundaries unchanged', reset: 'Reset view', eco: 'Key economy: ', zin: 'Zoom in', zout: 'Zoom out' },
-    zh: { close: '关闭', load: '地图加载中…', err: '无法加载地图', merged: '合并自：', same: '行政区划不变', reset: '重置视角', eco: '主要经济：', zin: '放大', zout: '缩小' }
+    vi: { close: 'Đóng', load: 'Đang tải bản đồ…', err: 'Không tải được bản đồ', merged: 'Sáp nhập từ: ', same: 'Giữ nguyên địa giới hành chính', eco: 'Kinh tế chủ yếu: ' },
+    en: { close: 'Close', load: 'Loading map…', err: 'Could not load the map', merged: 'Merged from: ', same: 'Administrative boundaries unchanged', eco: 'Key economy: ' },
+    zh: { close: '关闭', load: '地图加载中…', err: '无法加载地图', merged: '合并自：', same: '行政区划不变', eco: '主要经济：' }
   };
   const SOV = ['Hoàng Sa, Trường Sa', 'là của Việt Nam'];
 
@@ -184,11 +184,11 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     return 'rgb(' + m(6, 4) + ',' + m(78, 120) + ',' + m(59, 87) + ')';
   }
 
-  let stage = null, canvas = null, g = null, mapEl = null, svg = null, vp = null, landEl = null, sovEl = null, resetBtn = null, zinBtn = null, zoutBtn = null, dotEl = null, tieEl = null;
+  let stage = null, canvas = null, g = null, mapEl = null, svg = null, vp = null, landEl = null, sovEl = null, dotEl = null, tieEl = null;
   let card = null, cardName = null, cardSt = null, cardReg = null, cardDesc = null, cardX = null, cardEco = null, cardStk = null;
   let raf = 0, last = 0, t = 0, cw = 0, ch = 0, dpr = 1, token = 0, state = 'load', VW = 1, VH = 1;
   let audio = null, openId = null, abortCtl = null, dust = [], rings = [], labels = [], els = {}, sovTs = [];
-  let mks = [], lmEl = null;
+  let mks = [], lmEl = null, sovKey = '', sovFit = 0; // sovKey/sovFit: cache cỡ chữ khẩu hiệu chủ quyền
   let view = { k: 1, x: 0, y: 0 }, ptr = new Map(), moved = 0, multi = false, pd = 1;
 
   function initSprites() {
@@ -234,6 +234,21 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
 
   // ---- Zoom / Pan ----
   function unit() { return svg ? (svg.getBoundingClientRect().width / VW) || 1 : 1; }
+  // Cỡ chữ khẩu hiệu chủ quyền (px màn hình). PC: 26–34px theo kích thước bản đồ.
+  // Mobile: tối đa 17px (như cũ), tự thu nhỏ để dòng dài nhất chỉ chiếm ≤ 86% dải biển trống bên phải bờ biển
+  // (từ kinh độ 109.8 đến mép phải bản đồ, đối xứng quanh tâm khẩu hiệu) nên máy hẹp như iPhone SE vẫn gọn.
+  function sovSize(narrow, un) {
+    if (!narrow) return Math.min(34, Math.max(26, un * VW * 0.035));
+    let w1 = Math.max.apply(null, SOV.map(function (s) { return s.length; })) * 0.58; // dự phòng: ≈ 0.58 × cỡ chữ mỗi ký tự
+    try {
+      sovEl.style.fontSize = '100px';
+      const bw = sovEl.getBBox().width; // bề rộng dòng dài nhất ở cỡ 100 → tỉ lệ bề rộng / cỡ chữ
+      if (bw > 0) w1 = bw / 100;
+    } catch (e) {}
+    const cx = parseFloat(sovEl.getAttribute('x')) || VW / 2, lo = (109.8 - GEO.lon0) * KX * S + PAD, hi = VW - 12;
+    const room = 2 * Math.max(0, Math.min(cx - lo, hi - cx)) * un;
+    return Math.max(11, Math.min(17, 0.86 * room / w1));
+  }
   function applyView() {
     if (!vp) return;
     const k = view.k;
@@ -282,9 +297,14 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     });
     if (lmEl) lmEl.classList.toggle('on', k >= 1.45);
     if (sovEl) {
-      // Khẩu hiệu Hoàng Sa, Trường Sa: 17px trên mobile (vừa bản đồ); PC giữ 26–34px theo bản đồ
-      const sovPx = narrow ? 17 : Math.min(34, Math.max(26, unit() * VW * 0.035));
-      sovEl.style.fontSize = (sovPx / u).toFixed(1) + 'px';
+      // Khẩu hiệu "Hoàng Sa, Trường Sa / là của Việt Nam" nằm gọn trong dải biển bên phải bản đồ.
+      // Cỡ chữ và độ giãn dòng tính theo px màn hình rồi quy về đơn vị SVG; dy là số thuần (không dùng em)
+      // nên hai dòng không đè nhau ở mọi mức zoom. PC: giãn dòng 1.25; mobile: 1.75 (thoáng hẳn, không dính chữ).
+      const un = u / k, key = (narrow ? 'm' : 'd') + un.toFixed(4);
+      if (key !== sovKey) { sovKey = key; sovFit = sovSize(narrow, un); } // chỉ tính lại khi đổi khổ màn hình / xoay máy
+      const fu = sovFit / u, gap = (fu * (narrow ? 1.75 : 1.25)).toFixed(1);
+      sovEl.style.fontSize = fu.toFixed(1) + 'px';
+      sovTs.forEach(function (ts, i) { if (i) ts.setAttribute('dy', gap); });
     }
     if (openId) placeCard();
   }
@@ -330,14 +350,6 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     if (!ptr.size) multi = false;
   }
   function onWheel(e) { e.preventDefault(); zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0015)); }
-  function resetView() { view = { k: 1, x: 0, y: 0 }; applyView(); }
-  // Icon SVG nét mảnh 18px, nằm giữa nút (thay ký tự văn bản dễ méo)
-  function ico(btn, d) {
-    const s = se('svg', { width: 18, height: 18, viewBox: '0 0 18 18', fill: 'none', stroke: 'currentColor', 'stroke-width': 2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true' });
-    se('path', { d: d }, s);
-    btn.appendChild(s);
-  }
-  function zoomBy(f) { if (!svg) return; const r = mapEl.getBoundingClientRect(); zoomAt(r.left + r.width / 2, r.top + r.height / 2, f); }
 
   // ---- Dựng bản đồ ----
   function addShape(parent, id, ds, fill) {
@@ -582,10 +594,6 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
       const nm = pick(BY[l.id].name);
       l.el.textContent = l.up ? nm.toUpperCase() : nm; // tên tỉnh in hoa toàn bộ
     });
-    resetBtn.setAttribute('aria-label', L.reset);
-    resetBtn.title = L.reset;
-    zinBtn.setAttribute('aria-label', L.zin);
-    zoutBtn.setAttribute('aria-label', L.zout);
     if (openId) fillCard(openId); else cardX.setAttribute('aria-label', L.close);
   }
 
@@ -636,14 +644,7 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     dotEl.hidden = true;
     tieEl = mk('div', 's4-tie', stage);
     tieEl.hidden = true;
-    const zoom = mk('div', 's4-zoom', stage);
-    zinBtn = mk('button', 's4-zb', zoom); zinBtn.type = 'button'; ico(zinBtn, 'M9 3.5V14.5M3.5 9H14.5');
-    zoutBtn = mk('button', 's4-zb', zoom); zoutBtn.type = 'button'; ico(zoutBtn, 'M3.5 9H14.5');
-    resetBtn = mk('button', 's4-zb', zoom); resetBtn.type = 'button'; ico(resetBtn, 'M3.2 9A5.8 5.8 0 1 0 5 4.6M3 2.5V6H6.5');
     cardX.addEventListener('click', closeCard);
-    zinBtn.addEventListener('click', function () { zoomBy(1.25); });
-    zoutBtn.addEventListener('click', function () { zoomBy(0.8); });
-    resetBtn.addEventListener('click', resetView);
     window.addEventListener('resize', onResize);
     window.addEventListener('cgor-lang', renderTexts);
     window.addEventListener('keydown', onKey);
@@ -675,12 +676,11 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
       mapEl.removeEventListener('wheel', onWheel);
     }
     if (cardX) cardX.removeEventListener('click', closeCard);
-    if (resetBtn) resetBtn.removeEventListener('click', resetView);
     if (audio) { audio.close().catch(function () {}); audio = null; }
     if (stage) stage.remove();
-    stage = canvas = g = mapEl = svg = vp = landEl = sovEl = resetBtn = card = cardName = cardSt = cardReg = cardDesc = cardX = null;
-    zinBtn = zoutBtn = dotEl = tieEl = cardEco = cardStk = null;
-    dust = []; rings = []; labels = []; els = {}; sovTs = []; mks = []; lmEl = null;
+    stage = canvas = g = mapEl = svg = vp = landEl = sovEl = card = cardName = cardSt = cardReg = cardDesc = cardX = null;
+    dotEl = tieEl = cardEco = cardStk = null;
+    dust = []; rings = []; labels = []; els = {}; sovTs = []; mks = []; lmEl = null; sovKey = ''; sovFit = 0;
     ptr.clear();
     openId = null;
   }
