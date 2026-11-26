@@ -10,7 +10,7 @@
         max-width: calc(100vw - 95px);
       }
       #name {
-        top: calc(env(safe-area-inset-top, 0px) + 34px);
+        top: calc(env(safe-area-inset-top, 0px) + 18px);
       }
       #hud {
         font-size: 9.5px;
