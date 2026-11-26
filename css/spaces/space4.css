@@ -131,48 +131,34 @@ body[data-space="space4"] #deck-canvas { z-index: 10; }
 .s4-sel .s4-gold { stroke: #FDE68A; stroke-width: 3.4px; }
 .s4-sel .s4-fill { filter: brightness(1.35); }
 
-/* Nhãn tên tỉnh vàng ngà mảnh */
+/* Nhãn tên tỉnh vàng ngà: viền xanh ngọc tối dày theo cỡ chữ (scale cùng nhãn, luôn rõ trên nền và khi zoom) */
 .s4-lb {
   fill: #FEF3C7;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.01em;
-  paint-order: stroke;
-  stroke: rgba(3, 20, 14, 0.9);
-  stroke-width: 0.22em;
+  paint-order: stroke fill;
+  stroke: rgba(4, 24, 18, 0.9);
+  stroke-width: 3.5px;
+  filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.55));
   stroke-linejoin: round;
   pointer-events: none;
 }
+/* Tên tỉnh/thành in hoa toàn bộ */
+.s4-prv { text-transform: uppercase; }
 /* Khẩu hiệu chữ viết sơn giữa Hoàng Sa và Trường Sa */
 .s4-sov {
   font-family: 'Charm', cursive;
   font-weight: 700;
   fill: #FDE68A;
   paint-order: stroke;
-  stroke: rgba(3, 20, 14, 0.85);
-  stroke-width: 0.12em;
+  stroke: rgba(3, 20, 14, 0.9);
+  stroke-width: 0.14em;
   stroke-linejoin: round;
   pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
 }
 
-.s4-hint {
-  position: absolute;
-  z-index: 2;
-  left: 50%;
-  top: calc(var(--s4-top) - 28px);
-  translate: -50% 0;
-  max-width: calc(100vw - 32px);
-  padding: 5px 12px;
-  border: 1px solid rgba(251, 191, 36, 0.4);
-  border-radius: 999px;
-  background: rgba(10, 8, 6, 0.6);
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  pointer-events: none;
-}
-.s4-hint[hidden], .s4-card[hidden] { display: none; }
+.s4-card[hidden] { display: none; }
 
 /* Cụm nút bản đồ (+ − ⟲) dọc ở cạnh TRÁI, ngay phía trên nút "<" */
 .s4-zoom {
@@ -284,9 +270,9 @@ body[data-space="space4"] #deck-canvas { z-index: 10; }
 }
 .s4-card-st { margin: 2px 0 0; font-size: 13px; font-weight: 600; color: #FDE68A; }
 .s4-card-st[hidden] { display: none; }
-.s4-card-reg { margin: 2px 0 0; font-size: 12px; opacity: 0.75; }
-.s4-card-desc { margin: 6px 0 0; font-size: 14px; line-height: 1.55; }
-.s4-card-eco { margin: 8px 0 0; font-size: 13px; line-height: 1.5; color: #FDE68A; }
+.s4-card-reg { margin: 2px 0 0; font-size: 13px; opacity: 0.8; }
+.s4-card-desc { margin: 6px 0 0; font-size: 15px; line-height: 1.55; }
+.s4-card-eco { margin: 8px 0 0; font-size: 14px; line-height: 1.5; color: #FDE68A; }
 .s4-card-eco[hidden] { display: none; }
 .s4-card-stk { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
 .s4-card-stk[hidden] { display: none; }
@@ -300,7 +286,7 @@ body[data-space="space4"] #deck-canvas { z-index: 10; }
   border-radius: 999px;
   background: linear-gradient(180deg, rgba(251, 191, 36, 0.22), rgba(120, 53, 15, 0.35));
   color: #FEF3C7;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.3;
   box-shadow: 0 0 6px rgba(251, 191, 36, 0.25);

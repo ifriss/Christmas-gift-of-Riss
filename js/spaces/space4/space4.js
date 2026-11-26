@@ -144,10 +144,14 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     BY[m.id] = { id: m.id, isl: 1, name: { vi: m.n, en: m.n, zh: m.n }, sub: { vi: m.sub }, desc: { vi: m.desc, en: m.desc, zh: m.desc }, minK: m.lm ? 1.45 : 1.15 };
   });
 
+  // Lệch nhãn tay (đơn vị: cỡ chữ tỉnh) cho tỉnh có công trình khó tách
+  const NUDGE = {};
+  // Tỉnh neo nhãn lên trên một công trình cụ thể: Cần Thơ neo trên icon Cầu Cần Thơ & Chợ Nổi
+  const AT = { cantho: 'cauCanTho' };
   const UI = {
-    vi: { hint: 'Chạm vào tỉnh/thành để khám phá · 2 ngón để phóng to', close: 'Đóng', title: 'Bản đồ Việt Nam 34 tỉnh thành', load: 'Đang tải bản đồ…', err: 'Không tải được bản đồ', merged: 'Sáp nhập từ: ', same: 'Giữ nguyên địa giới hành chính', reset: 'Đặt lại góc nhìn', eco: 'Kinh tế chủ yếu: ', zin: 'Phóng to', zout: 'Thu nhỏ' },
-    en: { hint: 'Tap a province to explore · pinch to zoom', close: 'Close', title: 'Map of Vietnam, 34 provinces', load: 'Loading map…', err: 'Could not load the map', merged: 'Merged from: ', same: 'Administrative boundaries unchanged', reset: 'Reset view', eco: 'Key economy: ', zin: 'Zoom in', zout: 'Zoom out' },
-    zh: { hint: '点击省市探索 · 双指缩放', close: '关闭', title: '越南34省市地图', load: '地图加载中…', err: '无法加载地图', merged: '合并自：', same: '行政区划不变', reset: '重置视角', eco: '主要经济：', zin: '放大', zout: '缩小' }
+    vi: { close: 'Đóng', load: 'Đang tải bản đồ…', err: 'Không tải được bản đồ', merged: 'Sáp nhập từ: ', same: 'Giữ nguyên địa giới hành chính', reset: 'Đặt lại góc nhìn', eco: 'Kinh tế chủ yếu: ', zin: 'Phóng to', zout: 'Thu nhỏ' },
+    en: { close: 'Close', load: 'Loading map…', err: 'Could not load the map', merged: 'Merged from: ', same: 'Administrative boundaries unchanged', reset: 'Reset view', eco: 'Key economy: ', zin: 'Zoom in', zout: 'Zoom out' },
+    zh: { close: '关闭', load: '地图加载中…', err: '无法加载地图', merged: '合并自：', same: '行政区划不变', reset: '重置视角', eco: '主要经济：', zin: '放大', zout: '缩小' }
   };
   const SOV = ['Hoàng Sa, Trường Sa', 'là của Việt Nam'];
 
@@ -180,7 +184,7 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     return 'rgb(' + m(6, 4) + ',' + m(78, 120) + ',' + m(59, 87) + ')';
   }
 
-  let stage = null, canvas = null, g = null, mapEl = null, svg = null, vp = null, landEl = null, svgTitle = null, sovEl = null, hintEl = null, resetBtn = null, zinBtn = null, zoutBtn = null, dotEl = null, tieEl = null;
+  let stage = null, canvas = null, g = null, mapEl = null, svg = null, vp = null, landEl = null, sovEl = null, resetBtn = null, zinBtn = null, zoutBtn = null, dotEl = null, tieEl = null;
   let card = null, cardName = null, cardSt = null, cardReg = null, cardDesc = null, cardX = null, cardEco = null, cardStk = null;
   let raf = 0, last = 0, t = 0, cw = 0, ch = 0, dpr = 1, token = 0, state = 'load', VW = 1, VH = 1;
   let audio = null, openId = null, abortCtl = null, dust = [], rings = [], labels = [], els = {}, sovTs = [];
@@ -236,22 +240,45 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     view.x = Math.min(0, Math.max(VW * (1 - k), view.x));
     view.y = Math.min(0, Math.max(VH * (1 - k), view.y));
     vp.setAttribute('transform', 'translate(' + view.x.toFixed(1) + ' ' + view.y.toFixed(1) + ') scale(' + k.toFixed(3) + ')');
-    const u = unit() * k, fs = (7.5 + Math.min(k, 3.5) * 1.3) / u, all = k > 1.35;
+    // Cỡ chữ nhãn giữ theo px màn hình (nghịch đảo với zoom): tăng nhẹ theo k, không teo khi zoom ra
+    // Cỡ chữ trên màn hình = 15px × min(zoom, 6)^0.45: tăng rõ theo zoom, không teo khi zoom ra.
+    // Viền tính theo px màn hình (3.5px, tăng nhẹ theo cỡ chữ), quy đổi về đơn vị SVG bằng unit*k.
+    const kz = Math.min(k, 6), px = 15 * Math.pow(kz, 0.45), u = unit() * k;
+    const fs = px / u, sw = ((3.5 + (px - 15) * 0.1) / u).toFixed(3) + 'px', all = k > 1.35;
+    // Icon công trình (scale ico); tỉnh có công trình được đẩy nhãn lên cao hơn đỉnh icon để không bị che
+    const ico = 2.5 / (unit() * Math.pow(k, 0.6)), liftY = 8 * ico + fs * 0.7;
     labels.forEach(function (l) {
       // Tỉnh nhỏ (ĐB sông Hồng, miền Tây) ẩn nhãn ở mức zoom mặc định, chỉ hiện khi zoom > 1.35
       const p = BY[l.id], crowded = (!all && p && (p.reg === 1 || p.reg === 6)) || (p && p.minK && k < p.minK);
       l.el.style.display = crowded ? 'none' : '';
       l.el.style.fontSize = fs.toFixed(1) + 'px';
+      l.el.style.strokeWidth = sw;
+      // Tỉnh có công trình: nhãn đẩy lên trên để không bị icon/tên công trình che
+      if (l.y0 !== undefined) {
+        const nd = NUDGE[l.id] || [0, 0], am = AT[l.id] && mks.find(function (m) { return m.id === AT[l.id]; });
+        if (am) { // nhãn nằm hẳn phía trên icon công trình, cách icon một khoảng hở ≈ cỡ chữ
+          l.el.setAttribute('x', am.x.toFixed(1));
+          l.el.setAttribute('y', (am.y - 7 * ico - fs).toFixed(1));
+        } else {
+          l.el.setAttribute('x', (l.x0 + nd[0] * fs).toFixed(1));
+          l.el.setAttribute('y', (l.y0 - (l.lift ? liftY : 0) + nd[1] * fs).toFixed(1));
+        }
+      }
     });
     // Icon giữ kích thước gần đều trên màn hình; lớp công trình hiện khi zoom >= 1.45
-    const sc = 1.8 / (unit() * Math.pow(k, 0.6));
+    // Công trình to hơn ~1.4x so với trước; icon và nhãn cùng scale mượt theo zoom
+    const sc = ico, lfs = fs * 1.15;
     mks.forEach(function (m) {
       m.g.setAttribute('transform', 'translate(' + m.x.toFixed(1) + ' ' + m.y.toFixed(1) + ') scale(' + sc.toFixed(3) + ')');
-      m.lb.setAttribute('y', (m.y + 9 * sc).toFixed(1));
+      // Nhãn công trình (lớn hơn nhãn tỉnh) nằm dưới icon
+      m.lb.style.fontSize = lfs.toFixed(1) + 'px';
+      m.lb.setAttribute('y', (m.y + 8 * sc + lfs * 0.95).toFixed(1));
     });
     if (lmEl) lmEl.classList.toggle('on', k >= 1.45);
     if (sovEl) {
-      sovEl.style.fontSize = (14 / u).toFixed(1) + 'px';
+      // Khẩu hiệu Hoàng Sa, Trường Sa: 26px trên điện thoại, tăng theo bản đồ trên PC (tối đa 34px)
+      const sovPx = Math.min(34, Math.max(26, unit() * VW * 0.035));
+      sovEl.style.fontSize = (sovPx / u).toFixed(1) + 'px';
     }
     if (openId) placeCard();
   }
@@ -327,7 +354,7 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
       const lb = se('text', { x: gx.toFixed(1), y: gy.toFixed(1), 'text-anchor': 'middle', class: 's4-lb' }, parent);
       els[m.id] = g2;
       labels.push({ id: m.id, el: lb });
-      mks.push({ g: inner, lb: lb, x: gx, y: gy });
+      mks.push({ id: m.id, g: inner, lb: lb, x: gx, y: gy });
     });
   }
   function islands(parent) {
@@ -387,7 +414,6 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     VW = (GEO.lon1 - GEO.lon0) * KX * S + PAD * 2; VH = (GEO.lat1 - GEO.lat0) * S + PAD * 2;
     stage.style.setProperty('--s4-ar', (VW / VH).toFixed(4));
     svg = se('svg', { class: 's4-svg', viewBox: '0 0 ' + VW.toFixed(1) + ' ' + VH.toFixed(1), role: 'img' }, mapEl);
-    svgTitle = se('title', {}, svg);
     vp = se('g', {}, svg);
     landEl = se('g', {}, vp);
 
@@ -416,10 +442,26 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     order.forEach(function (id) {
       const G = groups[id];
       if (!G.A) return;
-      const lb = se('text', { x: (G.sx / G.A).toFixed(1), y: (G.sy / G.A).toFixed(1), 'text-anchor': 'middle', 'dominant-baseline': 'central', class: 's4-lb' }, vp);
-      labels.push({ id: id, el: lb });
+      const lb = se('text', { x: (G.sx / G.A).toFixed(1), y: (G.sy / G.A).toFixed(1), 'text-anchor': 'middle', 'dominant-baseline': 'central', class: 's4-lb s4-prv' }, vp);
+      labels.push({ id: id, el: lb, x0: G.sx / G.A, y0: G.sy / G.A, up: true });
     });
     marks(vp);
+    // Xác định tỉnh chứa từng công trình (kiểm tra điểm trong vùng tô) để đẩy nhãn tỉnh đó lên trên
+    const lift = {};
+    mks.forEach(function (m) {
+      order.forEach(function (id) {
+        if (lift[id] || !els[id]) return;
+        const fills = els[id].querySelectorAll('.s4-fill');
+        for (let i = 0; i < fills.length; i++) {
+          let hit = false;
+          try { hit = fills[i].isPointInFill(new DOMPoint(m.x, m.y)); } catch (e) {}
+          if (hit) { lift[id] = true; return; }
+        }
+      });
+    });
+    labels.forEach(function (l) { if (l.y0 !== undefined && (lift[l.id] || NUDGE[l.id])) l.lift = true; });
+    // Đưa mọi nhãn lên lớp trên cùng (sau icon công trình) để tên tỉnh/công trình không bị icon đè
+    labels.forEach(function (l) { vp.appendChild(l.el); });
     const sx = (113 - GEO.lon0) * KX * S + PAD, sy = (GEO.lat1 - 13.8) * S + PAD;
     sovEl = se('text', { x: sx.toFixed(1), y: sy.toFixed(1), 'text-anchor': 'middle', class: 's4-sov' }, vp);
     sovTs = SOV.map(function (s, i) {
@@ -488,7 +530,6 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     if (card) card.hidden = true;
     if (dotEl) dotEl.hidden = true;
     if (tieEl) tieEl.hidden = true;
-    if (hintEl) hintEl.hidden = false;
     setSel(null);
   }
   function openPin(id) {
@@ -497,7 +538,6 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     openId = id;
     fillCard(id);
     card.hidden = false;
-    hintEl.hidden = true;
     setSel(id);
     placeCard();
     pluck(id.charCodeAt(0) + id.length);
@@ -532,9 +572,10 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
   function renderTexts() {
     if (!stage) return;
     const L = UI[lang()];
-    hintEl.textContent = state === 'ok' ? L.hint : state === 'err' ? L.err : L.load;
-    if (svgTitle) svgTitle.textContent = L.title;
-    labels.forEach(function (l) { l.el.textContent = pick(BY[l.id].name); });
+    labels.forEach(function (l) {
+      const nm = pick(BY[l.id].name);
+      l.el.textContent = l.up ? nm.toUpperCase() : nm; // tên tỉnh in hoa toàn bộ
+    });
     resetBtn.setAttribute('aria-label', L.reset);
     resetBtn.title = L.reset;
     zinBtn.setAttribute('aria-label', L.zin);
@@ -589,7 +630,6 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     dotEl.hidden = true;
     tieEl = mk('div', 's4-tie', stage);
     tieEl.hidden = true;
-    hintEl = mk('div', 's4-hint', stage);
     const zoom = mk('div', 's4-zoom', stage);
     zinBtn = mk('button', 's4-zb', zoom); zinBtn.type = 'button'; ico(zinBtn, 'M9 3.5V14.5M3.5 9H14.5');
     zoutBtn = mk('button', 's4-zb', zoom); zoutBtn.type = 'button'; ico(zoutBtn, 'M3.5 9H14.5');
@@ -632,7 +672,7 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     if (resetBtn) resetBtn.removeEventListener('click', resetView);
     if (audio) { audio.close().catch(function () {}); audio = null; }
     if (stage) stage.remove();
-    stage = canvas = g = mapEl = svg = vp = landEl = svgTitle = sovEl = hintEl = resetBtn = card = cardName = cardSt = cardReg = cardDesc = cardX = null;
+    stage = canvas = g = mapEl = svg = vp = landEl = sovEl = resetBtn = card = cardName = cardSt = cardReg = cardDesc = cardX = null;
     zinBtn = zoutBtn = dotEl = tieEl = cardEco = cardStk = null;
     dust = []; rings = []; labels = []; els = {}; sovTs = []; mks = []; lmEl = null;
     ptr.clear();
