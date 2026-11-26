@@ -1,0 +1,307 @@
+@import url('https://fonts.googleapis.com/css2?family=Charm:wght@700&display=swap');
+/* SPACE 4 — Bản đồ sơn mài & dát vàng 24K: 34 tỉnh/thành, Hoàng Sa, Trường Sa */
+body[data-space="space4"] .space1-only { display: none !important; }
+body[data-space="space4"] { overflow-x: hidden; }
+/* Máy đĩa than chuyển sang GÓC DƯỚI BÊN TRÁI, để khoảng biển quanh Trường Sa bên phải thông thoáng */
+body[data-space="space4"] #deck-canvas { left: 14px; right: auto; }
+
+body[data-space="space4"] #name,
+body[data-space="space4"] .tool-btn,
+body[data-space="space4"] #signature,
+body[data-space="space4"] .signature,
+body[data-space="space4"] .signature-pill,
+body[data-space="space4"] [class*="signature"] {
+  background: rgba(10, 8, 6, 0.72);
+  color: #FDE68A;
+  border: 1px solid rgba(251, 191, 36, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
+}
+body[data-space="space4"] #name { border-radius: 999px; z-index: 30; }
+body[data-space="space4"] #top-tools { z-index: 30; }
+
+#s4-stage {
+  --s4-top: calc(env(safe-area-inset-top, 0px) + 64px);
+  --s4-bot: calc(env(safe-area-inset-bottom, 0px) + 84px);
+  --s4-ar: 0.85;
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  overflow-x: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s4-top) 8px var(--s4-bot);
+  background: radial-gradient(ellipse at 50% 40%, #14100C 0%, #0A1412 55%, #080706 100%);
+  color: #FDE68A;
+  font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, Arial, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (max-width: 430px) {
+  #s4-stage { --s4-bot: calc(env(safe-area-inset-bottom, 0px) + 136px); padding-inline: 4px; }
+}
+.s4-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+.s4-map {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  overflow: hidden;
+  touch-action: none;
+  border-radius: 14px;
+  aspect-ratio: var(--s4-ar);
+  width: min(100%, calc((100vh - var(--s4-top) - var(--s4-bot)) * var(--s4-ar)));
+  width: min(100%, calc((100dvh - var(--s4-top) - var(--s4-bot)) * var(--s4-ar)));
+}
+.s4-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+
+/* PC: bản đồ phủ kín 4 cạnh màn hình, nằm dưới các nút (z-index >= 10) */
+@media (min-width: 431px) {
+  body[data-space="space4"] #s4-stage { padding: 0; }
+  body[data-space="space4"] .s4-map {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    aspect-ratio: auto;
+    border-radius: 0;
+    overflow: visible !important;
+  }
+  body[data-space="space4"] .s4-svg { overflow: visible !important; }
+}
+body[data-space="space4"] #top-tools,
+body[data-space="space4"] .s4-zoom,
+body[data-space="space4"] .space-nav,
+body[data-space="space4"] #signature,
+body[data-space="space4"] #deck-canvas { z-index: 10; }
+
+/* Mobile: gỡ khung thừa bọc quanh cụm tên người dùng, chỉ giữ pill gọn; chừa khoảng cách với hàng nút */
+@media (max-width: 430px) {
+  body[data-space="space4"] :has(> #name) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: auto !important;
+    margin-bottom: 6px;
+  }
+  body[data-space="space4"] #name { border: 1px solid rgba(251, 191, 36, 0.55) !important; }
+}
+
+/* Tỉnh/thành: lớp vàng kim dưới (chỉ nửa ngoài lộ ra thành viền 1.1px), lớp sơn mài ngọc trên với ranh giới tỉnh cũ mảnh mờ */
+.s4-prov { cursor: pointer; }
+.s4-gold {
+  fill: none;
+  stroke: #FBBF24;
+  stroke-width: 2.2px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.s4-fill {
+  stroke: rgba(251, 191, 36, 0.14);
+  stroke-width: 0.25px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  fill-rule: evenodd;
+}
+.s4-hit {
+  fill: rgba(251, 191, 36, 0.05);
+  stroke: rgba(251, 191, 36, 0.35);
+  stroke-width: 0.8px;
+  stroke-dasharray: 4 4;
+  vector-effect: non-scaling-stroke;
+}
+.s4-sel { filter: drop-shadow(0 0 5px #FBBF24) drop-shadow(0 0 10px rgba(251, 191, 36, 0.6)); }
+.s4-sel .s4-gold { stroke: #FDE68A; stroke-width: 3.4px; }
+.s4-sel .s4-fill { filter: brightness(1.35); }
+
+/* Nhãn tên tỉnh vàng ngà mảnh */
+.s4-lb {
+  fill: #FEF3C7;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  paint-order: stroke;
+  stroke: rgba(3, 20, 14, 0.9);
+  stroke-width: 0.22em;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+/* Khẩu hiệu chữ viết sơn giữa Hoàng Sa và Trường Sa */
+.s4-sov {
+  font-family: 'Charm', cursive;
+  font-weight: 700;
+  fill: #FDE68A;
+  paint-order: stroke;
+  stroke: rgba(3, 20, 14, 0.85);
+  stroke-width: 0.12em;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.s4-hint {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: calc(var(--s4-top) - 28px);
+  translate: -50% 0;
+  max-width: calc(100vw - 32px);
+  padding: 5px 12px;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  border-radius: 999px;
+  background: rgba(10, 8, 6, 0.6);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+.s4-hint[hidden], .s4-card[hidden] { display: none; }
+
+/* Cụm nút bản đồ (+ − ⟲) dọc ở cạnh TRÁI, ngay phía trên nút "<" */
+.s4-zoom {
+  position: fixed;
+  z-index: 30;
+  left: max(14px, env(safe-area-inset-left, 0px) + 10px);
+  bottom: calc(50vh + 40px);
+  bottom: calc(50dvh + 40px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.s4-zb {
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(251, 191, 36, 0.55);
+  border-radius: 50%;
+  background: rgba(10, 8, 6, 0.72);
+  color: #FDE68A;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.s4-dot, .s4-tie { position: absolute; z-index: 2; pointer-events: none; }
+.s4-dot {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: #FDE68A;
+  box-shadow: 0 0 8px #FBBF24, 0 0 14px rgba(251, 191, 36, 0.6);
+}
+.s4-tie {
+  height: 1px;
+  margin-top: -0.5px;
+  background: linear-gradient(90deg, #FBBF24, rgba(251, 191, 36, 0.35));
+}
+.s4-dot[hidden], .s4-tie[hidden] { display: none; }
+.s4-zb svg { display: block; width: 18px; height: 18px; flex: none; }
+
+/* Mô hình công trình & điểm đảo: dát vàng kim, hiện mượt khi zoom >= 1.45 (công trình) */
+.vn-landmarks { opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+.vn-landmarks.on { opacity: 1; pointer-events: auto; }
+.s4-ic {
+  fill: rgba(251, 191, 36, 0.22);
+  stroke: #FDE68A;
+  stroke-width: 0.9px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 2px #FBBF24) drop-shadow(0 0 4px rgba(251, 191, 36, 0.6));
+}
+.s4-hit-pt { fill: transparent; }
+
+/* Thẻ thông tin sơn mài kính mờ */
+.s4-card {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  top: 0;
+  width: min(340px, calc(100vw - 24px));
+  box-sizing: border-box;
+  padding: 10px 14px 14px;
+  border: 1px solid #FBBF24;
+  border-radius: 16px;
+  background: rgba(10, 8, 6, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #FEF3C7;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.25), 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+/* Mũi nhọn nối thẻ với tỉnh: nằm ở cạnh gần tỉnh, đúng độ cao chấm */
+.s4-card::before {
+  content: "";
+  position: absolute;
+  top: var(--tail-y, 50%);
+  width: 9px;
+  height: 9px;
+  margin-top: -4.5px;
+  box-sizing: border-box;
+  background: #0A0806;
+  border: 1px solid #FBBF24;
+}
+.s4-card[data-side="r"]::before { left: -5px; border-right: 0; border-top: 0; transform: rotate(45deg); }
+.s4-card[data-side="l"]::before { right: -5px; border-left: 0; border-bottom: 0; transform: rotate(45deg); }
+.s4-card-head { display: flex; align-items: center; gap: 8px; }
+.s4-card-name { flex: 1; min-width: 0; font-size: 17px; font-weight: 700; line-height: 1.25; color: #FBBF24; }
+.s4-card-x {
+  flex: none;
+  min-width: 44px;
+  min-height: 44px;
+  margin: -8px -8px -8px 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #FDE68A;
+  font-size: 16px;
+  cursor: pointer;
+}
+.s4-card-st { margin: 2px 0 0; font-size: 13px; font-weight: 600; color: #FDE68A; }
+.s4-card-st[hidden] { display: none; }
+.s4-card-reg { margin: 2px 0 0; font-size: 12px; opacity: 0.75; }
+.s4-card-desc { margin: 6px 0 0; font-size: 14px; line-height: 1.55; }
+.s4-card-eco { margin: 8px 0 0; font-size: 13px; line-height: 1.5; color: #FDE68A; }
+.s4-card-eco[hidden] { display: none; }
+.s4-card-stk { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+.s4-card-stk[hidden] { display: none; }
+/* Sticker đặc sản: viền vàng nhạt, icon rõ nét */
+.s4-stk {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 2px 10px;
+  border: 1px solid rgba(253, 230, 138, 0.75);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.22), rgba(120, 53, 15, 0.35));
+  color: #FEF3C7;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.25);
+}

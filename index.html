@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-visual">
+  <title>AetheRiss</title>
+  <meta name="description" content="AetheRiss - mạng xã hội đa không gian của Riss">
+  <meta name="theme-color" content="#050a1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="AetheRiss">
+  <meta property="og:title" content="AetheRiss">
+  <meta property="og:description" content="Mạng xã hội đa không gian của Riss">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230b1528'/%3E%3Crect x='27' y='48' width='10' height='9' rx='2' fill='%23b45309'/%3E%3Cpolygon points='32,16 11,49 53,49' fill='%23059669'/%3E%3Cpolygon points='32,13 15,38 49,38' fill='%2310b981'/%3E%3Cpolygon points='32,10 20,27 44,27' fill='%2334d399'/%3E%3Cpolygon points='32,3 34.8,9.2 41.5,9.8 36.4,14.2 37.9,20.8 32,17.2 26.1,20.8 27.6,14.2 22.5,9.8 29.2,9.2' fill='%23fbbf24'/%3E%3Ccircle cx='25' cy='33' r='2.8' fill='%23ef4444'/%3E%3Ccircle cx='39' cy='42' r='3' fill='%23ef4444'/%3E%3Ccircle cx='23' cy='44' r='2.5' fill='%23fde047'/%3E%3Ccircle cx='38' cy='25' r='2.2' fill='%23fde047'/%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <!-- CSS: thứ tự nạp = thứ tự cascade ban đầu (KHÔNG đổi thứ tự các dòng link) -->
+  <link rel="stylesheet" href="css/base.css?v=1">
+  <link rel="stylesheet" href="css/top-tools.css?v=1">
+  <link rel="stylesheet" href="css/mailbox.css?v=1">
+  <link rel="stylesheet" href="css/auth.css?v=1">
+  <link rel="stylesheet" href="css/turntable.css?v=1">
+  <link rel="stylesheet" href="css/responsive.css?v=1">
+  <link rel="stylesheet" href="css/control-panel.css?v=1">
+  <link rel="stylesheet" href="css/spaces/space1.css?v=1">
+  <link rel="stylesheet" href="css/marquee.css?v=1">
+  <link rel="stylesheet" href="css/turntable-controls.css?v=1">
+  <link rel="stylesheet" href="css/touch-inputs.css?v=1">
+  <link rel="stylesheet" href="css/spaces/space2.css?v=1">
+  <link rel="stylesheet" href="css/spaces/space3.css?v=1">
+  <link rel="stylesheet" href="css/spaces/space4.css?v=1">
+  <link rel="stylesheet" href="css/core.css?v=1">
+</head>
+<body>
+  <!-- Vùng vẽ cây thông 3D ASCII -->
+  <canvas id="c" class="space1-only"></canvas>
+
+  <!-- Thanh thông tin phía trên -->
+  <div id="name" title="Nhấn để quản lý tài khoản / đổi tên">AetheRiss</div>
+  <div id="tt" class="space1-only">t 00.00</div>
+
+  <!-- Thông số kỹ thuật góc trái -->
+  <div id="hud" class="space1-only">
+    <div><span id="lbl-rot">góc xoay</span> <b id="hr">0</b>&deg;</div>
+    <div><span id="lbl-lights">đèn</span> <b id="hl">0</b></div>
+    <div><span id="lbl-chars">ký tự</span> <b id="hc">0</b></div>
+    <div>fps <b id="hf">0</b></div>
+  </div>
+
+  <!-- Chữ ký Dev góc phải dưới -->
+  <div id="dev-credit" hidden><!-- thay bằng pill chữ ký (js/core/signature.js); giữ phần tử để i18n không lỗi -->
+    <span class="dc-role">DEV:</span> <span class="dc-name">RISS - Trương Thành Thông</span><br>
+    <span class="dc-wish" id="dc-wish-text">chúc mọi người giáng sinh vui vẻ 🎄</span>
+  </div>
+
+  <!-- Bóng nói của ông già Noel -->
+  <button type="button" id="qa-btn" class="space1-only">Hỏi đáp 🎅</button>
+  <div id="qa-box" class="space1-only" role="dialog" aria-labelledby="qa-title">
+    <div class="qa-head">
+      <span id="qa-title">🎅 Hỏi đáp với ông già Noel</span>
+      <button type="button" class="dp-x" id="qa-close" aria-label="Close">✕</button>
+    </div>
+    <div id="qa-log" aria-live="polite"></div>
+    <div id="qa-chips"></div>
+    <form id="qa-form" autocomplete="off">
+      <input type="text" id="qa-input" maxlength="200" placeholder="Hỏi ông già Noel…">
+      <button type="submit" id="qa-send">Gửi</button>
+    </form>
+    <div id="qa-note"></div>
+  </div>
+  <div id="santa-bubble" class="space1-only" aria-live="polite"><span id="sb-text"></span></div>
+
+  <!-- Nút nhỏ "Bảng điều khiển" (đặt dưới chữ MERRY CHRISTMAS) + bảng chứa các nút hiệu ứng (tạo bằng JS) -->
+  <button id="ctl-btn" class="space1-only" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="ctl-panel"><span aria-hidden="true">⚙️</span><span id="ctl-btn-txt">Bảng điều khiển</span></button>
+  <div id="ctl-panel" class="space1-only" role="dialog" aria-labelledby="ctl-title">
+    <div class="cp-head">
+      <span id="ctl-title">⚙️ Bảng điều khiển</span>
+      <button type="button" class="dp-x" id="ctl-close" aria-label="Close">✕</button>
+    </div>
+    <div id="bar"></div>
+  </div>
+
+  <!-- Cụm nút chức năng góc trên bên phải -->
+  <div id="top-tools">
+    <button id="lang-btn" class="tool-btn" type="button" title="Switch language / Đổi ngôn ngữ / 切换语言">🌐 VI</button>
+    <button id="refresh-btn" class="tool-btn" type="button" title="Làm mới trang / Reload / 刷新页面">🔄</button>
+    <button id="cd-btn" class="tool-btn" type="button">⏳ <span id="cd-btn-txt">Đếm ngược</span></button>
+    <button id="noti-btn" class="tool-btn" type="button">🔔 <span id="noti-btn-txt">Thông báo</span> <span id="noti-count" style="display:none">0</span></button>
+    <button id="mail-btn" class="tool-btn" type="button">📩 <span id="mail-btn-txt">Bảng tin</span> <span id="mail-count">0</span></button>
+  </div>
+
+  <!-- Hộp Đếm ngược Giáng Sinh -->
+  <div id="cd-box">
+    <div class="cd-head">
+      <span id="cd-title">⏳ Đếm ngược Giáng Sinh (GMT+7)</span>
+      <button type="button" class="mb-close" id="cd-close">✕</button>
+    </div>
+    <div class="cd-body">
+      <div class="cd-grid">
+        <div class="cd-cell">
+          <div class="cd-num" id="cd-d">00</div>
+          <div class="cd-lbl" id="cd-lbl-d">Ngày</div>
+        </div>
+        <div class="cd-cell">
+          <div class="cd-num" id="cd-h">00</div>
+          <div class="cd-lbl" id="cd-lbl-h">Giờ</div>
+        </div>
+        <div class="cd-cell">
+          <div class="cd-num" id="cd-m">00</div>
+          <div class="cd-lbl" id="cd-lbl-m">Phút</div>
+        </div>
+        <div class="cd-cell">
+          <div class="cd-num" id="cd-s">00</div>
+          <div class="cd-lbl" id="cd-lbl-s">Giây</div>
+        </div>
+      </div>
+      <div id="cd-note">Đếm ngược tới 25/12 (GMT+7) 🎄</div>
+    </div>
+  </div>
+
+  <!-- Hộp Thông báo từ DEV -->
+  <div id="noti-box">
+    <div class="mb-head noti-head">
+      <span id="noti-title">🔔 Thông báo từ DEV</span>
+      <button type="button" class="mb-close" id="noti-close">✕</button>
+    </div>
+    <div id="noti-list">
+      <div style="color:var(--dim);text-align:center;padding:16px 0">Đang tải thông báo...</div>
+    </div>
+    <!-- Khung đăng thông báo: chỉ hiển thị với tài khoản có DEV -->
+    <div class="mb-compose" id="noti-compose" style="display:none">
+      <form class="mb-form" id="noti-form">
+        <textarea id="noti-input" rows="1" placeholder="Đăng thông báo mới từ DEV... (Shift+Enter xuống dòng)"></textarea>
+        <button type="submit" id="noti-send">Đăng</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bảng tin (Newsfeed) -->
+  <div id="mailbox">
+    <div class="mb-head">
+      <span id="mb-title">📰 Bảng tin</span>
+      <button type="button" class="mb-close" id="mb-close">✕</button>
+    </div>
+    <div id="mb-list">
+      <div style="color:var(--dim);text-align:center;padding:16px 0">Đang tải bảng tin...</div>
+    </div>
+
+    <!-- Thanh khóa dành cho Khách truy cập -->
+    <div id="mb-guest-lock">
+      <span id="mb-lock-text">🔒 Chỉ thành viên đăng nhập mới đăng bài & thả tim được.</span>
+      <button type="button" id="mb-guest-login-btn">Đăng nhập</button>
+    </div>
+
+    <!-- Khung soạn thảo dành cho Thành viên đã đăng nhập -->
+    <div class="mb-compose" id="mb-compose">
+      <div id="reply-banner">
+        <span id="reply-banner-text">↳ Đang trả lời...</span>
+        <button type="button" id="reply-cancel" title="Hủy trả lời">✕</button>
+      </div>
+      <form class="mb-form" id="mb-form">
+        <textarea id="mb-input" rows="1" placeholder="Chia sẻ lên Bảng tin... (Shift+Enter xuống dòng)"></textarea>
+        <button type="submit" id="mb-send">Gửi</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3 Tùy chọn: Khách truy cập / Đăng nhập / Đăng ký + Hồ sơ -->
+  <div id="modal">
+    <div class="modal-box">
+      <h3 id="modal-title">CHÀO MỪNG ĐẾN VỚI AETHERISS</h3>
+
+      <div class="auth-tabs" id="auth-tabs">
+        <button type="button" class="auth-tab active" data-tab="guest" id="tab-guest">Khách</button>
+        <button type="button" class="auth-tab" data-tab="login" id="tab-login">Đăng nhập</button>
+        <button type="button" class="auth-tab" data-tab="register" id="tab-register">Đăng ký</button>
+      </div>
+
+      <div class="auth-error" id="auth-error"></div>
+
+      <!-- TAB 1: KHÁCH TRUY CẬP -->
+      <form class="auth-pane active" id="pane-guest">
+        <p class="auth-desc" id="guest-desc">Khám phá các không gian & nghe nhạc ngay (đăng nhập để đăng bài lên Bảng tin).</p>
+        <div class="auth-field">
+          <label for="guest-name-input" id="lbl-guest-name">Tên hiển thị (tùy chọn)</label>
+          <input type="text" class="auth-input" id="guest-name-input" placeholder="AetheRiss" autocomplete="off">
+        </div>
+        <button type="submit" class="auth-submit" id="btn-guest-go">Vào khám phá</button>
+      </form>
+
+      <!-- TAB 2: ĐĂNG NHẬP -->
+      <form class="auth-pane" id="pane-login">
+        <div class="auth-field">
+          <label for="login-user" id="lbl-login-user">Tên tài khoản</label>
+          <input type="text" class="auth-input" id="login-user" placeholder="" autocomplete="username">
+        </div>
+        <div class="auth-field">
+          <label for="login-pass" id="lbl-login-pass">Mật khẩu</label>
+          <input type="password" class="auth-input" id="login-pass" placeholder="••••••" autocomplete="current-password">
+        </div>
+        <button type="submit" class="auth-submit" id="btn-login-go">Đăng nhập</button>
+      </form>
+
+      <!-- TAB 3: ĐĂNG KÝ + NHẬN LẠI LỜI CHÚC CŨ -->
+      <form class="auth-pane" id="pane-register">
+        <div id="ip-suggest-box">
+          <div class="ip-suggest-title" id="ip-suggest-title">✨ Tìm thấy bài viết cũ từ mạng của bạn (chạm để nhận lại):</div>
+          <div class="ip-suggest-chips" id="ip-suggest-chips"></div>
+        </div>
+        <div class="auth-field">
+          <label for="reg-display" id="lbl-reg-display">Tên hiển thị (có thể có dấu & emoji)</label>
+          <input type="text" class="auth-input" id="reg-display" placeholder="" maxlength="32">
+        </div>
+        <div class="auth-field">
+          <label for="reg-user" id="lbl-reg-user">Tên tài khoản (viết liền không dấu, 3-20 ký tự)</label>
+          <input type="text" class="auth-input" id="reg-user" placeholder="" maxlength="20" autocomplete="username">
+        </div>
+        <div class="auth-field">
+          <label for="reg-pass" id="lbl-reg-pass">Mật khẩu (tối thiểu 4 ký tự)</label>
+          <input type="password" class="auth-input" id="reg-pass" placeholder="••••••" autocomplete="new-password">
+        </div>
+        <button type="submit" class="auth-submit" id="btn-register-go">Tạo tài khoản</button>
+      </form>
+
+      <!-- HỒ SƠ KHI ĐÃ ĐĂNG NHẬP -->
+      <form id="profile-pane">
+        <div class="profile-card" id="profile-info"></div>
+        <div class="auth-field">
+          <label for="prof-display-input" id="lbl-prof-display">Đổi tên hiển thị mới</label>
+          <input type="text" class="auth-input" id="prof-display-input" maxlength="32">
+        </div>
+        <div class="profile-actions">
+          <button type="submit" class="auth-submit" id="btn-prof-save">Lưu tên</button>
+          <button type="button" class="btn-danger" id="btn-logout">Đăng xuất</button>
+          <button type="button" class="btn-ghost" id="btn-prof-close">Đóng</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Máy đĩa than Hi-Fi & Bảng tùy chọn nhạc -->
+  <canvas id="deck-canvas" tabindex="0" role="button" aria-label="Máy đĩa than"></canvas>
+
+  <div id="deck-panel" role="dialog" aria-labelledby="dp-title">
+    <div class="dp-head">
+      <span id="dp-title">💿 Máy đĩa than</span>
+      <button type="button" class="dp-x" id="dp-close">✕</button>
+    </div>
+    <div class="dp-now">
+      <div class="dp-label" id="dp-now-label">Đang phát</div>
+      <div class="dp-song mq-auto" id="dp-song">-</div>
+      <div class="dp-seek">
+        <span id="dp-time-cur">0:00</span>
+        <input type="range" class="dp-range" id="dp-seek" min="0" max="1000" step="1" value="0" disabled aria-label="Seek">
+        <span id="dp-time-dur">--:--</span>
+      </div>
+    </div>
+    <div class="dp-actions">
+      <button type="button" class="dp-btn mq-auto" id="dp-toggle">▶ Phát nhạc</button>
+      <button type="button" class="dp-btn alt mq-auto" id="dp-next">⏭ Bài tiếp</button>
+      <button type="button" class="dp-btn alt mq-auto" id="dp-change" aria-pressed="false">📋 Danh sách</button>
+      <button type="button" class="dp-btn search-btn" id="dp-search" aria-pressed="false" title="Tìm bài">🔍</button>
+    </div>
+    <div class="dp-search-wrap" id="dp-search-wrap">
+      <span style="font-size:11px;color:#4ef57b">🔍</span>
+      <input type="text" id="dp-search-input" placeholder="Tìm tên bài hát..." autocomplete="off">
+      <button type="button" id="dp-search-clear" title="Xóa">✕</button>
+    </div>
+    <div class="dp-modes">
+      <button type="button" class="dp-mode-btn mq-auto active" id="dp-repeat">🔁 Cả danh sách</button>
+      <button type="button" class="dp-mode-btn mq-auto" id="dp-shuffle" aria-pressed="false">🔀 Trộn: Tắt</button>
+      <button type="button" class="dp-mode-btn mq-auto add-btn" id="dp-add-song">➕ Thêm nhạc</button>
+    </div>
+    <div class="dp-vol">
+      <button type="button" class="dp-vol-btn" id="dp-mute" aria-pressed="false">🔊</button>
+      <span id="dp-vol-label">Âm lượng</span>
+      <input type="range" class="dp-range" id="dp-volume" min="0" max="100" step="1" value="80" aria-label="Volume">
+      <span id="dp-vol-val">80</span>
+    </div>
+    <div class="dp-hint" id="dp-vol-hint"></div>
+    <div class="dp-timer">
+      <div class="dp-timer-head">
+        <span id="dp-timer-title">⏲ Hẹn giờ tắt nhạc</span>
+        <span id="dp-timer-left"></span>
+      </div>
+      <div class="dp-chips">
+        <button type="button" class="dp-chip" data-min="0" id="dp-t-off" aria-pressed="true">Tắt</button>
+        <button type="button" class="dp-chip" data-min="30" id="dp-t-30" aria-pressed="false">30 phút</button>
+        <button type="button" class="dp-chip" data-min="60" id="dp-t-60" aria-pressed="false">1 giờ</button>
+        <button type="button" class="dp-chip" data-min="120" id="dp-t-120" aria-pressed="false">2 giờ</button>
+        <button type="button" class="dp-chip" id="dp-t-custom" aria-pressed="false">Tùy chỉnh</button>
+      </div>
+      <div class="dp-timer-custom" id="dp-timer-custom">
+        <input type="number" id="dp-timer-input" min="1" max="720" step="1" inputmode="numeric" placeholder="Số phút (1–720)">
+        <button type="button" id="dp-timer-set">Đặt</button>
+      </div>
+    </div>
+    <p class="dp-pick" id="dp-pick" style="display:none">Chọn bài hát</p>
+    <div class="dp-list" id="dp-list"></div>
+  </div>
+
+  <!-- Ô box nhỏ đề xuất thêm nhạc cho DEV duyệt -->
+  <div id="add-song-box" role="dialog" aria-labelledby="asb-title">
+    <div class="asb-head">
+      <span id="asb-title">➕ Đề xuất thêm nhạc</span>
+      <button type="button" class="dp-x" id="add-song-close">✕</button>
+    </div>
+    <div class="asb-hint" id="add-song-hint">Gợi ý: Điền tên bài hát (gửi cho DEV duyệt)</div>
+    <form class="asb-form" id="add-song-form">
+      <input type="text" id="add-song-input" placeholder="Điền tên bài hát..." autocomplete="off">
+      <button type="submit" id="add-song-submit">Gửi</button>
+    </form>
+    <div id="add-song-msg"></div>
+
+    <!-- Danh sách đề xuất chờ duyệt (Chỉ hiển thị khi đăng nhập tài khoản DEV) -->
+    <div id="dev-song-queue">
+      <div class="dsq-head">
+        <button type="button" class="dsq-refresh" id="dsq-refresh"><span class="dsq-refresh-icon">↻</span> <span>Tải lại</span></button>
+        <span>🛠️ Đề xuất chờ duyệt (<span id="dsq-count">0</span>)</span>
+      </div>
+      <div id="dev-song-list"></div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- DỮ LIỆU NHẠC: data/songs.js (Code.gs / add-song.html chỉ sửa file này) -->
+  <!-- ===================================================================== -->
+  <script src="data/songs.js?v=1"></script>
+
+  <!-- ===================================================================== -->
+  <!-- KHỐI 1: HỘP NHẠC LOFI (WEB AUDIO + MP3 TỰ HOST)                        -->
+  <!-- ===================================================================== -->
+  <script src="js/music/player.js?v=1"></script>
+
+  <!-- ===================================================================== -->
+  <!-- KHỐI 1.5: CHUỖI ĐA NGÔN NGỮ MỚI & CHỮ CHẠY (MARQUEE)                  -->
+  <!-- ===================================================================== -->
+  <script src="js/core/i18n-marquee.js?v=1"></script>
+
+  <!-- ===================================================================== -->
+  <!-- KHỐI 2: ĐA NGÔN NGỮ (VI/EN/中文), ĐĂNG NHẬP 3 CHẾ ĐỘ & HỘP THƯ        -->
+  <!-- ===================================================================== -->
+  <script src="js/core/social.js?v=1"></script>
+
+  <!-- ===================================================================== -->
+  <!-- KHỐI 3: ENGINE RENDER CÂY THÔNG NOEL 3D ASCII & ÔNG GIÀ NOEL          -->
+  <!-- ===================================================================== -->
+  <script src="js/spaces/space1/space1.js?v=1"></script>
+  <script src="js/spaces/space2/space2.js?v=1"></script>
+  <script src="js/spaces/space3/space3.js?v=1"></script>
+  <script src="js/spaces/space4/space4.js?v=1"></script>
+
+  <!-- ===================================================================== -->
+  <!-- KHỐI 4: MÁY ĐĨA THAN HI-FI & ĐỀ XUẤT NHẠC CHO DEV DUYỆT               -->
+  <!-- ===================================================================== -->
+  <script src="js/music/turntable.js?v=1"></script>
+
+  <!-- ===================================================================== -->
+  <!-- KHỐI 5: BẢNG ĐIỀU KHIỂN, TUA NHẠC, ÂM LƯỢNG, HẸN GIỜ & ÔNG GIÀ NOEL NÓI -->
+  <!-- ===================================================================== -->
+  <!-- TRÌNH PHÁT NHẠC DÙNG CHUNG (tua, âm lượng, hẹn giờ) — nạp trước control-panel để nhãn ngôn ngữ ổn định -->
+  <script src="js/core/music-player.js?v=1"></script>
+  <script src="js/ui/control-panel.js?v=1"></script>
+
+  <script src="js/ui/mobile-viewport.js?v=1"></script>
+
+  <!-- AETHERISS CORE: chữ ký + quản lý Space (nạp cuối, sau khi mọi Space đã đăng ký) -->
+  <script src="js/core/signature.js?v=1"></script>
+  <script src="js/core/space-manager.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+/* ===================================================================== */
+/* SPACE 3: Tiệm tạp hóa pixel RGB lơ lửng giữa vũ trụ xanh ngọc bích    */
+/* ===================================================================== */
+
+body[data-space="space3"] { background: #021210; }
+/* ẩn các thành phần chỉ dành riêng cho Space 1 */
+body[data-space="space3"] .space1-only { display: none !important; }
+
+#space3-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  overflow-x: hidden;
+  z-index: 0;
+  background: #021210;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#space3-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Bong bóng thoại pixel */
+.s3-bubble {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  max-width: min(240px, calc(100vw - 24px));
+  padding: 7px 11px;
+  font: 700 12px/1.4 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+  text-align: center;
+  color: #052e2b;
+  background: #d1fae5;
+  border: 2px solid #34d399;
+  border-radius: 0;
+  box-shadow: 0 0 0 2px #021210, 0 0 16px rgba(52, 211, 153, 0.55);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -100%) scale(0.85);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.s3-bubble.on { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+.s3-bubble.below { transform: translate(-50%, 0) scale(0.85); }
+.s3-bubble.below.on { transform: translate(-50%, 0) scale(1); }
+.s3-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  background: #d1fae5;
+  border-right: 2px solid #34d399;
+  border-bottom: 2px solid #34d399;
+  transform: rotate(45deg) scale(0.8);
+}
+.s3-bubble.below::after {
+  bottom: auto;
+  top: -8px;
+  transform: rotate(225deg) scale(0.8);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s3-bubble { transition: none; }
+}

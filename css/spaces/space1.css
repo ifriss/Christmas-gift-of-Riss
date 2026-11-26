@@ -1,0 +1,171 @@
+    /* ===================================================================== */
+    /* 7. BÓNG NÓI CỦA ÔNG GIÀ NOEL                                          */
+    /* ===================================================================== */
+    #santa-bubble {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 17;
+      max-width: min(236px, calc(100vw - 16px));
+      padding: 7px 11px 8px;
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #eaf4ff;
+      background: rgba(13, 22, 51, 0.86);
+      border: 1px solid #ffd36b66;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), 0 0 14px rgba(255, 211, 107, 0.14);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      pointer-events: none;
+      opacity: 0;
+      scale: 0.92;
+      transform-origin: var(--tail, 24px) 100%;
+      transition: opacity 0.35s ease, scale 0.35s cubic-bezier(.2, .9, .3, 1.2);
+      overflow-wrap: anywhere;
+    }
+    #santa-bubble.on {
+      opacity: 0.96;
+      scale: 1;
+    }
+    #santa-bubble::after {
+      content: "";
+      position: absolute;
+      left: var(--tail, 24px);
+      bottom: -6px;
+      width: 10px;
+      height: 10px;
+      margin-left: -5px;
+      background: rgba(13, 22, 51, 0.96);
+      border-right: 1px solid #ffd36b66;
+      border-bottom: 1px solid #ffd36b66;
+      transform: rotate(45deg);
+    }
+    #santa-bubble .sb-h { visibility: hidden; }
+
+
+    /* ===================================================================== */
+    /* 7b. HỎI ĐÁP VỚI ÔNG GIÀ NOEL                                          */
+    /* ===================================================================== */
+    #qa-btn {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 18;
+      opacity: 0;
+      pointer-events: none;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 11px;
+      border: 1px solid #ffd36b88;
+      border-radius: 999px;
+      color: var(--gold);
+      background: rgba(13, 22, 51, 0.78);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      white-space: nowrap;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: opacity 0.4s ease, background 0.2s, box-shadow 0.2s;
+    }
+    #qa-btn.show { opacity: 1; pointer-events: auto; }
+    #qa-btn:hover { background: rgba(40, 28, 10, 0.86); box-shadow: 0 0 12px rgba(255, 211, 107, 0.35); }
+    #qa-box {
+      position: fixed;
+      left: 50%;
+      top: calc(env(safe-area-inset-top, 0px) + 12px);
+      transform: translateX(-50%);
+      z-index: 60;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      width: min(380px, calc(100vw - 24px));
+      max-height: min(60dvh, 540px);
+      padding: 12px;
+      color: #eaf4ff;
+      background: rgba(13, 22, 51, 0.96);
+      border: 1px solid #ffd36b77;
+      border-radius: 14px;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    #qa-box.open { display: flex; }
+    .qa-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 700; color: var(--gold); }
+    #qa-log {
+      flex: 1 1 auto;
+      min-height: 70px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-right: 2px;
+    }
+    .qa-msg {
+      max-width: 88%;
+      padding: 6px 10px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      border-radius: 12px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .qa-msg.bot { align-self: flex-start; background: #16254f; border: 1px solid #2a3e7a; }
+    .qa-msg.me { align-self: flex-end; background: #5a3a12; border: 1px solid #ffd36b66; }
+    .qa-msg.wait { opacity: 0.7; font-style: italic; }
+    #qa-chips { display: flex; flex-wrap: wrap; gap: 6px; max-height: 96px; overflow-y: auto; }
+    .qa-chip {
+      font-family: inherit;
+      font-size: 11px;
+      padding: 4px 9px;
+      color: #eaf4ff;
+      background: #101c42;
+      border: 1px solid #ffd36b55;
+      border-radius: 999px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .qa-chip:hover { border-color: #ffd36b; color: #ffd36b; }
+    #qa-form { display: flex; gap: 6px; }
+    #qa-input {
+      flex: 1;
+      min-width: 0;
+      padding: 7px 10px;
+      font-size: 16px;            /* >=16px để iOS không tự phóng to khi gõ */
+      font-family: inherit;
+      color: #eaf4ff;
+      background: #0b1330;
+      border: 1px solid #ffd36b55;
+      border-radius: 10px;
+      outline: none;
+    }
+    #qa-input:focus { border-color: #ffd36b; }
+   #qa-send {
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      min-width: 54px;
+      padding: 0 12px;
+      color: #1a1204;
+      background: #ffd36b;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-variant-numeric: tabular-nums;
+    }
+    #qa-send:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    #qa-note { font-size: 9.5px; line-height: 1.4; color: var(--dim); }
+
+
+
+/* ===================================================================== */
+/* SPACE 1: ẩn toàn bộ phần tử riêng của Space 1 khi đang ở Space khác    */
+/* ===================================================================== */
+body:not([data-space="space1"]) .space1-only {
+  display: none !important;
+}

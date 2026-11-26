@@ -1,0 +1,5 @@
+music/
+.git/
+*.mp3
+*.wav
+*.zip

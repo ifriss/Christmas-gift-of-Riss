@@ -1,0 +1,52 @@
+/* Space 2 — Aether Cosmic Lounge */
+#space2-root {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  overflow-x: hidden;
+  background: #04030f;
+  color: #cfe3ff;
+  text-align: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#space2-root .s2-canvas { position: absolute; inset: 0; display: block; }
+
+/* Widget giữa màn hình: chừa header (trên), đĩa than/chữ ký (dưới) và 2 nút mép */
+#space2-root .s2-card {
+  position: relative;
+  width: min(300px, calc(100vw - 96px));
+  margin: calc(env(safe-area-inset-top, 0px) + 64px) 0 calc(env(safe-area-inset-bottom, 0px) + 110px);
+  padding: 16px 16px 14px;
+  border-radius: 20px;
+  background: rgba(14, 10, 46, 0.55);
+  border: 1px solid rgba(160, 140, 255, 0.35);
+  box-shadow: 0 0 28px rgba(125, 249, 255, 0.15), inset 0 0 22px rgba(160, 140, 255, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+#space2-root .s2-title { font-size: clamp(16px, 5vw, 22px); font-weight: 700; color: #7df9ff; text-shadow: 0 0 14px #7df9ff88; }
+#space2-root .s2-sub { margin-top: 4px; font-size: 12px; color: #a9b8ee; }
+#space2-root .s2-clock { margin-top: 12px; font-size: clamp(30px, 10vw, 42px); font-weight: 700; letter-spacing: 0.04em; color: #fff; text-shadow: 0 0 18px #a78bfa; }
+#space2-root .s2-lbl { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8aa6d6; }
+#space2-root .s2-row { display: flex; gap: 10px; margin-top: 12px; }
+#space2-root .s2-cell { flex: 1; padding: 8px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); }
+#space2-root .s2-val { margin-top: 2px; font-size: 14px; font-weight: 700; color: #d9c8ff; }
+#space2-root .s2-bar { height: 4px; margin-top: 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+#space2-root .s2-bar i { display: block; height: 100%; width: 10%; border-radius: 4px; background: linear-gradient(90deg, #7df9ff, #a78bfa); transition: width 0.6s; }
+#space2-root .s2-hint { margin-top: 12px; font-size: 10.5px; color: #7f8fc0; }
+
+@media (max-height: 560px) {
+  #space2-root .s2-card { margin-top: 48px; margin-bottom: 70px; padding: 10px 12px; }
+  #space2-root .s2-clock { margin-top: 6px; }
+  #space2-root .s2-row, #space2-root .s2-hint { margin-top: 8px; }
+}

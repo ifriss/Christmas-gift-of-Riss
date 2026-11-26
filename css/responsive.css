@@ -1,0 +1,65 @@
+    /* ===================================================================== */
+    /* 5. TỐI ƯU GIAO DIỆN MOBILE (<= 640PX)                                 */
+    /* ===================================================================== */
+    @media (max-width: 640px) {
+      #tt {
+        font-size: 10px;
+        top: calc(env(safe-area-inset-top, 0px) + 8px);
+      }
+      #hint {
+        max-width: calc(100vw - 95px);
+      }
+      #name {
+        top: calc(env(safe-area-inset-top, 0px) + 34px);
+      }
+      #hud {
+        font-size: 9.5px;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+      }
+      #dev-credit {
+        font-size: 10px;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+        max-width: 215px;
+      }
+      button {
+        font-size: 10px;
+        padding: 5px 8px;
+      }
+      #top-tools {
+        top: calc(env(safe-area-inset-top, 0px) + 64px);
+        gap: 4px;
+      }
+      .tool-btn {
+        padding: 5px 8px;
+      }
+      #cd-box, #noti-box, #mailbox {
+        top: calc(env(safe-area-inset-top, 0px) + 98px);
+      }
+      #noti-box, #mailbox {
+        max-height: calc(100dvh - 220px);
+      }
+
+      /* Máy đĩa than nhỏ gọn bên phải, phía trên chữ ký Dev */
+      #deck-canvas {
+        right: max(10px, env(safe-area-inset-right, 0px) + 8px);
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 66px);
+        width: 86px;
+        height: 86px;
+      }
+
+      /* Bảng điều khiển nhạc & box thêm nhạc căn giữa an toàn trên Mobile */
+      #deck-panel, #add-song-box {
+        left: 50%;
+        right: auto;
+        top: 50%;
+        bottom: auto;
+        transform: translate(-50%, -50%);
+        width: min(338px, calc(100vw - 24px));
+        max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 110px);
+        padding: 11px;
+      }
+      .dp-list {
+        max-height: 220px;
+      }
+    }
+

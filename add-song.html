@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quản lý nhạc Giáng Sinh - Riss</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050a1a;
+      --card: #0d1633;
+      --fg: #cfe3ff;
+      --dim: #7389b0;
+      --gold: #ffd36b;
+      --green: #4ef57b;
+      --cyan: #52f0ff;
+      --red: #ff6b8b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0d1c42, var(--bg));
+      color: var(--fg);
+      font-family: "JetBrains Mono", monospace;
+      display: flex;
+      justify-content: center;
+      padding: 24px 14px;
+    }
+    .wrap { width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 16px; }
+    .card {
+      background: var(--card);
+      border: 1px solid #2a3b70;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    }
+    .hidden { display: none !important; }
+    h1 { margin: 0 0 6px; font-size: 17px; color: var(--gold); }
+    p.sub { margin: 0 0 16px; font-size: 11.5px; color: var(--dim); line-height: 1.5; }
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+    label { font-size: 11px; color: #8aa0c8; }
+    input[type="text"], input[type="password"], input:not([type]) {
+      width: 100%;
+      background: #050a1a;
+      border: 1px solid #2a3b70;
+      border-radius: 9px;
+      padding: 10px 12px;
+      color: var(--fg);
+      font: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+    input:focus { border-color: var(--gold); }
+    input[type="file"] {
+      width: 100%;
+      background: #050a1a;
+      border: 1px dashed #2a3b70;
+      border-radius: 9px;
+      padding: 9px 10px;
+      color: var(--fg);
+      font: inherit;
+      font-size: 12px;
+    }
+    input[type="file"]::file-selector-button {
+      font: inherit;
+      font-size: 11.5px;
+      font-weight: 700;
+      margin-right: 10px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--cyan);
+      background: #101b3a;
+      color: var(--cyan);
+      cursor: pointer;
+    }
+    button {
+      font: inherit;
+      font-size: 12.5px;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 11px 16px;
+      cursor: pointer;
+      border: 1px solid var(--gold);
+      background: #1d2f63;
+      color: var(--gold);
+      transition: 0.15s;
+    }
+    button:hover { background: #263d80; }
+    button:disabled { opacity: 0.5; cursor: wait; }
+    .btn-full { width: 100%; }
+    .btn-sm { padding: 5px 10px; font-size: 11px; border-color: var(--cyan); color: var(--cyan); background: #101b3a; }
+    .btn-save-order { padding: 5px 10px; font-size: 11px; border-color: var(--green); color: var(--green); background: rgba(78, 245, 123, 0.12); }
+    .btn-save-order:hover { background: rgba(78, 245, 123, 0.22); }
+    .btn-replace { padding: 4px 8px; font-size: 10.5px; border-color: var(--cyan); color: var(--cyan); background: rgba(82, 240, 255, 0.1); }
+    .btn-replace:hover { background: rgba(82, 240, 255, 0.2); }
+    .btn-del { padding: 4px 8px; font-size: 10.5px; border-color: var(--red); color: var(--red); background: rgba(255, 59, 92, 0.12); }
+    .status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 9px;
+      font-size: 11.5px;
+      line-height: 1.5;
+      display: none;
+    }
+    .status.ok { display: block; background: rgba(78,245,123,0.12); border: 1px solid var(--green); color: var(--green); }
+    .status.err { display: block; background: rgba(255,59,92,0.12); border: 1px solid var(--red); color: var(--red); }
+    .song-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .song-item {
+      background: #070e24;
+      border: 1px solid #1e2d59;
+      border-radius: 9px;
+      padding: 9px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+    }
+    .song-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+    .song-info { min-width: 0; flex: 1; }
+    .song-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .fixed-stt {
+      width: 50px;
+      flex-shrink: 0;
+      text-align: center;
+      font-size: 11px;
+      color: var(--dim);
+    }
+    .stt-input {
+      width: 50px;
+      flex-shrink: 0;
+      background: #050a1a;
+      border: 1px solid #2a3b70;
+      border-radius: 7px;
+      padding: 5px 4px;
+      color: var(--gold);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+    }
+    .stt-input:focus { border-color: var(--green); }
+    .song-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .song-meta { font-size: 10px; color: var(--dim); margin-top: 2px; word-break: break-all; }
+    .head-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; flex-wrap: wrap; }
+    .head-tools { display: flex; align-items: center; gap: 6px; }
+    a.link { color: var(--cyan); font-size: 11px; text-decoration: none; }
+    .who { font-size: 11.5px; color: var(--green); margin: 0; }
+    .user-badge {
+      background: rgba(255, 211, 107, 0.18);
+      border: 1px solid #ffd36baa;
+      color: var(--gold);
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 0 5px;
+      border-radius: 5px;
+      margin-left: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- ĐĂNG NHẬP BẰNG TÀI KHOẢN CỦA CÂY THÔNG -->
+    <div class="card" id="login-card">
+      <div class="head-flex">
+        <h1>🔐 Đăng nhập quản lý nhạc</h1>
+        <a class="link" href="./index.html">← Về cây thông</a>
+      </div>
+      <p class="sub">Dùng tài khoản đã đăng ký trên trang cây thông. Chỉ tài khoản có huy hiệu DEV (do admin đặt trong Google Sheet) mới quản lý được nhạc.</p>
+      <form id="login-form">
+        <div class="field">
+          <label for="lg-user">Tên tài khoản</label>
+          <input id="lg-user" type="text" autocomplete="username" autocapitalize="none" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="lg-pass">Mật khẩu</label>
+          <input id="lg-pass" type="password" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-full" id="btn-login">🔓 Đăng nhập</button>
+      </form>
+      <div id="login-status" class="status"></div>
+    </div>
+
+    <!-- KHU QUẢN LÝ (chỉ hiện sau khi đăng nhập) -->
+    <div id="app" class="hidden" style="display:contents">
+
+      <div class="card" id="who-card">
+        <div class="head-flex" style="margin:0">
+          <p class="who" id="who"></p>
+          <a class="link" href="#" id="btn-logout">Đăng xuất</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h1>🎵 Thêm bài nhạc mp3 mới</h1>
+        <p class="sub">Chọn file mp3 từ máy, tool sẽ tải file lên thư mục <b>music/</b> trong repo rồi cập nhật thẳng vào <b>index.html</b>. Chỉ dùng nhạc bạn có quyền sử dụng.</p>
+
+        <form id="add-form">
+          <div class="field">
+            <label>Tên bài hát hiển thị trên nút bấm</label>
+            <input id="song-name" required maxlength="60" placeholder="vd: Last Christmas (Lofi)">
+          </div>
+          <div class="field">
+            <label for="song-file">File mp3 từ máy (tối đa 20MB)</label>
+            <input id="song-file" type="file" accept=".mp3,audio/mpeg" required>
+          </div>
+          <button type="submit" class="btn-full" id="btn-add">🚀 Tải lên & Thêm vào index.html</button>
+        </form>
+
+        <div id="status" class="status"></div>
+      </div>
+
+      <div class="card">
+        <div class="head-flex">
+          <h1 style="margin:0">📜 Danh sách nhạc hiện tại</h1>
+          <div class="head-tools">
+            <button type="button" class="btn-save-order" id="btn-save-order">💾 Lưu thứ tự</button>
+            <button type="button" class="btn-sm" id="btn-reload">🔄 Tải lại</button>
+          </div>
+        </div>
+        <p class="sub" style="margin-bottom:8px">3 bài đầu cố định. Nhập số STT mới vào các bài phía dưới rồi bấm <b>💾 Lưu thứ tự</b> để cập nhật lên <b>index.html</b>. Bấm <b>Thay file</b> để đổi file .mp3 mới cho bài đó.</p>
+        <input type="file" id="replace-file-input" accept=".mp3,audio/mpeg" class="hidden">
+        <div id="list-status" class="status"></div>
+        <div id="song-list" class="song-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    // Cùng máy chủ tài khoản với index.html
+    const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxrsc-RtFFOPjfbTAjcTsxFcmlUMXPCkRslxr_ZotyQ0XaXHj0TecatX7oRseX22Zs24A/exec";
+
+    // Dùng chung khóa phiên đăng nhập với index.html (đã đăng nhập cây thông thì vào thẳng đây)
+    const SESSION_KEY = 'cgor_auth_user';
+
+    let session = null; // { username, displayName, badge, token }
+    let replacingSong = null; // { id, name, btn }
+
+    const ERRORS = {
+      WRONG_PASSWORD: 'Mật khẩu không chính xác.',
+      USER_NOT_FOUND: 'Không tìm thấy tên tài khoản này.',
+      UNAUTHORIZED: 'Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.',
+      FORBIDDEN: 'Tài khoản này chưa có huy hiệu DEV nên không quản lý được nhạc.',
+      GITHUB_NOT_CONFIGURED: 'Apps Script chưa cấu hình GitHub (kiểm tra Script properties).',
+      INVALID_SONG: 'Tên bài hoặc file mp3 không hợp lệ.',
+      INVALID_MP3: 'File không phải mp3 hợp lệ.',
+      FILE_TOO_LARGE: 'File mp3 quá lớn (tối đa 20 MB).',
+      SONG_NOT_FOUND: 'Không tìm thấy bài hát này (có thể đã bị xóa).',
+      SONGS_NOT_FOUND: 'Không tìm thấy mảng SONGS trong index.html.',
+      NETWORK: 'Lỗi kết nối máy chủ, vui lòng thử lại.'
+    };
+
+    function errText(code) {
+      const c = String(code || 'NETWORK');
+      if (ERRORS[c]) return ERRORS[c];
+      if (c.indexOf('GITHUB_ERROR') === 0) return 'GitHub báo lỗi: ' + c.replace('GITHUB_ERROR:', '').trim();
+      return c;
+    }
+
+    function showStatus(msg, isOk, id) {
+      const el = $(id || 'status');
+      el.textContent = msg;
+      el.className = 'status ' + (isOk ? 'ok' : 'err');
+    }
+
+    function escapeHTML(s) {
+      return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    }
+
+    function readSharedSession() {
+      try {
+        const u = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+        if (u && u.token && u.username) return u;
+      } catch (e) {}
+      return null;
+    }
+
+    function saveSession(u) {
+      session = u;
+      try {
+        if (u) localStorage.setItem(SESSION_KEY, JSON.stringify(u));
+        else localStorage.removeItem(SESSION_KEY);
+      } catch (e) {}
+    }
+
+    // Gọi Apps Script (token đăng nhập gửi kèm, token GitHub nằm phía máy chủ)
+    async function api(action, extra) {
+      let data;
+      try {
+        const res = await fetch(SHEET_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(Object.assign({ action: action, token: session ? session.token : '' }, extra || {}))
+        });
+        data = await res.json();
+      } catch (e) {
+        const err = new Error(errText('NETWORK'));
+        err.code = 'NETWORK';
+        throw err;
+      }
+      if (!data || !data.ok) {
+        const code = (data && data.error) || 'NETWORK';
+        const err = new Error(errText(code));
+        err.code = code;
+        throw err;
+      }
+      return data;
+    }
+
+    function backToLogin(msg) {
+      saveSession(null);
+      $('song-list').innerHTML = '';
+      $('app').classList.add('hidden');
+      $('login-card').classList.remove('hidden');
+      if (msg) showStatus('❌ ' + msg, false, 'login-status');
+      else $('login-status').className = 'status';
+    }
+
+    function handleApiError(err) {
+      if (err.code === 'UNAUTHORIZED' || err.code === 'FORBIDDEN') {
+        backToLogin(err.message);
+        return true;
+      }
+      return false;
+    }
+
+    // ---------- Đăng nhập ----------
+    $('login-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const username = $('lg-user').value.trim().toLowerCase();
+      const password = $('lg-pass').value;
+      if (!username || !password) return;
+
+      const btn = $('btn-login');
+      btn.disabled = true;
+      showStatus('⏳ Đang đăng nhập...', true, 'login-status');
+      try {
+        const res = await fetch(SHEET_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'login', username: username, password: password, ip: '' })
+        });
+        const data = await res.json();
+        if (!(data && data.ok && data.user)) {
+          showStatus('❌ ' + errText(data && data.error), false, 'login-status');
+        } else {
+          saveSession(data.user);
+          $('lg-pass').value = '';
+          $('login-status').className = 'status';
+          await enterApp();
+        }
+      } catch (err) {
+        showStatus('❌ ' + errText('NETWORK'), false, 'login-status');
+      }
+      btn.disabled = false;
+    });
+
+    async function enterApp() {
+      $('login-card').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      const badge = session.badge ? '<span class="user-badge">' + escapeHTML(session.badge) + '</span>' : '';
+      $('who').innerHTML = 'Đã đăng nhập: <b>' + escapeHTML(session.displayName || session.username) + '</b> (@' + escapeHTML(session.username) + ')' + badge;
+      await renderSongList();
+    }
+
+    $('btn-logout').addEventListener('click', e => {
+      e.preventDefault();
+      backToLogin('');
+    });
+
+    // ---------- Danh sách / thêm / sắp xếp / thay file / xóa bài hát ----------
+    const MAX_MP3_BYTES = 20 * 1024 * 1024;
+
+    function readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(String(r.result).split(',')[1] || '');
+        r.onerror = () => reject(new Error('Không đọc được file.'));
+        r.readAsDataURL(file);
+      });
+    }
+
+    function renderSongsMarkup(songs) {
+      const box = $('song-list');
+      if (!songs || !songs.length) {
+        box.innerHTML = '<div style="font-size:11.5px;color:var(--red)">Không tìm thấy bài hát nào trong index.html</div>';
+        return;
+      }
+      box.innerHTML = songs.map((s, idx) => {
+        const isFixedTop3 = idx < 3;
+        const leftControl = isFixedTop3
+          ? `<span class="fixed-stt">#${idx + 1}</span>`
+          : `<input type="number" class="stt-input" min="4" max="${songs.length}" value="${idx + 1}" title="Nhập số thứ tự (từ 4)">`;
+
+        const rightActions = (!isFixedTop3 && s.type === 'audio')
+          ? `
+            <div class="song-actions">
+              <button type="button" class="btn-replace" data-id="${escapeHTML(s.id)}" data-name="${escapeHTML(s.name)}">Thay file</button>
+              <button type="button" class="btn-del" data-id="${escapeHTML(s.id)}" data-name="${escapeHTML(s.name)}">Xóa</button>
+            </div>
+          `
+          : '';
+
+        return `
+          <div class="song-item" data-id="${escapeHTML(s.id)}" data-fixed="${isFixedTop3 ? '1' : '0'}">
+            <div class="song-left">
+              ${leftControl}
+              <div class="song-info">
+                <div class="song-title"><b>${escapeHTML(s.name)}</b></div>
+                <div class="song-meta">${s.type === 'audio' ? 'File: ' + escapeHTML(s.src || '') : 'Nhạc hộp nhạc tích hợp'}</div>
+              </div>
+            </div>
+            ${rightActions}
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function renderSongList() {
+      const box = $('song-list');
+      box.innerHTML = '<div style="font-size:11.5px;color:var(--dim)">Đang tải từ GitHub...</div>';
+      try {
+        const data = await api('songs_list');
+        renderSongsMarkup(data.songs || []);
+      } catch (err) {
+        if (handleApiError(err)) return;
+        box.innerHTML = `<div style="font-size:11.5px;color:var(--red)">${escapeHTML(err.message)}</div>`;
+      }
+    }
+
+    $('btn-reload').addEventListener('click', () => {
+      $('list-status').className = 'status';
+      renderSongList();
+    });
+
+    // Lưu thứ tự bài hát theo số STT nhập vào (chỉ áp dụng cho các bài từ thứ 4 trở đi)
+    $('btn-save-order').addEventListener('click', async () => {
+      const rows = Array.from(document.querySelectorAll('#song-list .song-item[data-fixed="0"]'));
+      if (!rows.length) return;
+
+      const items = rows.map((row, currentIndex) => {
+        const raw = parseInt(row.querySelector('.stt-input').value, 10);
+        const stt = Number.isNaN(raw) ? (currentIndex + 4) : raw;
+        return {
+          id: row.getAttribute('data-id'),
+          stt: stt,
+          currentIndex: currentIndex
+        };
+      });
+
+      items.sort((a, b) => (a.stt - b.stt) || (a.currentIndex - b.currentIndex));
+      const orderedIds = items.map(x => x.id);
+
+      const btn = $('btn-save-order');
+      btn.disabled = true;
+      showStatus('⏳ Đang cập nhật thứ tự lên index.html...', true, 'list-status');
+      try {
+        const data = await api('songs_reorder', { orderedIds: orderedIds });
+        if (data && Array.isArray(data.songs)) {
+          renderSongsMarkup(data.songs);
+        } else {
+          await renderSongList();
+        }
+        showStatus('✅ Đã cập nhật thứ tự bài hát lên index.html và làm mới danh sách!', true, 'list-status');
+      } catch (err) {
+        if (!handleApiError(err)) showStatus('❌ ' + err.message, false, 'list-status');
+      }
+      btn.disabled = false;
+    });
+
+    // Kiểm tra nhanh chữ ký file MP3 thực tế trên trình duyệt
+    async function isValidMp3File(file) {
+      const buf = await file.slice(0, 4).arrayBuffer();
+      const b = new Uint8Array(buf);
+      if (b.length < 4) return false;
+      if (b[0] === 0x49 && b[1] === 0x44 && b[2] === 0x33) return true; // ID3 tag
+      return b[0] === 0xff && (b[1] & 0xe0) === 0xe0; // MPEG frame sync
+    }
+
+    // Đẩy trực tiếp file MP3 từ trình duyệt lên GitHub (chịu tải tới 100 MB)
+    async function uploadMp3DirectToGithub(gh, filePath, base64, cleanName) {
+      const safePath = filePath.split('/').map(encodeURIComponent).join('/');
+      const url = `https://api.github.com/repos/${encodeURIComponent(gh.owner)}/${encodeURIComponent(gh.repo)}/contents/${safePath}`;
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + gh.token,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        },
+        body: JSON.stringify({
+          message: 'Add mp3: ' + filePath,
+          content: base64,
+          branch: gh.branch
+        })
+      });
+      if (res.status !== 200 && res.status !== 201) {
+        let info = {};
+        try { info = await res.json(); } catch (e) {}
+        throw new Error('GitHub báo lỗi: ' + (info.message || res.status));
+      }
+    }
+
+    $('add-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const name = $('song-name').value.trim();
+      const file = $('song-file').files[0];
+      if (!name || !file) {
+        showStatus('Hãy nhập tên bài và chọn file mp3.', false);
+        return;
+      }
+      if (!/\.mp3$/i.test(file.name)) {
+        showStatus('Chỉ nhận file có đuôi .mp3', false);
+        return;
+      }
+      if (file.size > MAX_MP3_BYTES) {
+        showStatus('File quá lớn (tối đa 20 MB).', false);
+        return;
+      }
+
+      const btn = $('btn-add');
+      btn.disabled = true;
+      showStatus('⏳ Đang kiểm tra file và xin quyền tải lên...', true);
+      try {
+        if (!(await isValidMp3File(file))) {
+          throw new Error(errText('INVALID_MP3'));
+        }
+
+        // Bước 1: Lấy đường dẫn & quyền đẩy từ Apps Script
+        const prep = await api('songs_prepare', { name: name, size: file.size });
+
+        // Bước 2: Đẩy thẳng file MP3 lên GitHub
+        showStatus('⏳ Đang tải file mp3 lên GitHub...', true);
+        const base64 = await readFileAsBase64(file);
+        await uploadMp3DirectToGithub(prep.gh, prep.filePath, base64, prep.cleanName);
+
+        // Bước 3: Báo Apps Script cập nhật index.html
+        showStatus('⏳ Đang cập nhật bài hát vào index.html...', true);
+        await api('songs_commit', {
+          name: prep.cleanName,
+          slug: prep.slug,
+          filePath: prep.filePath
+        });
+
+        $('song-name').value = '';
+        $('song-file').value = '';
+        showStatus(`✅ Đã thêm "${name}" thành công! GitHub Pages sẽ cập nhật sau khoảng 1-2 phút.`, true);
+        renderSongList();
+      } catch (err) {
+        if (!handleApiError(err)) showStatus('❌ ' + err.message, false);
+      }
+      btn.disabled = false;
+    });
+
+    // Bấm nút Thay file hoặc Xóa trên từng dòng bài hát
+    $('song-list').addEventListener('click', async e => {
+      const replaceBtn = e.target.closest('.btn-replace');
+      if (replaceBtn) {
+        replacingSong = {
+          id: replaceBtn.getAttribute('data-id'),
+          name: replaceBtn.getAttribute('data-name'),
+          btn: replaceBtn
+        };
+        const picker = $('replace-file-input');
+        picker.value = '';
+        picker.click();
+        return;
+      }
+
+      const btn = e.target.closest('.btn-del');
+      if (!btn) return;
+      const id = btn.getAttribute('data-id');
+      const name = btn.getAttribute('data-name');
+      if (!confirm(`Xóa bài "${name}" khỏi trang web?`)) return;
+
+      btn.disabled = true;
+      try {
+        await api('songs_remove', { id: id });
+        showStatus(`🗑️ Đã xóa bài "${name}".`, true, 'list-status');
+        renderSongList();
+      } catch (err) {
+        if (!handleApiError(err)) {
+          showStatus('❌ ' + err.message, false, 'list-status');
+          btn.disabled = false;
+        }
+      }
+    });
+
+    // Xử lý sau khi chọn file .mp3 mới để thay thế
+    $('replace-file-input').addEventListener('change', async e => {
+      const file = e.target.files[0];
+      const target = replacingSong;
+      replacingSong = null;
+      if (!file || !target) return;
+
+      if (!/\.mp3$/i.test(file.name)) {
+        showStatus('❌ Chỉ nhận file có đuôi .mp3', false, 'list-status');
+        return;
+      }
+      if (file.size > MAX_MP3_BYTES) {
+        showStatus('❌ File quá lớn (tối đa 20 MB).', false, 'list-status');
+        return;
+      }
+
+      if (target.btn) target.btn.disabled = true;
+      showStatus(`⏳ Đang kiểm tra file thay thế cho "${target.name}"...`, true, 'list-status');
+      try {
+        if (!(await isValidMp3File(file))) {
+          throw new Error(errText('INVALID_MP3'));
+        }
+
+        const prep = await api('songs_replace_prepare', { id: target.id, size: file.size });
+
+        showStatus(`⏳ Đang tải file mp3 mới lên GitHub cho "${target.name}"...`, true, 'list-status');
+        const base64 = await readFileAsBase64(file);
+        await uploadMp3DirectToGithub(prep.gh, prep.filePath, base64, prep.name);
+
+        showStatus(`⏳ Đang cập nhật file mới vào index.html...`, true, 'list-status');
+        await api('songs_replace_commit', {
+          id: target.id,
+          filePath: prep.filePath
+        });
+
+        showStatus(`✅ Đã thay file mp3 mới cho bài "${target.name}"!`, true, 'list-status');
+        await renderSongList();
+      } catch (err) {
+        if (!handleApiError(err)) {
+          showStatus('❌ ' + err.message, false, 'list-status');
+          if (target.btn) target.btn.disabled = false;
+        }
+      }
+    });
+
+    // Đã đăng nhập sẵn ở cây thông thì vào thẳng
+    (function init() {
+      const shared = readSharedSession();
+      if (shared) {
+        session = shared;
+        enterApp();
+      }
+    })();
+  </script>
+</body>
+</html>

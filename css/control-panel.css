@@ -1,0 +1,66 @@
+    /* ===================================================================== */
+    /* 6. NÚT & BẢNG ĐIỀU KHIỂN (dưới chữ MERRY CHRISTMAS)                    */
+    /* ===================================================================== */
+    #ctl-btn {
+      position: fixed;
+      left: 50%;
+      top: 72%;
+      transform: translate(-50%, 6px);
+      z-index: 18;
+      opacity: 0;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-color: #ffd36b88;
+      color: var(--gold);
+      background: rgba(13, 22, 51, 0.72);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      white-space: nowrap;
+      transition: opacity 0.7s ease, transform 0.7s ease, background 0.2s, box-shadow 0.2s;
+    }
+    #ctl-btn.show {
+      opacity: 0.92;
+      pointer-events: auto;
+      transform: translate(-50%, 0);
+    }
+    #ctl-btn.show:hover,
+    #ctl-btn[aria-expanded="true"] {
+      opacity: 1;
+      background: #1d2f63;
+      box-shadow: 0 0 12px rgba(255, 211, 107, 0.35);
+    }
+
+    #ctl-panel {
+      position: fixed;
+      left: 50%;
+      top: 60%;
+      transform: translateX(-50%);
+      z-index: 55;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      width: min(560px, calc(100vw - 20px));
+      overflow-y: auto;
+      background: rgba(13, 22, 51, 0.96);
+      border: 1px solid #ffd36b77;
+      border-radius: 14px;
+      padding: 10px 12px 12px;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    #ctl-panel.open { display: flex; }
+    .cp-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+

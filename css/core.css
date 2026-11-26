@@ -1,0 +1,136 @@
+/* ===================================================================== */
+/* AETHERISS CORE: nút chuyển Space, lớp chuyển cảnh, chữ ký (signature)  */
+/* ===================================================================== */
+
+/* Lớp phủ mờ dần khi đổi Space */
+#space-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: #050a1a;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+#space-veil.on { opacity: 1; pointer-events: auto; }
+
+/* Nút "<" / ">" chuyển Space: thanh mảnh sát hẳn rìa, không nền tròn, cao >= 44px */
+.space-nav {
+  position: fixed;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 40;
+  width: 24px;
+  min-height: 44px;
+  height: 64px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--sig-color, var(--gold));
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  opacity: 0.55;
+  text-shadow: 0 0 8px var(--sig-glow, rgba(255, 211, 107, 0.4));
+  transition: opacity 0.2s, color 0.5s;
+}
+#space-next { right: 0; }
+#space-prev { left: 0; }
+#space-next { padding-right: env(safe-area-inset-right, 0px); width: calc(24px + env(safe-area-inset-right, 0px)); }
+#space-prev { padding-left: env(safe-area-inset-left, 0px); width: calc(24px + env(safe-area-inset-left, 0px)); }
+.space-nav:hover, .space-nav:active { opacity: 1; background: none; }
+.space-nav:disabled { opacity: 0.2; }
+
+/* Chữ ký dạng pill nhỏ, góc phải dưới, xuyên suốt mọi Space */
+#signature {
+  position: fixed;
+  right: max(14px, env(safe-area-inset-right, 0px) + 12px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+  z-index: 15;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: min(260px, calc(100vw - 120px));
+  padding: 3px 10px 3px 8px;
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: var(--sig-color, #ffd36b);
+  background: var(--sig-bg, rgba(13, 22, 51, 0.6));
+  border: 1px solid var(--sig-border, #ffd36b55);
+  border-radius: 999px;
+  box-shadow: 0 0 10px var(--sig-glow, rgba(255, 211, 107, 0.18));
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+  transition: color 0.5s, border-color 0.5s, box-shadow 0.5s, background 0.5s;
+  animation: sig-glow 3.6s ease-in-out infinite;
+}
+/* mở rộng vùng chạm lên >= 44px mà không làm pill to ra */
+#signature::after { content: ""; position: absolute; inset: -12px -8px; }
+#signature .sig-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+#signature .sig-full { display: none; }
+#signature.open .sig-full { display: inline; }
+#signature.open .sig-short { display: none; }
+@keyframes sig-glow { 50% { box-shadow: 0 0 16px var(--sig-glow, rgba(255, 211, 107, 0.4)); } }
+@media (prefers-reduced-motion: reduce) { #signature { animation: none; } }
+
+/* Màu chữ ký theo từng Space */
+body[data-space="space1"] {
+  --sig-color: #ffd36b; --sig-border: #ffd36b55; --sig-glow: rgba(255, 211, 107, 0.3);
+  --sig-bg: rgba(13, 22, 51, 0.6);
+}
+body[data-space="space2"] {
+  --sig-color: #c4b5fd; --sig-border: #a78bfa88; --sig-glow: rgba(125, 249, 255, 0.45);
+  --sig-bg: rgba(20, 12, 60, 0.66);
+}
+body[data-space="space3"] {
+  --sig-color: #6ee7b7; --sig-border: #34d399cc; --sig-glow: rgba(52, 211, 153, 0.55);
+  --sig-bg: rgba(2, 24, 21, 0.72);
+}
+body[data-space="space4"] {
+  --sig-color: #fde047; --sig-border: #facc15; --sig-glow: rgba(45, 212, 191, 0.6);
+  --sig-bg: rgba(7, 89, 133, 0.72);
+}
+body[data-space="space4"] #signature { border-width: 2px; }
+
+html, body { overflow-x: hidden; }
+
+/* iPhone (<= 430px): máy đĩa than thu gọn nằm TRÊN pill chữ ký, cách 2 nút < > ở mép;
+   bảng nhạc chừa lề 2 bên để không đè nút chuyển Space; vùng chạm >= 44px */
+@media (max-width: 430px) {
+  #deck-canvas {
+    width: 72px;
+    height: 72px;
+    right: max(34px, env(safe-area-inset-right, 0px) + 30px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 54px);
+  }
+  #signature { right: max(34px, env(safe-area-inset-right, 0px) + 30px); max-width: calc(100vw - 80px); }
+  #deck-panel, #add-song-box {
+    width: min(338px, calc(100vw - 72px));
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 150px);
+  }
+  #deck-panel .dp-btn, #deck-panel .dp-mode-btn, #deck-panel .dp-chip,
+  #deck-panel .dp-vol-btn, #deck-panel .dp-x, #deck-panel #dp-timer-set,
+  #deck-panel .dp-item { min-height: 44px; }
+  #deck-panel .dp-x { min-width: 44px; }
+  #deck-panel .dp-vol-btn { min-width: 44px; }
+  #deck-panel .dp-modes, #deck-panel .dp-actions { flex-wrap: wrap; }
+}
+
+@media (max-width: 640px) {
+  #signature { bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); font-size: 10px; }
+}

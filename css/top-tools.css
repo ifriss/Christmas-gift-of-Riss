@@ -1,0 +1,158 @@
+    /* Cụm nút chức năng góc trên bên phải (Ngôn ngữ, Tải lại, Đếm ngược, Lời chúc) */
+    #top-tools {
+      position: fixed;
+      right: max(14px, env(safe-area-inset-right, 0px) + 10px);
+      top: calc(env(safe-area-inset-top, 0px) + 68px);
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .tool-btn {
+      background: #101b3ae6;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: transform 0.15s, background 0.2s, border-color 0.2s;
+    }
+
+    .tool-btn:hover {
+      background: #1d2f63;
+      transform: translateY(-1px);
+    }
+
+    #lang-btn {
+      border-color: #4ef57b;
+      color: #4ef57b;
+    }
+
+    #refresh-btn {
+      border-color: #ff9a3c;
+      color: #ff9a3c;
+    }
+
+    #cd-btn {
+      border-color: #52f0ff;
+      color: #52f0ff;
+    }
+
+    #cd-btn.active {
+      background: #153459;
+      box-shadow: 0 0 12px rgba(82, 240, 255, 0.35);
+    }
+
+    #mail-btn.active {
+      background: #1d2f63;
+      box-shadow: 0 0 12px rgba(255, 211, 107, 0.35);
+    }
+
+    #noti-btn {
+      border-color: #ff7ad9;
+      color: #ff7ad9;
+    }
+
+    #noti-btn.active {
+      background: #361942;
+      box-shadow: 0 0 12px rgba(255, 122, 217, 0.35);
+    }
+
+    #noti-count {
+      background: #ff3b3b;
+      color: #ffffff;
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+
+    #mail-count {
+      background: #ff3b3b;
+      color: #ffffff;
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 99px;
+    }
+
+    /* ===================================================================== */
+    /* 2. HỘP ĐẾM NGƯỢC GIÁNG SINH & HỘP THƯ LỜI CHÚC                        */
+    /* ===================================================================== */
+    #cd-box {
+      position: fixed;
+      right: max(14px, env(safe-area-inset-right, 0px) + 10px);
+      top: calc(env(safe-area-inset-top, 0px) + 104px);
+      width: min(310px, calc(100vw - 28px));
+      background: rgba(13, 22, 51, 0.94);
+      border: 1px solid #52f0ff88;
+      border-radius: 14px;
+      display: none;
+      flex-direction: column;
+      z-index: 40;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+
+    #cd-box.open {
+      display: flex;
+    }
+
+    .cd-head {
+      padding: 10px 14px;
+      border-bottom: 1px solid #2a3b70;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #52f0ff;
+    }
+
+    .cd-body {
+      padding: 14px 12px 16px;
+      text-align: center;
+    }
+
+    .cd-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .cd-cell {
+      background: #070e24;
+      border: 1px solid #1e2d59;
+      border-radius: 10px;
+      padding: 8px 4px;
+    }
+
+    .cd-num {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--gold);
+      text-shadow: 0 0 8px rgba(255, 211, 107, 0.4);
+      line-height: 1.2;
+    }
+
+    .cd-lbl {
+      font-size: 9.5px;
+      color: var(--dim);
+      margin-top: 3px;
+    }
+
+    #cd-note {
+      font-size: 11px;
+      color: #4ef57b;
+      font-weight: 600;
+    }
+

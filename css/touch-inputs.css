@@ -1,0 +1,8 @@
+    /* Mobile: mọi ô nhập >= 16px để iOS không tự phóng to khi focus */
+    @media (pointer: coarse) {
+      input:not([type="range"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]),
+      textarea,
+      select {
+        font-size: 16px !important;
+      }
+    }
