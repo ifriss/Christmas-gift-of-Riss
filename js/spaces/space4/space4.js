@@ -243,7 +243,9 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     // Cỡ chữ nhãn giữ theo px màn hình (nghịch đảo với zoom): tăng nhẹ theo k, không teo khi zoom ra
     // Cỡ chữ trên màn hình = 15px × min(zoom, 6)^0.45: tăng rõ theo zoom, không teo khi zoom ra.
     // Viền tính theo px màn hình (3.5px, tăng nhẹ theo cỡ chữ), quy đổi về đơn vị SVG bằng unit*k.
-    const kz = Math.min(k, 6), px = 15 * Math.pow(kz, 0.45), u = unit() * k;
+    // Màn hình mobile (≤768px): cỡ chữ ≈ 0.6 lần, tăng theo zoom chậm hơn và dừng sớm hơn để các tên sát nhau không đè
+    const narrow = window.matchMedia('(max-width: 768px)').matches;
+    const kz = Math.min(k, narrow ? 4 : 6), px = (narrow ? 9 : 15) * Math.pow(kz, narrow ? 0.35 : 0.45), u = unit() * k;
     const fs = px / u, sw = ((3.5 + (px - 15) * 0.1) / u).toFixed(3) + 'px', all = k > 1.35;
     // Icon công trình (scale ico); tỉnh có công trình được đẩy nhãn lên cao hơn đỉnh icon để không bị che
     const ico = 2.5 / (unit() * Math.pow(k, 0.6)), liftY = 8 * ico + fs * 0.7;
@@ -276,8 +278,8 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     });
     if (lmEl) lmEl.classList.toggle('on', k >= 1.45);
     if (sovEl) {
-      // Khẩu hiệu Hoàng Sa, Trường Sa: 26px trên điện thoại, tăng theo bản đồ trên PC (tối đa 34px)
-      const sovPx = Math.min(34, Math.max(26, unit() * VW * 0.035));
+      // Khẩu hiệu Hoàng Sa, Trường Sa: 17px trên mobile (vừa bản đồ); PC giữ 26–34px theo bản đồ
+      const sovPx = narrow ? 17 : Math.min(34, Math.max(26, unit() * VW * 0.035));
       sovEl.style.fontSize = (sovPx / u).toFixed(1) + 'px';
     }
     if (openId) placeCard();
