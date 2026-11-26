@@ -248,7 +248,8 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     const kz = Math.min(k, narrow ? 4 : 6), px = (narrow ? 9 : 15) * Math.pow(kz, narrow ? 0.35 : 0.45), u = unit() * k;
     const fs = px / u, sw = ((3.5 + (px - 15) * 0.1) / u).toFixed(3) + 'px', all = k > 1.35;
     // Icon công trình (scale ico); tỉnh có công trình được đẩy nhãn lên cao hơn đỉnh icon để không bị che
-    const ico = 2.5 / (unit() * Math.pow(k, 0.6)), liftY = 8 * ico + fs * 0.7;
+    // Mobile: icon công trình nhỏ hơn ~0.7 lần và tăng theo zoom chậm hơn
+    const ico = (narrow ? 1.75 : 2.5) / (unit() * Math.pow(k, narrow ? 0.5 : 0.6)), liftY = 8 * ico + fs * 0.7;
     labels.forEach(function (l) {
       // Tỉnh nhỏ (ĐB sông Hồng, miền Tây) ẩn nhãn ở mức zoom mặc định, chỉ hiện khi zoom > 1.35
       const p = BY[l.id], crowded = (!all && p && (p.reg === 1 || p.reg === 6)) || (p && p.minK && k < p.minK);
@@ -274,6 +275,8 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
       m.g.setAttribute('transform', 'translate(' + m.x.toFixed(1) + ' ' + m.y.toFixed(1) + ') scale(' + sc.toFixed(3) + ')');
       // Nhãn công trình (lớn hơn nhãn tỉnh) nằm dưới icon
       m.lb.style.fontSize = lfs.toFixed(1) + 'px';
+      // Tên công trình không hiển thị trên bản đồ (vẫn chạm icon để xem thẻ thông tin)
+      if (m.lm) m.lb.style.display = 'none';
       m.lb.setAttribute('y', (m.y + 8 * sc + lfs * 0.95).toFixed(1));
     });
     if (lmEl) lmEl.classList.toggle('on', k >= 1.45);
@@ -356,7 +359,7 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
       const lb = se('text', { x: gx.toFixed(1), y: gy.toFixed(1), 'text-anchor': 'middle', class: 's4-lb' }, parent);
       els[m.id] = g2;
       labels.push({ id: m.id, el: lb });
-      mks.push({ id: m.id, g: inner, lb: lb, x: gx, y: gy });
+      mks.push({ id: m.id, g: inner, lb: lb, x: gx, y: gy, lm: !!m.lm });
     });
   }
   function islands(parent) {
