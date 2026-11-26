@@ -145,7 +145,7 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
   });
 
   // Lệch nhãn tay (đơn vị: cỡ chữ tỉnh) cho tỉnh có công trình khó tách
-  const NUDGE = {};
+  const NUDGE = { hue: [0, 1.25] };
   // Tỉnh neo nhãn lên trên một công trình cụ thể: Cần Thơ neo trên icon Cầu Cần Thơ & Chợ Nổi
   const AT = { cantho: 'cauCanTho' };
   const UI = {
@@ -277,7 +277,8 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
       m.lb.style.fontSize = lfs.toFixed(1) + 'px';
       // Tên công trình không hiển thị trên bản đồ (vẫn chạm icon để xem thẻ thông tin)
       if (m.lm) m.lb.style.display = 'none';
-      m.lb.setAttribute('y', (m.y + 8 * sc + lfs * 0.95).toFixed(1));
+      const extraY = m.id === 'ngomon' ? 7 * sc : 0;
+      m.lb.setAttribute('y', (m.y + 8 * sc + extraY + lfs * 0.95).toFixed(1));
     });
     if (lmEl) lmEl.classList.toggle('on', k >= 1.45);
     if (sovEl) {
