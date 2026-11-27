@@ -213,7 +213,7 @@
     }
     #deck-panel, #add-song-box, .dp-timer, .dp-chips, .dp-timer-custom { min-width: 0; }
     .dp-actions, .dp-modes, .dp-chips { align-items: center; align-content: flex-start; grid-auto-rows: auto; }
-    .dp-btn, .dp-mode-btn, .dp-chip { align-self: flex-start; flex: 0 0 auto; flex-grow: 0; flex-shrink: 0; height: auto; }
+    .dp-btn, .dp-mode-btn, .dp-chip { align-self: flex-start; height: auto; }
     #deck-panel :is(div, nav, section)[class*="ctl"],
     #deck-panel :is(div, nav, section)[class*="row"],
     #deck-panel :is(div, nav, section)[class*="btns"] {
@@ -237,6 +237,24 @@
       #dp-timer-set { padding: 3px 8px; }
       .dp-timer { padding: 7px 6px; }
       #deck-panel, #add-song-box { max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); }
+    }
+    /* Chốt cứng độ dày nút máy nhạc (thắng mọi rule `button` toàn cục) */
+    #deck-panel .dp-btn, #deck-panel .dp-mode-btn {
+      min-height: 0 !important;
+      height: auto !important;
+      line-height: 1.1 !important;
+      padding-top: 5px !important;
+      padding-bottom: 5px !important;
+      align-self: flex-start !important;
+    }
+    @media (max-width: 768px) {
+      #deck-panel .dp-btn, #deck-panel .dp-mode-btn {
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+        font-size: 10px !important;
+        gap: 3px;
+      }
+      #deck-panel .dp-actions, #deck-panel .dp-modes { gap: 4px; align-items: flex-start; }
     }
     @media (max-width: 640px) {
       #santa-bubble {
