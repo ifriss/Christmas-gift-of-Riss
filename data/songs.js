@@ -255,5 +255,11 @@
           name: "MRT",
           type: 'audio',
           src: 'music/mrt-mwz3qvgq.mp3'
+        },
+        {
+          id: 'mp3_mwz44kzn',
+          name: "Beautiful In White",
+          type: 'audio',
+          src: 'music/beautiful-in-white-mwz44kzn.mp3'
         }
       ];
