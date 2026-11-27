@@ -9,6 +9,549 @@
   // (không được gán lại trong mount()).
   window.updateBarLanguage = function (lang) { if (barLang) barLang(lang); };
 
+  /* ---------------------------------------------------------------------
+     CHÒM SAO TÊN & DANH HIỆU LƠ LỬNG
+     - Tên thuần (không kèm huy hiệu) → 1 cụm chòm sao + tên 11px.
+     - Mỗi danh hiệu/badge → 1 thực thể riêng, trôi độc lập quanh vị trí "nhà".
+     - Vị trí nhà được chọn sao cho KHÔNG chạm: cây thông/ngôi sao, Ông già Noel,
+       dòng MERRY CHRISTMAS, và mọi nút/bảng điều khiển đang hiển thị (DOM).
+     - Mọi nội dung gán bằng textContent (chống XSS).
+     --------------------------------------------------------------------- */
+  const NS = 'http://www.w3.org/2000/svg';
+  const SKY_DOM = [
+    '#deck-canvas', '#deck-panel', '#ctl-btn', '#ctl-panel', '#qa-btn', '#qa-box',
+    '#santa-bubble', '#top-tools', '#hud', '#tt', '#cd-box', '#noti-box',
+    '#mailbox', '#add-song-box', '#dev-credit'
+  ];
+  const SKY_AMP = 16;   // biên độ trôi tối đa (px)
+  const SKY_PAD = 8;    // khoảng đệm an toàn quanh vật thể
+  const SKY_TOP = 64;   // dưới thanh thông tin phía trên
+  const SKY_GROUND = 12; // khoảng cách an toàn phía trên vạch đất / mặt tuyết
+  const MAX_FLING = 1100; // tốc độ quán tính tối đa khi thả (px/s)
+  const clampB = (v, lo, hi) => (hi < lo ? lo : v < lo ? lo : v > hi ? hi : v);
+
+  // Tên & danh hiệu lấy từ social.js (không đọc DOM cũ, không có pill)
+  function skyIdentity() {
+    let u = null;
+    try { u = window.CGOR_GET_USER ? window.CGOR_GET_USER() : null; } catch (e) { u = null; }
+    if (u && u.username) {
+      const badges = String(u.badge || '').split(',')
+        .map(b => b.trim())
+        .filter(b => b && b.toLowerCase() !== 'def');
+      return { name: String(u.displayName || u.username), badges };
+    }
+    let guest = '';
+    try { guest = localStorage.getItem('xmas_custom_name') || ''; } catch (e) {}
+    return { name: guest || 'AetheRiss', badges: [] };
+  }
+
+  /* Bộ mẫu chòm sao: toạ độ điểm trong khung 0–100; nét nối = cặp chỉ số điểm [i, j].
+     Mỗi mẫu tối đa CONS_N điểm và CONS_E nét; phần dư được ẩn khi chuyển mẫu. */
+  const CONS_W = 150, CONS_H = 62;
+  const CONS_N = 12, CONS_E = 14;
+  const CONS_S = 0.58;                                  // tỉ lệ khung 100 → px
+  const CONS_OX = (CONS_W - 100 * CONS_S) / 2, CONS_OY = 2;
+  const CONS_DUR = 1200;                                // thời gian chuyển mẫu (ms)
+  const CONS_PATTERNS = [
+    // 12 cung hoàng đạo
+    { p: [[15,30],[30,55],[50,65],[70,55],[85,30],[12,18],[88,18]], // Bạch Dương
+      e: [[0,1],[1,2],[2,3],[3,4],[0,5],[4,6]] },
+    { p: [[15,20],[35,45],[50,55],[65,45],[85,20],[35,70],[50,80],[65,70]], // Kim Ngưu
+      e: [[0,1],[1,2],[2,3],[3,4],[1,5],[5,6],[6,7],[7,3]] },
+    { p: [[25,10],[25,90],[75,10],[75,90],[15,15],[35,15],[65,15],[85,15],[15,90],[35,90],[65,90],[85,90]], // Song Tử
+      e: [[0,1],[2,3],[4,0],[0,5],[6,2],[2,7],[1,8],[1,9],[3,10],[3,11]] },
+    { p: [[10,40],[25,25],[45,30],[50,50],[35,60],[15,55],[90,60],[75,75],[55,70],[60,85],[80,90],[92,80]], // Cự Giải
+      e: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[6,7],[7,8],[8,9],[9,10],[10,11]] },
+    { p: [[25,30],[40,15],[60,18],[70,35],[55,50],[40,45],[60,70],[75,85],[90,80],[15,80],[25,70]], // Sư Tử
+      e: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[4,6],[6,7],[7,8],[5,9],[9,10]] },
+    { p: [[10,80],[10,20],[30,50],[50,20],[50,80],[62,80],[75,60],[90,70],[85,85]], // Xử Nữ
+      e: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8]] },
+    { p: [[50,15],[12,35],[88,35],[15,62],[35,62],[65,62],[85,62],[50,80]], // Thiên Bình
+      e: [[0,7],[1,2],[1,3],[3,4],[2,5],[5,6],[0,1],[0,2]] },
+    { p: [[10,20],[10,55],[22,68],[35,55],[35,20],[48,70],[62,60],[70,45],[78,35],[90,30],[84,20]], // Bọ Cạp
+      e: [[0,1],[1,2],[2,3],[3,4],[3,5],[5,6],[6,7],[7,8],[8,9],[9,10]] },
+    { p: [[12,88],[78,22],[58,22],[78,42],[25,30],[42,42],[30,55],[50,50]], // Nhân Mã
+      e: [[0,1],[1,2],[1,3],[4,5],[5,6],[4,6],[5,7]] },
+    { p: [[15,15],[30,35],[50,40],[65,25],[55,60],[75,75],[90,65],[80,55],[70,85],[85,92],[95,80]], // Ma Kết
+      e: [[0,1],[1,2],[2,3],[2,4],[4,5],[5,6],[6,7],[7,4],[5,8],[8,9],[9,10]] },
+    { p: [[10,35],[25,25],[40,35],[55,25],[70,35],[85,25],[10,65],[25,55],[40,65],[55,55],[70,65],[85,55]], // Bảo Bình
+      e: [[0,1],[1,2],[2,3],[3,4],[4,5],[6,7],[7,8],[8,9],[9,10],[10,11]] },
+    { p: [[15,15],[10,40],[15,65],[85,15],[90,40],[85,65],[20,40],[50,45],[80,40]], // Song Ngư
+      e: [[0,1],[1,2],[3,4],[4,5],[1,6],[6,7],[7,8],[8,4]] },
+    // Chủ đề Giáng Sinh
+    { p: [[50,8],[30,30],[70,30],[38,42],[62,42],[30,58],[50,70],[70,58],[25,85],[75,85]], // Ông già Noel
+      e: [[0,1],[0,2],[1,2],[1,3],[2,4],[3,5],[5,6],[6,7],[7,4],[6,8],[7,9],[8,9]] },
+    { p: [[50,5],[35,28],[65,28],[22,52],[78,52],[10,75],[90,75],[50,75],[50,92]], // Cây thông
+      e: [[0,1],[0,2],[1,3],[2,4],[3,4],[3,5],[4,6],[5,6],[5,7],[6,7],[7,8]] },
+    { p: [[50,5],[95,38],[78,92],[22,92],[5,38]], // Ngôi sao
+      e: [[0,2],[2,4],[4,1],[1,3],[3,0]] },
+    { p: [[50,50],[50,8],[86,29],[86,71],[50,92],[14,71],[14,29]], // Bông tuyết
+      e: [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,2],[2,3],[3,4],[4,5],[5,6],[6,1]] },
+    { p: [[15,40],[85,40],[85,85],[15,85],[10,28],[90,28],[90,40],[10,40],[50,28],[35,12],[65,12],[50,85]], // Hộp quà
+      e: [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[8,9],[8,10],[8,11]] }
+  ];
+
+  function makeConstellation(name, auto) {
+    const wrap = document.createElement('div');
+    wrap.className = 'sp1-cons';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'sp1-cons-svg');
+    svg.setAttribute('width', CONS_W);
+    svg.setAttribute('height', CONS_H);
+    svg.setAttribute('viewBox', '0 0 ' + CONS_W + ' ' + CONS_H);
+
+    const lines = [], dots = [], circles = [];
+    for (let k = 0; k < CONS_E; k++) {
+      const ln = document.createElementNS(NS, 'line');
+      ln.setAttribute('class', 'sp1-line sp1-off');
+      svg.appendChild(ln);
+      lines.push(ln);
+    }
+    for (let i = 0; i < CONS_N; i++) {
+      const g = document.createElementNS(NS, 'g');
+      g.setAttribute('class', 'sp1-dot sp1-off');
+      const c = document.createElementNS(NS, 'circle');
+      c.setAttribute('class', 'sp1-star');
+      c.setAttribute('r', (1.1 + Math.random()).toFixed(2));
+      c.style.animationDelay = (-Math.random() * 3.2).toFixed(2) + 's';
+      g.appendChild(c);
+      svg.appendChild(g);
+      dots.push(g);
+      circles.push(c);
+    }
+
+    // Trạng thái: vị trí đang hiển thị (cur), điểm đầu/cuối của lần chuyển (from/to)
+    const cur = [];
+    for (let i = 0; i < CONS_N; i++) cur.push({ x: CONS_W / 2, y: CONS_H / 2 });
+    let edges = [], count = 0, from = null, to = null, t0 = 0, anim = false, nextAt = 0, last = -1;
+
+    function paint() {
+      for (let i = 0; i < CONS_N; i++) {
+        circles[i].setAttribute('cx', cur[i].x.toFixed(1));
+        circles[i].setAttribute('cy', cur[i].y.toFixed(1));
+      }
+      for (let k = 0; k < CONS_E; k++) {
+        const ed = edges[k];
+        const ln = lines[k];
+        if (!ed) { ln.classList.add('sp1-off'); continue; }
+        ln.classList.remove('sp1-off');
+        ln.setAttribute('x1', cur[ed[0]].x.toFixed(1));
+        ln.setAttribute('y1', cur[ed[0]].y.toFixed(1));
+        ln.setAttribute('x2', cur[ed[1]].x.toFixed(1));
+        ln.setAttribute('y2', cur[ed[1]].y.toFixed(1));
+      }
+    }
+
+    function setPattern(idx, now, instant) {
+      last = idx;
+      const pat = CONS_PATTERNS[idx];
+      edges = pat.e;
+      count = pat.p.length;
+      const goal = cur.map((c, i) => i < count
+        ? { x: CONS_OX + pat.p[i][0] * CONS_S, y: CONS_OY + pat.p[i][1] * CONS_S }
+        : { x: c.x, y: c.y });
+      for (let i = 0; i < CONS_N; i++) dots[i].classList.toggle('sp1-off', i >= count);
+      if (instant) {
+        for (let i = 0; i < CONS_N; i++) { cur[i].x = goal[i].x; cur[i].y = goal[i].y; }
+        anim = false;
+      } else {
+        from = cur.map(c => ({ x: c.x, y: c.y }));
+        to = goal;
+        t0 = now;
+        anim = true;
+      }
+      nextAt = now + 6000 + Math.random() * 4000;   // chu kỳ 6–10 s
+      paint();
+    }
+
+    // Gọi mỗi khung hình (từ vòng lặp của createSky): nội suy mượt, rồi đến lúc thì đổi mẫu khác
+    function step(now) {
+      if (anim) {
+        let k = (now - t0) / CONS_DUR;
+        if (k >= 1) { k = 1; anim = false; }
+        const e = k * k * (3 - 2 * k);
+        for (let i = 0; i < CONS_N; i++) {
+          cur[i].x = from[i].x + (to[i].x - from[i].x) * e;
+          cur[i].y = from[i].y + (to[i].y - from[i].y) * e;
+        }
+        paint();
+      } else if (auto && now >= nextAt) {
+        let idx;
+        do { idx = (Math.random() * CONS_PATTERNS.length) | 0; } while (idx === last);
+        setPattern(idx, now, false);
+      }
+    }
+
+    setPattern((Math.random() * CONS_PATTERNS.length) | 0, performance.now(), true);
+
+    const label = document.createElement('div');
+    label.className = 'sp1-cname';
+    const chars = Array.from(name);
+    label.textContent = chars.slice(0, 24).join('') + (chars.length > 24 ? '…' : '');
+
+    wrap.appendChild(svg);
+    wrap.appendChild(label);
+    wrap.appendChild(makeHalo(11));
+    return { el: wrap, step };
+  }
+
+  // Hào quang: các ngôi sao sáng nhỏ xếp thành vòng quanh chữ, quay & nhấp nháy (chỉ trang trí, không nhận chuột)
+  function makeHalo(count) {
+    const halo = document.createElement('div');
+    halo.className = 'sp1-halo';
+    for (let i = 0; i < count; i++) {
+      const s = document.createElement('span');
+      s.className = 'sp1-hs';
+      const a = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+      const rr = 0.84 + Math.random() * 0.16;
+      s.style.left = (50 + Math.cos(a) * 49 * rr).toFixed(1) + '%';
+      s.style.top = (50 + Math.sin(a) * 47 * rr).toFixed(1) + '%';
+      const d = (2 + Math.random() * 2.2).toFixed(1) + 'px';
+      s.style.width = d;
+      s.style.height = d;
+      s.style.animationDelay = (-Math.random() * 2.4).toFixed(2) + 's';
+      halo.appendChild(s);
+    }
+    return halo;
+  }
+
+  function makeBadge(text) {
+    const el = document.createElement('div');
+    el.className = 'sp1-badge';
+    el.textContent = text;
+    el.appendChild(makeHalo(6));
+    return el;
+  }
+
+  function skyOverlap(a, b, pad) {
+    return a.x < b.x + b.w + pad && a.x + a.w > b.x - pad &&
+           a.y < b.y + b.h + pad && a.y + a.h > b.y - pad;
+  }
+
+  function createSky(opt) {
+    const amp = opt.calm ? 0 : SKY_AMP;
+    const root = document.createElement('div');
+    root.className = 'sp1-sky space1-only';
+    root.setAttribute('aria-hidden', 'true');
+    const probe = document.createElement('div');   // đọc vùng an toàn iPhone (env(safe-area-inset-*))
+    probe.className = 'sp1-safe';
+    root.appendChild(probe);
+    document.body.appendChild(root);
+
+    let items = [];
+    let safe = { t: 0, r: 0, b: 0, l: 0 };
+    let alive = true, raf = 0, timer = 0, resizeTimer = 0, last = 0;
+    const t0 = performance.now();
+
+    function readSafe() {
+      const cs = getComputedStyle(probe);
+      const v = p => parseFloat(cs.getPropertyValue(p)) || 0;
+      safe = { t: v('padding-top'), r: v('padding-right'), b: v('padding-bottom'), l: v('padding-left') };
+    }
+
+    // Biên trôi của cụm (toạ độ "nhà", chưa tính dao động). Biên dưới luôn nằm TRÊN vạch đất.
+    function bounds(it) {
+      const g = opt.ground();
+      let minX = safe.l + SKY_PAD + amp;
+      let maxX = innerWidth - safe.r - it.w - SKY_PAD - amp;
+      // Màn hình hẹp: nới đệm nhưng vẫn giữ cụm nằm trọn trong khung nhìn
+      if (maxX < minX) { minX = safe.l; maxX = Math.max(minX, innerWidth - safe.r - it.w); }
+      let maxY = Math.min(innerHeight - safe.b - it.h - amp, g - SKY_GROUND - it.h - amp);
+      let minY = SKY_TOP + safe.t + amp;
+      // Màn hình thấp (landscape): ưu tiên đứng trên vạch đất, trần thanh công cụ được nới
+      if (maxY < minY) minY = Math.max(0, Math.min(SKY_TOP + safe.t, maxY));
+      return { minX, maxX, minY, maxY };
+    }
+
+    // Vật thể cần tránh: hình học Space 1 (opt.worldRects) + các phần tử DOM đang hiển thị
+    function obstacles() {
+      const out = opt.worldRects();
+      for (const sel of SKY_DOM) {
+        const el = document.querySelector(sel);
+        if (!el) continue;
+        const cs = getComputedStyle(el);
+        if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+        const r = el.getBoundingClientRect();
+        if (r.width >= 2 && r.height >= 2) out.push({ x: r.left, y: r.top, w: r.width, h: r.height });
+      }
+      return out;
+    }
+
+    // Vùng cấm cây thông 3D: nếu cụm chồng lên → dịch sang trái/phải/trên đỉnh (nơi gần nhất còn trong biên),
+    // đồng thời đảo vận tốc để rời xa tâm cây. Không bao giờ hút vào tâm.
+    function pushFromTree(it, p, vel) {
+      const tb = opt.treeBox && opt.treeBox();
+      if (!tb || tb.w < 2 || tb.h < 2) return p;
+      const pad = 2;   // treeBox là lõi cây (đã thu hẹp): cho phép lướt qua mép tán, chỉ đẩy nhẹ sang bên
+      if (!skyOverlap({ x: p.x, y: p.y, w: it.w, h: it.h }, tb, pad)) return p;
+      const b = bounds(it);
+      const cand = [
+        { x: tb.x - it.w - pad, y: p.y, d: 'l' },
+        { x: tb.x + tb.w + pad, y: p.y, d: 'r' }
+      ];
+      let best = null, bestD = Infinity;
+      for (const c of cand) {
+        if (c.x < b.minX - 0.5 || c.x > b.maxX + 0.5 || c.y < b.minY - 0.5 || c.y > b.maxY + 0.5) continue;
+        const dd = Math.abs(c.x - p.x) + Math.abs(c.y - p.y);
+        if (dd < bestD) { bestD = dd; best = c; }
+      }
+      if (!best) {   // hết chỗ: dạt về phía có nhiều khoảng trống hơn, kẹp trong biên
+        const goLeft = (p.x + it.w / 2) < (tb.x + tb.w / 2);   // dạt về phía đang ở gần hơn
+        best = { x: goLeft ? tb.x - it.w - pad : tb.x + tb.w + pad, y: p.y, d: goLeft ? 'l' : 'r' };
+      }
+      const out = { x: clampB(best.x, b.minX, b.maxX), y: clampB(best.y, b.minY, b.maxY) };
+      if (vel) {
+        const away = best.d === 'l' ? -1 : 1;
+        vel.x = away * (Math.abs(vel.x) * 0.6 + 30);   // đổi hướng nhẹ, không đẩy lên trên
+      }
+      return out;
+    }
+
+    const fitsObs = (r, obs) => !obs.some(o => skyOverlap(r, o, amp + SKY_PAD));
+    const others = it => items
+      .filter(o => o !== it && o.home && !o.hidden)
+      .map(o => ({ x: o.home.x, y: o.home.y, w: o.w, h: o.h }));
+
+    // Chọn "nhà": ưu tiên chỗ không chạm vật thể; nếu không có thì lấy chỗ chạm ít nhất. Không bao giờ trả về null (không ẩn).
+    function findHome(it, obs) {
+      const { minX, maxX, minY, maxY } = bounds(it);
+      const oth = others(it);
+      const cost = (x, y) => {
+        const r = { x, y, w: it.w, h: it.h };
+        let c = 0;
+        for (const o of obs) if (skyOverlap(r, o, amp + SKY_PAD)) c++;
+        for (const o of oth) if (skyOverlap(r, o, 2 * amp + SKY_PAD)) c++;
+        return c;
+      };
+      let best = { x: minX, y: minY }, bestC = Infinity;
+      const test = (x, y) => {
+        const c = cost(x, y);
+        if (c === 0) return true;
+        if (c < bestC) { bestC = c; best = { x, y }; }
+        return false;
+      };
+      for (let k = 0; k < 90; k++) {
+        const x = minX + Math.random() * (maxX - minX);
+        const y = minY + Math.random() * (maxY - minY);
+        if (test(x, y)) return pushFromTree(it, { x, y });
+      }
+      const nx = Math.max(1, Math.ceil((maxX - minX) / 16));
+      const ny = Math.max(1, Math.ceil((maxY - minY) / 16));
+      for (let j = 0; j <= ny; j++) {
+        for (let i = 0; i <= nx; i++) {
+          const x = minX + ((maxX - minX) * i) / nx;
+          const y = minY + ((maxY - minY) * j) / ny;
+          if (test(x, y)) return pushFromTree(it, { x, y });
+        }
+      }
+      return pushFromTree(it, best);
+    }
+
+    function sync(it) {
+      it.el.classList.toggle('is-hidden', !!it.hidden);
+    }
+
+    // Kéo thả 1 cụm/1 danh hiệu. Chặn lan truyền sự kiện để không xoay/quét cảnh Space 1.
+    function bindDrag(it) {
+      const el = it.el;
+      const down = e => {
+        if (e.button > 0 || it.hidden) return;
+        e.stopPropagation();
+        e.preventDefault();
+        it.cur.x += it.ox; it.cur.y += it.oy;   // giữ đúng vị trí đang hiển thị, không giật
+        it.ox = 0; it.oy = 0;
+        it.off.x = e.clientX - it.cur.x;
+        it.off.y = e.clientY - it.cur.y;
+        it.vel.x = 0; it.vel.y = 0;
+        it.samp.x = e.clientX; it.samp.y = e.clientY; it.samp.t = performance.now();
+        it.drag = true;
+        el.classList.add('is-drag');
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      };
+      const move = e => {
+        if (!it.drag) return;
+        e.stopPropagation();
+        const now = performance.now();
+        const dt = (now - it.samp.t) / 1000;
+        if (dt > 0.004) {
+          const ivx = (e.clientX - it.samp.x) / dt, ivy = (e.clientY - it.samp.y) / dt;
+          it.vel.x = it.vel.x * 0.5 + ivx * 0.5;
+          it.vel.y = it.vel.y * 0.5 + ivy * 0.5;
+          it.samp.x = e.clientX; it.samp.y = e.clientY; it.samp.t = now;
+        }
+        const b = bounds(it);
+        it.cur.x = clampB(e.clientX - it.off.x, b.minX, b.maxX);
+        it.cur.y = clampB(e.clientY - it.off.y, b.minY, b.maxY);
+        const pf = pushFromTree(it, it.cur);   // kéo vào cây thông → kẹp ra ngoài biên cây
+        it.cur.x = pf.x; it.cur.y = pf.y;
+      };
+      const up = e => {
+        if (!it.drag) return;
+        e.stopPropagation();
+        it.drag = false;
+        el.classList.remove('is-drag');
+        try { el.releasePointerCapture(e.pointerId); } catch (err) {}
+        const idle = performance.now() - it.samp.t > 90;   // đứng yên trước khi thả → không quán tính
+        let vx = idle ? 0 : it.vel.x, vy = idle ? 0 : it.vel.y;
+        const sp = Math.hypot(vx, vy);
+        if (sp > MAX_FLING) { vx *= MAX_FLING / sp; vy *= MAX_FLING / sp; }
+        it.vel.x = vx; it.vel.y = vy;
+        it.roam = performance.now() + 2500 + Math.random() * 3000;   // thả xong sẽ bay tiếp tự nhiên
+        if (Math.hypot(vx, vy) < 8) { it.vel.x = 0; it.vel.y = 0; it.home = { x: it.cur.x, y: it.cur.y }; }
+      };
+      el.addEventListener('pointerdown', down);
+      el.addEventListener('pointermove', move);
+      el.addEventListener('pointerup', up);
+      el.addEventListener('pointercancel', up);
+      el.addEventListener('lostpointercapture', up);
+      return () => {
+        el.removeEventListener('pointerdown', down);
+        el.removeEventListener('pointermove', move);
+        el.removeEventListener('pointerup', up);
+        el.removeEventListener('pointercancel', up);
+        el.removeEventListener('lostpointercapture', up);
+      };
+    }
+
+    function build() {
+      readSafe();
+      items.forEach(it => { it.unbind(); it.el.remove(); });
+      const id = skyIdentity();
+      const cons = makeConstellation(id.name, !opt.calm);
+      const els = [cons.el].concat(id.badges.map(makeBadge));
+      items = [];
+      els.forEach(el => {
+        root.appendChild(el);
+        const it = {
+          el,
+          morph: el === cons.el ? cons : null,
+          w: el.offsetWidth,
+          h: el.offsetHeight,
+          home: null,
+          cur: { x: 0, y: 0 },
+          vel: { x: 0, y: 0 },
+          off: { x: 0, y: 0 },
+          samp: { x: 0, y: 0, t: 0 },
+          ox: 0, oy: 0,
+          roam: performance.now() + 3000 + Math.random() * 5000,   // lần đổi hướng bay kế tiếp
+          drag: false,
+          hidden: true,
+          ph: Math.random() * Math.PI * 2,
+          fx: 0.42 + Math.random() * 0.42,   // nhanh hơn rõ rệt so với bản trước
+          fy: 0.36 + Math.random() * 0.4,
+          ax: amp * (0.5 + Math.random() * 0.6),
+          ay: amp * (0.4 + Math.random() * 0.5)
+        };
+        it.unbind = bindDrag(it);
+        items.push(it);
+      });
+      const obs = obstacles();
+      items.forEach(it => {
+        it.home = findHome(it, obs);
+        it.cur = { x: it.home.x, y: it.home.y };
+        it.hidden = false;
+        sync(it);
+      });
+    }
+
+    // Mỗi ~1s: đo lại kích thước (font có thể tải muộn), kẹp "nhà" vào khung nhìn hiện tại,
+    // và nếu có vật thể mới đè lên (ví dụ mở bảng) thì tìm chỗ khác
+    function tick() {
+      if (!alive) return;
+      const obs = obstacles();
+      items.forEach(it => {
+        const w = it.el.offsetWidth, h = it.el.offsetHeight;
+        if (w && h) { it.w = w; it.h = h; }
+        if (it.drag) return;   // đang kéo: không đổi nhà
+        const b = bounds(it);
+        it.home.x = clampB(it.home.x, b.minX, b.maxX);
+        it.home.y = clampB(it.home.y, b.minY, b.maxY);
+        it.home = pushFromTree(it, it.home);
+        const curRect = { x: it.cur.x, y: it.cur.y, w: it.w, h: it.h };
+        const homeRect = { x: it.home.x, y: it.home.y, w: it.w, h: it.h };
+        if (!fitsObs(curRect, obs) || !fitsObs(homeRect, obs)) it.home = findHome(it, obs);
+        sync(it);
+      });
+    }
+
+    function frame(now) {
+      if (!alive) return;
+      raf = requestAnimationFrame(frame);
+      const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
+      last = now;
+      const tt = (now - t0) / 1000;
+      const k = Math.min(1, dt * 1.2);
+      for (const it of items) {
+        if (it.morph) it.morph.step(now);
+        if (!it.drag) {
+          const b = bounds(it);
+          if (it.vel.x || it.vel.y) {
+            // quán tính sau khi thả: trôi tiếp rồi dừng lại, điểm dừng thành "nhà" mới
+            it.cur.x += it.vel.x * dt;
+            it.cur.y += it.vel.y * dt;
+            const f = Math.exp(-dt * 3.2);
+            it.vel.x *= f; it.vel.y *= f;
+            if (it.cur.x < b.minX || it.cur.x > b.maxX) { it.cur.x = clampB(it.cur.x, b.minX, b.maxX); it.vel.x *= -0.4; }
+            if (it.cur.y < b.minY || it.cur.y > b.maxY) { it.cur.y = clampB(it.cur.y, b.minY, b.maxY); it.vel.y *= -0.4; }
+            if (Math.hypot(it.vel.x, it.vel.y) < 8) {
+              it.vel.x = 0; it.vel.y = 0;
+              it.home = { x: it.cur.x, y: it.cur.y };
+            }
+          } else {
+            // Định kỳ chọn điểm đến mới trong toàn vùng trời (kể cả hai bên gốc cây) để bay linh hoạt, không đứng yên
+            if (!opt.calm && now >= it.roam) {
+              it.roam = now + 5000 + Math.random() * 6000;
+              it.home = findHome(it, obstacles());
+            }
+            it.cur.x += (it.home.x - it.cur.x) * k;
+            it.cur.y += (it.home.y - it.cur.y) * k;
+          }
+          it.cur.x = clampB(it.cur.x, b.minX, b.maxX);
+          it.cur.y = clampB(it.cur.y, b.minY, b.maxY);
+          const pf = pushFromTree(it, it.cur, it.vel);   // trôi/quán tính vào cây thông → đẩy bật ra
+          it.cur.x = pf.x; it.cur.y = pf.y;
+          it.home = pushFromTree(it, it.home);
+          it.ox = Math.sin(tt * it.fx + it.ph) * it.ax;
+          it.oy = Math.cos(tt * it.fy + it.ph * 1.3) * it.ay;
+        }
+        const x = it.cur.x + it.ox;
+        const y = it.cur.y + it.oy;
+        it.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+      }
+    }
+
+    const onResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(build, 150);
+    };
+    // Đổi tên ở tab khác / hồ sơ cập nhật → dựng lại cụm tên ngay
+    const onStore = e => { if (!e || e.key === 'xmas_custom_name') build(); };
+    window.addEventListener('cgor-auth', build);
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+    window.addEventListener('storage', onStore);
+
+    build();
+    raf = requestAnimationFrame(frame);
+    timer = setInterval(tick, 1000);
+
+    return {
+      destroy() {
+        alive = false;
+        cancelAnimationFrame(raf);
+        clearInterval(timer);
+        clearTimeout(resizeTimer);
+        window.removeEventListener('cgor-auth', build);
+        window.removeEventListener('resize', onResize);
+        window.removeEventListener('orientationchange', onResize);
+        window.removeEventListener('storage', onStore);
+        items.forEach(it => it.unbind());
+        items = [];
+        root.remove();
+      }
+    };
+  }
+
   function mount() {
     if (cleanup) return;
     const disposers = [];
@@ -905,6 +1448,37 @@
       });
       resize();
       rafId = requestAnimationFrame(frame);
+
+      // Chòm sao tên & danh hiệu: né cây thông, Ông già Noel, dòng chữ và các nút/bảng đang mở
+      const starSky = createSky({
+        calm: rm,
+        ground: () => groundRow * chh * zoom + panY,   // toạ độ màn hình của vạch chân trời (đỉnh mặt đất/tuyết)
+        treeBox: () => {   // vùng cấm cây thông 3D + ngôi sao (toạ độ màn hình, đệm theo kích thước cây)
+          // Chỉ lõi cây (thân + phần giữa tán): mép tán cho phép lướt/chạm nhẹ, vùng hai bên gốc cây để trống
+          const x1 = cx - 0.17 * treeH, x2 = cx + 0.17 * treeH;
+          const y1 = baseY - 1.16 * treeH, y2 = baseY + chh;
+          const a = x1 * zoom + panX, b = y1 * zoom + panY, c = x2 * zoom + panX, d = y2 * zoom + panY;
+          return { x: Math.min(a, c), y: Math.min(b, d), w: Math.abs(c - a), h: Math.abs(d - b) };
+        },
+        worldRects: () => {
+          const out = [];
+          const add = (x1, y1, x2, y2) => {
+            const a = x1 * zoom + panX, b = y1 * zoom + panY;
+            const c = x2 * zoom + panX, d = y2 * zoom + panY;
+            out.push({ x: Math.min(a, c), y: Math.min(b, d), w: Math.abs(c - a), h: Math.abs(d - b) });
+          };
+          add(cx - 0.17 * treeH, baseY - 1.16 * treeH, cx + 0.17 * treeH, baseY + chh);      // lõi cây thông + ngôi sao
+          const hw = (msg.length * cw) / 2 + cw;
+          add(cx - hw, groundRow * chh, cx + hw, (groundRow + 7) * chh);                     // MERRY CHRISTMAS + mặt đất
+          const Sx = window.CGOR_SANTA;
+          if (Sx && Sx.on) {                                                                 // Ông già Noel (toạ độ màn hình)
+            const half = 8 * cw * zoom;
+            out.push({ x: Sx.x - half, y: Sx.y - chh * zoom, w: 2 * half, h: (Sx.b - Sx.y) + 2 * chh * zoom });
+          }
+          return out;
+        }
+      });
+      disposers.push(starSky.destroy);
 
       cleanup = function () {
         alive = false;

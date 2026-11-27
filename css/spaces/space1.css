@@ -164,6 +164,125 @@
 
 
 /* ===================================================================== */
+/* 8. CHÒM SAO TÊN & DANH HIỆU LƠ LỬNG (DOM do space1.js tạo trong mount) */
+/* ===================================================================== */
+.sp1-sky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+/* Đo vùng an toàn iPhone (tai thỏ / thanh home); không hiển thị */
+.sp1-safe {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+.sp1-cons,
+.sp1-badge {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: auto;          /* nhận chuột/chạm để kéo thả */
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  will-change: transform;
+  transition: opacity 0.6s ease;
+}
+.sp1-cons.is-hidden,
+.sp1-badge.is-hidden { opacity: 0; pointer-events: none; }
+.sp1-cons.is-drag,
+.sp1-badge.is-drag { cursor: grabbing; z-index: 2; transition: none; }
+
+/* Hào quang: vòng sao sáng nhỏ quay quanh chữ (không nhận chuột) */
+.sp1-halo {
+  position: absolute;
+  inset: -14px;
+  pointer-events: none;
+  color: #fff1a8;
+  animation: sp1-orbit 22s linear infinite;
+}
+.sp1-badge .sp1-halo { inset: -10px -12px; color: var(--gold); }
+.sp1-hs {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+  transform: translate(-50%, -50%);
+  animation: sp1-hs-tw 2.4s ease-in-out infinite;
+}
+@keyframes sp1-orbit {
+  to { transform: rotate(360deg); }
+}
+@keyframes sp1-hs-tw {
+  0%, 100% { opacity: 0.3; scale: 0.7; }
+  50% { opacity: 1; scale: 1.25; }
+}
+.sp1-cons-svg { display: block; overflow: visible; }
+.sp1-cons-svg .sp1-line {
+  fill: none;
+  stroke: rgba(255, 241, 168, 0.32);
+  stroke-width: 0.8;
+  transition: opacity 0.6s ease;
+}
+.sp1-cons-svg .sp1-line.sp1-off,
+.sp1-cons-svg .sp1-dot.sp1-off { opacity: 0; }
+.sp1-cons-svg .sp1-dot { transition: opacity 0.6s ease; }
+.sp1-star {
+  fill: #fff1a8;
+  opacity: 0.6;
+  animation: sp1-twinkle 3.2s ease-in-out infinite;
+}
+@keyframes sp1-twinkle {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.95; }
+}
+.sp1-cname {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.2;
+  color: #fff1a8;
+  opacity: 0.85;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 0 0 6px rgba(255, 241, 168, 0.35);
+}
+.sp1-badge {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--gold);
+  white-space: nowrap;
+  text-shadow: 0 0 6px rgba(255, 211, 107, 0.45);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sp1-star,
+  .sp1-halo,
+  .sp1-hs { animation: none; }
+  .sp1-hs { opacity: 0.7; }
+}
+@media (max-width: 768px) {
+  .sp1-cname { font-size: 10.5px; }
+  .sp1-badge { font-size: 9.5px; }
+}
+@media (max-width: 768px) and (orientation: landscape) and (max-height: 500px) {
+  .sp1-halo { inset: -8px; }
+  .sp1-badge .sp1-halo { inset: -6px -8px; }
+}
+
+/* ===================================================================== */
 /* SPACE 1: ẩn toàn bộ phần tử riêng của Space 1 khi đang ở Space khác    */
 /* ===================================================================== */
 body:not([data-space="space1"]) .space1-only {

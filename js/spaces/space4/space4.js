@@ -874,6 +874,7 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     window.addEventListener('cgor-lang', renderTexts);
     window.addEventListener('keydown', onKey);
     document.body.appendChild(stage);
+    document.body.classList.add('s4-active');
     state = 'load';
     view = { k: 1, x: 0, y: 0 };
     initSprites();
@@ -903,6 +904,7 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     if (cardX) cardX.removeEventListener('click', closeCard);
     if (audio) { audio.close().catch(function () {}); audio = null; }
     if (stage) stage.remove();
+    document.body.classList.remove('s4-active');
     stage = canvas = g = mapEl = svg = vp = landEl = sovEl = card = cardName = cardSt = cardReg = cardDesc = cardX = null;
     dotEl = tieEl = cardEco = cardStk = null;
     dust = []; rings = []; labels = []; els = {}; sovTs = []; mks = []; lmEl = null; star = null; sovKey = ''; sovFit = 0;

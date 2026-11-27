@@ -45,6 +45,10 @@
         bottom: calc(env(safe-area-inset-bottom, 0px) + 66px);
         width: 86px;
         height: 86px;
+        flex: 0 0 auto;
+        aspect-ratio: 1 / 1;
+        max-width: 86px;
+        max-height: 86px;
       }
 
       /* Bảng điều khiển nhạc & box thêm nhạc căn giữa an toàn trên Mobile */
@@ -55,11 +59,24 @@
         bottom: auto;
         transform: translate(-50%, -50%);
         width: min(338px, calc(100vw - 24px));
+        max-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 110px);
         max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 110px);
         padding: 11px;
       }
       .dp-list {
         max-height: 220px;
+      }
+    }
+
+    /* Space 1 trên điện thoại: tên chòm sao không vượt khung nhìn hẹp (iPhone có safe-area) */
+    @media (max-width: 768px) {
+      .sp1-sky {
+        height: 100dvh;
+      }
+      .sp1-cname {
+        max-width: min(calc(100vw - 24px), 220px);
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
 

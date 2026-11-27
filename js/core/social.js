@@ -480,6 +480,7 @@
 
       window.CGOR_IS_DEV = isDevUser;
       window.CGOR_GET_USER = () => currentUser;
+      window.CGOR_OPEN_ACCOUNT = () => openAuthModal('guest');
       window.CGOR_GET_IP = () => cachedUserIP;
       window.CGOR_FORMAT_TIME = formatTimeVN;
       window.CGOR_ESCAPE_HTML = escapeHTML;
@@ -487,15 +488,12 @@
       function syncAuthUI() {
         const notiComposeEl = document.getElementById('noti-compose');
         if (currentUser) {
-          const badgeStr = currentUser.badge ? ' [' + currentUser.badge + ']' : '';
-          nameLabel.textContent = currentUser.displayName + badgeStr;
           mbGuestLock.classList.remove('active');
           mbCompose.style.display = 'flex';
           if (notiComposeEl) notiComposeEl.style.display = isDevUser() ? 'flex' : 'none';
         } else {
           let guestSaved = '';
           try { guestSaved = localStorage.getItem('xmas_custom_name') || ''; } catch (e) {}
-          nameLabel.textContent = guestSaved || 'AetheRiss';
           guestNameInput.value = guestSaved;
           mbGuestLock.classList.add('active');
           mbCompose.style.display = 'none';
@@ -504,6 +502,8 @@
         if (typeof renderNotices === 'function') renderNotices();
         if (window.updateDeckLanguage) window.updateDeckLanguage();
         if (window.CGOR_applySongBoxRole) window.CGOR_applySongBoxRole();
+        // Space 1 (chòm sao tên & danh hiệu) lắng nghe để cập nhật khi đăng nhập/đăng xuất/đổi tên
+        window.dispatchEvent(new Event('cgor-auth'));
       }
 
       function slugifyUsername(str) {
@@ -673,7 +673,7 @@
         modal.style.display = 'none';
       });
 
-      nameLabel.addEventListener('click', function () {
+      if (nameLabel) nameLabel.addEventListener('click', function () {
         openAuthModal('guest');
       });
 
@@ -1424,7 +1424,7 @@ return '<button type="button" class="react-sum' + (t.total > 0 ? ' has' : '') + 
         const tDict = I18N[curLang];
         document.documentElement.lang = curLang === 'zh' ? 'zh-CN' : curLang;
         langBtn.textContent = tDict.langBadge;
-        nameLabel.title = tDict.nameTitle;
+        if (nameLabel) nameLabel.title = tDict.nameTitle;
         document.getElementById('lbl-rot').textContent = tDict.rot;
         document.getElementById('lbl-lights').textContent = tDict.lights;
         document.getElementById('lbl-chars').textContent = tDict.chars;

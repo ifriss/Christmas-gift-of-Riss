@@ -4,6 +4,7 @@
         vi: {
           ctlBtn: 'Bảng điều khiển',
           ctlTitle: '⚙️ Bảng điều khiển',
+          accBtn: 'Tài khoản',
           boxTitle: '🎁 Nhạc hộp nhạc tích hợp',
           boxNote: '🎄🎄🎄',
           mp3Title: '🎵 Danh sách nhạc',
@@ -25,6 +26,7 @@
         en: {
           ctlBtn: 'Control panel',
           ctlTitle: '⚙️ Control panel',
+          accBtn: 'Account',
           boxTitle: '🎁 Built-in music box',
           boxNote: '🎄🎄🎄',
           mp3Title: '🎵 Playlist',
@@ -46,6 +48,7 @@
         zh: {
           ctlBtn: '控制面板',
           ctlTitle: '⚙️ 控制面板',
+          accBtn: '账户',
           boxTitle: '🎁 内置音乐盒',
           boxNote: '🎄🎄🎄',
           mp3Title: '🎵 播放列表',

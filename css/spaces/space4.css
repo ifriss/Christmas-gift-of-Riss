@@ -102,6 +102,9 @@ body[data-space="space4"] #deck-canvas { z-index: 10; }
   }
   body[data-space="space4"] #name { border: 1px solid rgba(251, 191, 36, 0.55) !important; }
 }
+/* Space 4: ẩn pill tên người dùng (PC + mobile) để không che phía Bắc bản đồ; chỉ áp dụng khi body có class s4-active */
+body.s4-active #name { display: none !important; }
+
 /* Mobile: pill tên người dùng gọn, không tràn/cấn */
 @media (max-width: 768px) {
   body[data-space="space4"] #name {

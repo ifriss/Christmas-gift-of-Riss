@@ -123,11 +123,11 @@
       color: var(--dim);
     }
     #dp-timer-left { color: #4ef57b; font-weight: 700; font-variant-numeric: tabular-nums; }
-    .dp-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .dp-chips { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
     .dp-chip {
       font-size: 10px;
       font-weight: 600;
-      padding: 5px 9px;
+      padding: 3px 8px;
       border-radius: 8px;
       border: 1px solid #2a3b70;
       background: #09112b;
@@ -180,6 +180,64 @@
     .dp-sec small { font-size: 9.5px; font-weight: 400; color: var(--dim); }
 
     .dp-list { min-height: 96px; }
+
+    /* Chuẩn hoá nút máy nhạc/mâm đĩa: không co giãn méo, không tràn khung (mọi Space, mọi trình duyệt) */
+    #deck-panel, #add-song-box {
+      box-sizing: border-box;
+      max-width: calc(100vw - 16px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+      max-height: calc(100vh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+      max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+    #deck-panel button, #add-song-box button, .dp-chip, .dp-vol-btn {
+      flex: 0 0 auto;
+      flex-grow: 0;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      white-space: nowrap;
+      min-height: 0;
+      height: auto;
+      align-self: flex-start;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      line-height: 1.1;
+      border-radius: 8px;
+      -webkit-appearance: none;
+      appearance: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #deck-panel, #add-song-box, .dp-timer, .dp-chips, .dp-timer-custom { min-width: 0; }
+    .dp-actions, .dp-modes, .dp-chips { align-items: center; align-content: flex-start; grid-auto-rows: auto; }
+    .dp-btn, .dp-mode-btn, .dp-chip { align-self: flex-start; flex: 0 0 auto; flex-grow: 0; flex-shrink: 0; height: auto; }
+    #deck-panel :is(div, nav, section)[class*="ctl"],
+    #deck-panel :is(div, nav, section)[class*="row"],
+    #deck-panel :is(div, nav, section)[class*="btns"] {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      align-content: flex-start;
+      gap: 6px;
+    }
+    @media (pointer: coarse) and (min-width: 769px) {
+      #deck-panel button, #add-song-box button, .dp-chip { min-height: 0; min-width: 0; }
+    }
+    @media (max-width: 768px) {
+      #deck-panel button, #add-song-box button, .dp-chip { flex: 0 0 auto; flex-shrink: 0; white-space: nowrap; min-height: 0; height: auto; align-self: flex-start; flex-grow: 0; border-radius: 7px; }
+      #deck-panel button, #add-song-box button { font-size: 10px; padding: 3px 5px; min-width: 0; }
+      #deck-panel :is(div, nav, section)[class*="ctl"],
+      #deck-panel :is(div, nav, section)[class*="row"],
+      #deck-panel :is(div, nav, section)[class*="btns"] { flex-wrap: nowrap; gap: 4px; }
+      .dp-chips { gap: 3px; flex-wrap: nowrap; align-items: center; }
+      .dp-chip { font-size: 9.5px; padding: 3px 5px; min-width: 0; }
+      #dp-timer-set { padding: 3px 8px; }
+      .dp-timer { padding: 7px 6px; }
+      #deck-panel, #add-song-box { max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); }
+    }
     @media (max-width: 640px) {
       #santa-bubble {
         max-width: min(196px, calc(100vw - 16px));

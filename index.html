@@ -33,8 +33,7 @@
   <!-- Vùng vẽ cây thông 3D ASCII -->
   <canvas id="c" class="space1-only"></canvas>
 
-  <!-- Thanh thông tin phía trên -->
-  <div id="name" title="Nhấn để quản lý tài khoản / đổi tên">AetheRiss</div>
+  <!-- Thanh thông tin phía trên (pill tên cũ đã xóa: tên & danh hiệu hiển thị trong Space 1) -->
   <div id="tt" class="space1-only">t 00.00</div>
 
   <!-- Thông số kỹ thuật góc trái -->
@@ -80,6 +79,7 @@
 
   <!-- Cụm nút chức năng góc trên bên phải -->
   <div id="top-tools">
+    <button id="acc-btn" class="tool-btn" type="button" title="Tài khoản / Account / 账户"><span aria-hidden="true">⚙️</span> <span id="acc-btn-txt">Tài khoản</span></button>
     <button id="lang-btn" class="tool-btn" type="button" title="Switch language / Đổi ngôn ngữ / 切换语言">🌐 VI</button>
     <button id="refresh-btn" class="tool-btn" type="button" title="Làm mới trang / Reload / 刷新页面">🔄</button>
     <button id="cd-btn" class="tool-btn" type="button">⏳ <span id="cd-btn-txt">Đếm ngược</span></button>

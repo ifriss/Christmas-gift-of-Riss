@@ -70,6 +70,9 @@
         $('ctl-title').textContent = t.ctlTitle;
         ctlBtn.title = t.ctlBtn;
         placeCtlBtn();
+        const accTxt = $('acc-btn-txt');
+        if (accTxt) accTxt.textContent = t.accBtn;
+        updateToolsFade();
       }
       const prevBar = window.updateBarLanguage;
       window.updateBarLanguage = function (l) {
@@ -81,6 +84,58 @@
         if (prevDeck) prevDeck();
         applyExtraLang();
       };
+      /* =====================================================================
+         A2. THANH CÔNG CỤ GÓC PHẢI (#top-tools): nút Tài khoản + vuốt ngang 1 hàng
+         ===================================================================== */
+      const accBtn = $('acc-btn');
+      const topTools = $('top-tools');
+      // Mở modal Tài khoản trực tiếp (pill #name đã xóa); giữ fallback nếu còn #name
+      if (accBtn) accBtn.addEventListener('click', function () {
+        if (window.CGOR_OPEN_ACCOUNT) { window.CGOR_OPEN_ACCOUNT(); return; }
+        const nameEl = $('name');
+        if (nameEl) nameEl.click();
+      });
+      // Chặn lan truyền sự kiện chạm/cuộn trên thanh công cụ để vuốt ngang không kéo bản đồ/cảnh phía dưới
+      if (topTools) {
+        ['touchstart', 'touchmove', 'wheel'].forEach(function (ev) {
+          topTools.addEventListener(ev, function (e) { e.stopPropagation(); }, { passive: true });
+        });
+        topTools.addEventListener('scroll', updateToolsFade, { passive: true });
+        // Người dùng chạm vào thanh thì hủy gợi ý cuộn
+        topTools.addEventListener('pointerdown', cancelToolsNudge, { passive: true });
+      }
+      window.addEventListener('resize', updateToolsFade);
+      // Mờ hai mép chỉ khi nội dung tràn ngang (mask-image nằm trong top-tools.css)
+      function updateToolsFade() {
+        if (!topTools) return;
+        const max = topTools.scrollWidth - topTools.clientWidth;
+        const sl = topTools.scrollLeft;
+        topTools.classList.toggle('tt-ov-l', max > 2 && sl > 2);
+        topTools.classList.toggle('tt-ov-r', max > 2 && sl < max - 2);
+      }
+
+      // Gợi ý cuộn: nhích ngang nhẹ 1 lần khi tải trang, chỉ khi scrollWidth > clientWidth
+      let nudgeTimers = [];
+      function cancelToolsNudge() {
+        nudgeTimers.forEach(function (t) { clearTimeout(t); });
+        nudgeTimers = [];
+      }
+      function nudgeTools() {
+        if (!topTools || !topTools.scrollTo) return;
+        const max = topTools.scrollWidth - topTools.clientWidth;
+        if (max <= 2) return;
+        const amt = Math.min(max, 26);
+        topTools.scrollTo({ left: amt, behavior: 'smooth' });
+        nudgeTimers.push(setTimeout(function () {
+          topTools.scrollTo({ left: 0, behavior: 'smooth' });
+        }, 650));
+        nudgeTimers.push(setTimeout(updateToolsFade, 1100));
+      }
+      if (topTools) {
+        if (document.readyState === 'complete') nudgeTimers.push(setTimeout(nudgeTools, 1200));
+        else window.addEventListener('load', function () { nudgeTimers.push(setTimeout(nudgeTools, 1200)); }, { once: true });
+      }
+
       applyExtraLang();
 
       /* =====================================================================
