@@ -248,13 +248,22 @@
       align-self: flex-start !important;
     }
     @media (max-width: 768px) {
-      #deck-panel .dp-btn, #deck-panel .dp-mode-btn {
-        padding-left: 6px !important;
-        padding-right: 6px !important;
+      #deck-panel .dp-btn, #deck-panel .dp-mode-btn, #deck-panel .dp-chip {
+        padding: 7px 6px !important;
+        min-height: 32px !important;
+        height: auto !important;
         font-size: 10px !important;
-        gap: 3px;
+        align-self: flex-start !important;
+        flex: 0 0 auto !important;
+        flex-grow: 0 !important;
+        flex-shrink: 0 !important;
+        white-space: nowrap;
       }
-      #deck-panel .dp-actions, #deck-panel .dp-modes { gap: 4px; align-items: flex-start; }
+      #deck-panel .dp-actions, #deck-panel .dp-modes, #deck-panel .dp-chips {
+        gap: 4px;
+        align-items: flex-start;
+        grid-auto-rows: auto;
+      }
     }
     @media (max-width: 640px) {
       #santa-bubble {
