@@ -20,7 +20,6 @@
   const vol = $('dp-volume');
   const volVal = $('dp-vol-val');
   const muteBtn = $('dp-mute');
-  const volHint = $('dp-vol-hint');
   const tLeft = $('dp-timer-left');
   const chips = Array.prototype.slice.call(deckPanel.querySelectorAll('.dp-chip[data-min]'));
   const customBtn = $('dp-t-custom');
@@ -82,10 +81,6 @@
     volVal.textContent = m ? 0 : v;
     muteBtn.textContent = (m || v === 0) ? '🔇' : v < 35 ? '🔈' : v < 70 ? '🔉' : '🔊';
     muteBtn.setAttribute('aria-pressed', (m || v === 0) ? 'true' : 'false');
-    const routed = !!(L.isGainRouted && L.isGainRouted());
-    if (routed && volHint.getAttribute('data-routed')) volHint.textContent = volHint.getAttribute('data-routed');
-    else if (volHint.getAttribute('data-base')) volHint.textContent = volHint.getAttribute('data-base');
-    volHint.style.display = (routed || !L.isVolumeSupported()) ? 'block' : 'none';
   }
   vol.addEventListener('input', function () { L.setVolume(Number(vol.value)); });
   vol.addEventListener('change', function () { L.setVolume(Number(vol.value)); });
@@ -181,9 +176,6 @@
     $('dp-vol-label').textContent = t.volLabel;
     vol.setAttribute('aria-label', t.volLabel);
     muteBtn.setAttribute('aria-label', t.muteAria || t.volLabel);
-    volHint.setAttribute('data-base', t.volHint);
-    volHint.setAttribute('data-routed', t.volRouted || '');
-    volHint.textContent = t.volHint;
     syncVol();
     $('dp-timer-title').textContent = t.timerTitle;
     $('dp-t-off').textContent = t.tOff;

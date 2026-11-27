@@ -73,39 +73,44 @@
         }
         return Math.min(1, Math.max(0, v));
       }
-      // iOS: audio.volume bị khóa = 1 → đưa âm thanh qua GainNode để thanh âm lượng của web
-      // hoạt động ĐỘC LẬP và nhân với âm lượng phần cứng (vd. web 50% × máy 70% = 35%).
-      const IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
-        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-      // iOS: mặc định KHÔNG qua AudioContext (phát bằng thẻ <audio> thuần → nghe nền / tắt màn hình
-      // ổn định, âm lượng do nút cứng của máy). Chỉ nối GainNode khi người dùng CHỦ ĐỘNG kéo
-      // thanh âm lượng xuống dưới 100. Vì vậy trên iOS luôn bắt đầu phiên ở 100.
-      if (IS_IOS) {
-        volume = 100;
-        muted = false;
-      }
+      // Pre-amp độc lập: MỌI thiết bị đều đưa <audio> qua GainNode (khởi tạo 1 lần) để thanh âm lượng
+      // của web nhân biên độ trước khi ra phần cứng (web 50% × phần cứng 100% = 50%).
+      // Nếu có bài khác origin (không có CORS) thì không nối, quay về audio.volume.
       let gainCtx = null, gainNode = null, gainTried = false;
+      function sameOriginAll() {
+        try {
+          return SONGS.every(function (s) {
+            if (!s.src) return true;
+            const u = new URL(s.src, location.href);
+            return u.origin === location.origin;
+          });
+        } catch (e) { return false; }
+      }
       function ensureGain() {
         if (gainTried) return;
         gainTried = true;
-        // iOS/iPadOS có thể báo giả là chỉnh được audio.volume → nhận diện thẳng theo thiết bị
-        if (volumeOK && !IS_IOS) return; // thiết bị chỉnh được audio.volume thật → không cần
         try {
           const AC = window.AudioContext || window.webkitAudioContext;
-          if (!AC) return;
+          if (!AC || !sameOriginAll()) return;
           gainCtx = new AC();
           const src = gainCtx.createMediaElementSource(audioEl);
           gainNode = gainCtx.createGain();
           src.connect(gainNode);
           gainNode.connect(gainCtx.destination);
           audioEl.volume = 1;
-          gainCtx.addEventListener && gainCtx.addEventListener('statechange', function () {
-            if (gainCtx.state !== 'running' && playing) resumeGain();
-          });
+          gainCtx.onstatechange = function () {
+            if (gainCtx.state !== 'running') resumeGain();
+            applyVolume();
+          };
         } catch (e) { gainCtx = null; gainNode = null; }
       }
       function resumeGain() {
-        try { if (gainCtx && gainCtx.state !== 'running') gainCtx.resume(); } catch (e) {}
+        try {
+          if (gainCtx && gainCtx.state !== 'running' && gainCtx.state !== 'closed') {
+            const p = gainCtx.resume();
+            if (p && p.then) p.then(applyVolume, function () {});
+          }
+        } catch (e) {}
       }
       function applyVolume() {
         const v = effVolume();
@@ -137,7 +142,7 @@
           try { localStorage.setItem('cgor_muted', 'false'); } catch (e) {}
         }
         try { localStorage.setItem('cgor_volume', String(volume)); } catch (e) {}
-        if (IS_IOS && (volume < 100 || muted)) { ensureGain(); resumeGain(); }
+        ensureGain(); resumeGain();
         applyVolume();
         emit('volume');
       }
@@ -148,7 +153,7 @@
           localStorage.setItem('cgor_muted', muted ? 'true' : 'false');
           localStorage.setItem('cgor_volume', String(volume));
         } catch (e) {}
-        if (IS_IOS && (volume < 100 || muted)) { ensureGain(); resumeGain(); }
+        ensureGain(); resumeGain();
         applyVolume();
         emit('volume');
       }
@@ -405,7 +410,8 @@
           audioEl.src = url;
         }
         audioEl.loop = song.group === 'box' || repeatMode === 'one';
-        if (gainNode) resumeGain();
+        ensureGain();
+        resumeGain();
         applyVolume();
         const tok = ++playToken;
         const pr = audioEl.play();
@@ -589,10 +595,14 @@
       ['play', 'pause', 'seeked', 'ratechange', 'loadedmetadata'].forEach(function (ev) {
         audioEl.addEventListener(ev, updatePosition);
       });
-      document.addEventListener('visibilitychange', function () {
-        // Chỉ cần khi đang nối GainNode (iPhone + đã kéo âm lượng web < 100); còn lại để trình duyệt tự xử lý
-        if (!document.hidden && gainNode) { resumeGain(); applyVolume(); }
-      });
+      function reassertVolume() {
+        if (document.visibilityState === 'hidden') return;
+        resumeGain();
+        applyVolume();
+      }
+      document.addEventListener('visibilitychange', reassertVolume);
+      window.addEventListener('pageshow', reassertVolume);
+      window.addEventListener('focus', reassertVolume);
 
       /* ---------------- Nhật ký chẩn đoán âm thanh ----------------
          Chỉ bật khi mở web với ?audiodebug=1 (tắt bằng ?audiodebug=0). Ghi lại sự kiện phát/dừng/đệm,
@@ -910,7 +920,7 @@
         isMuted: function () { return muted; },
         toggleMute: toggleMute,
         isGainRouted: function () { return !!gainNode; },
-        isVolumeSupported: function () { return !!gainNode || (volumeOK && !IS_IOS) || (!gainTried && !!(window.AudioContext || window.webkitAudioContext)); },
+        isVolumeSupported: function () { return !!gainNode || volumeOK; },
         setSleepTimer: setSleepTimer,
         getSleepMinutes: function () { return sleepMin; },
         getSleepRemaining: getSleepRemaining
