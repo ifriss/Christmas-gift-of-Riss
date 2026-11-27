@@ -243,5 +243,11 @@
           name: "Lựa Chọn Của Em",
           type: 'audio',
           src: 'music/lua-chon-cua-em-mwxdskyq.mp3'
+        },
+        {
+          id: 'mp3_mwz3pq3m',
+          name: "Dưới Tán Cây Khô Hoa Nở",
+          type: 'audio',
+          src: 'music/duoi-tan-cay-kho-hoa-no-mwz3pq3m.mp3'
         }
       ];
