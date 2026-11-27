@@ -6,10 +6,11 @@
       z-index: 30;
       display: flex;
       align-items: center;
-      gap: 6px;
+      --tt-gap: 6px;
+      gap: var(--tt-gap);
       flex-wrap: nowrap;
       justify-content: flex-start;
-      max-width: calc(100vw - 28px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+      max-width: min(370px, calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
       overflow-x: auto;
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
@@ -24,12 +25,45 @@
     /* Chỉ bật mờ hai mép khi nội dung thực sự tràn (JS gắn class .tt-ov-l / .tt-ov-r) */
     #top-tools.tt-ov-l { --tt-fade-l: 14px; }
     #top-tools.tt-ov-r { --tt-fade-r: 14px; }
-    #top-tools {
-      --tt-fade-l: 0px;
-      --tt-fade-r: 0px;
-      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--tt-fade-l), #000 calc(100% - var(--tt-fade-r)), transparent 100%);
-      mask-image: linear-gradient(to right, transparent 0, #000 var(--tt-fade-l), #000 calc(100% - var(--tt-fade-r)), transparent 100%);
+    /* Mép mềm do 2 nút tua (gradient) đảm nhiệm, không dùng mask nữa */
+    #top-tools.tt-drag { cursor: grabbing; user-select: none; -webkit-user-select: none; }
+
+    /* Nút tua 2 đầu: sticky, không chiếm chỗ (margin âm), tự ẩn khi chạm đầu/cuối */
+    .tt-nav {
+      position: sticky;
+      z-index: 2;
+      flex: 0 0 auto;
+      align-self: stretch;
+      width: 24px;
+      padding: 0;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      outline: none;
+      font-size: 20px;
+      font-weight: 300;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, color 0.2s;
+      -webkit-tap-highlight-color: transparent;
     }
+    .tt-nav-l {
+      left: 0;
+      margin-right: calc(-24px - var(--tt-gap));
+      background: linear-gradient(to right, rgba(7, 14, 36, 0.92), rgba(7, 14, 36, 0));
+    }
+    .tt-nav-r {
+      right: 0;
+      margin-left: calc(-24px - var(--tt-gap));
+      background: linear-gradient(to left, rgba(7, 14, 36, 0.92), rgba(7, 14, 36, 0));
+    }
+    #top-tools.tt-ov-l .tt-nav-l,
+    #top-tools.tt-ov-r .tt-nav-r { opacity: 1; pointer-events: auto; }
+    .tt-nav:hover, .tt-nav:active { color: rgba(255, 255, 255, 0.85); }
     /* Nút Tài khoản: cùng kính mờ, viền neon tím */
     #acc-btn { border-color: #a78bfa; color: #a78bfa; }
     #top-tools > * { flex-shrink: 0; white-space: nowrap; }

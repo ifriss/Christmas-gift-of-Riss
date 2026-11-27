@@ -27,7 +27,7 @@
       }
       #top-tools {
         top: calc(env(safe-area-inset-top, 0px) + 64px);
-        gap: 4px;
+        --tt-gap: 4px;
       }
       .tool-btn {
         padding: 5px 8px;
@@ -70,6 +70,15 @@
 
     /* Space 1 trên điện thoại: tên chòm sao không vượt khung nhìn hẹp (iPhone có safe-area) */
     @media (max-width: 768px) {
+      #top-tools {
+        max-width: min(370px, calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      #top-tools > .tool-btn { flex: 0 0 auto; white-space: nowrap; }
       .sp1-sky {
         height: 100dvh;
       }

@@ -114,6 +114,58 @@
         topTools.classList.toggle('tt-ov-r', max > 2 && sl < max - 2);
       }
 
+      // Nút tua ‹ › + kéo chuột ngang + lăn chuột ngang (tự khép kín, không gắn trùng khi gọi lại)
+      function initToolsScroller() {
+        if (!topTools || topTools.dataset.ttScroller === '1') return;
+        topTools.dataset.ttScroller = '1';
+        function mk(cls, ch, dir) {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'tt-nav ' + cls;
+          b.textContent = ch;
+          b.setAttribute('aria-hidden', 'true');
+          b.tabIndex = -1;
+          b.addEventListener('click', function () {
+            cancelToolsNudge();
+            topTools.scrollBy({ left: dir * Math.max(120, topTools.clientWidth * 0.6), behavior: 'smooth' });
+          });
+          return b;
+        }
+        topTools.insertBefore(mk('tt-nav-l', '‹', -1), topTools.firstChild);
+        topTools.appendChild(mk('tt-nav-r', '›', 1));
+        // Lăn chuột dọc/ngang → cuộn ngang
+        topTools.addEventListener('wheel', function (e) {
+          if (topTools.scrollWidth - topTools.clientWidth <= 2) return;
+          const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+          if (!d) return;
+          e.preventDefault();
+          topTools.scrollLeft += d;
+        }, { passive: false });
+        // Kéo chuột ngang (chạm trên mobile đã cuộn native)
+        let down = false, moved = false, sx = 0, sl = 0;
+        topTools.addEventListener('pointerdown', function (e) {
+          if (e.pointerType !== 'mouse' || e.button !== 0 || e.target.closest('.tt-nav')) return;
+          down = true; moved = false; sx = e.clientX; sl = topTools.scrollLeft;
+        });
+        window.addEventListener('pointermove', function (e) {
+          if (!down) return;
+          const dx = e.clientX - sx;
+          if (!moved && Math.abs(dx) > 4) { moved = true; topTools.classList.add('tt-drag'); }
+          if (moved) topTools.scrollLeft = sl - dx;
+        });
+        window.addEventListener('pointerup', function () {
+          if (!down) return;
+          down = false;
+          topTools.classList.remove('tt-drag');
+        });
+        // Sau khi kéo thì nuốt click để không bấm nhầm nút
+        topTools.addEventListener('click', function (e) {
+          if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
+        }, true);
+        updateToolsFade();
+      }
+      initToolsScroller();
+
       // Gợi ý cuộn: nhích ngang nhẹ 1 lần khi tải trang, chỉ khi scrollWidth > clientWidth
       let nudgeTimers = [];
       function cancelToolsNudge() {
