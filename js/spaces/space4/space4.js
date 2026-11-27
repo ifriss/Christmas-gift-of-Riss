@@ -122,6 +122,112 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     r = r.trim(); if (!r) return;
     const f = r.split('|'); INFO[f[0]] = { e: f[1], s: f.slice(2, 5) };
   });
+  // Bản dịch EN / ZH của INFO_RAW (cùng định dạng id|kinh tế|3 sticker)
+  const INFO_EN_RAW = `
+hanoi|Finance, technology, trade and cultural tourism|🍜 Hanoi Pho|🏺 Bat Trang Ceramics|💻 Tech & Services
+hue|Heritage tourism, urban services, Tam Giang lagoon fisheries|🏯 Heritage Tourism|🐟 Lagoon Fisheries|🌿 Agarwood Craft
+laichau|Hydropower, highland agriculture and forestry, eco-tourism|🍵 Shan Tuyet Tea|⚡ Da River Hydropower|🏔️ Eco-tourism
+dienbien|Muong Thanh rice, livestock, historical tourism|🌾 Muong Thanh Rice|🐄 Cattle Farming|🏛️ Historical Tourism
+sonla|Industrial crops, dairy cows, plateau tourism|🥛 Moc Chau Milk|🍵 Moc Chau Tea|🌸 Moc Chau Plum Blossoms
+langson|Agriculture and forestry, border-gate trade, eco-tourism|🌰 Chi Lang Star Anise|🛒 Border-gate Trade|🏔️ Mau Son Mountain
+quangninh|Coal, seaports, Ha Long tourism, marine fisheries|⛏️ Coal|🦪 Oysters & Pearls|🚢 Ha Long Tourism
+thanhhoa|Nghi Son oil refining, agriculture, marine fisheries|🏭 Nghi Son Refinery|🐟 Sea Fishing|🏖️ Sam Son Beach
+nghean|Agriculture, industry, trade, beach tourism|🍊 Xa Doai Oranges|🦑 Cua Lo Seafood|🏖️ Cua Lo Beach
+hatinh|Vung Ang steel and deep-water port, agriculture, fisheries|🏭 Vung Ang Steel|🐟 Seafood|🌾 Rice
+caobang|Agriculture and forestry, minerals, border tourism|🌰 Trung Khanh Chestnuts|🌿 Medicinal Herbs|💧 Ban Gioc Waterfall
+tuyenquang|Agriculture (oranges, tea), hydropower, Na Hang lake tourism|🍊 Song Con Oranges|🍵 Tea|⚡ Tuyen Quang Hydropower
+laocai|Apatite mining, tea, Sa Pa tourism|🌄 Sa Pa Terraced Fields|⛏️ Tang Loong Apatite|🍑 Tam Hoa Plums
+thainguyen|Metallurgy, minerals, tea, lake tourism|🍵 Tan Cuong Tea|🏭 Thai Nguyen Steel|🏞️ Nui Coc Lake
+phutho|Agriculture, food processing, spiritual tourism|🌳 Doan Hung Pomelo|🏛️ Hung Kings Temple|🐓 Muong Chicken
+bacninh|Electronics, components, agriculture, craft villages|📱 Electronics & Components|🍒 Luc Ngan Lychee|🎶 Quan Ho Folk Songs
+hungyen|Electronics, automobiles, fruit farming|🐉 Hung Yen Longan|🏭 Electronics & Autos|🏯 Pho Hien
+haiphong|Seaports, shipbuilding, industry, beach tourism|⚓ Seaport|🦀 Cat Hai Crab|🏝️ Cat Ba Island
+ninhbinh|Heritage tourism, agriculture, building materials|🛶 Trang An|🍚 Ninh Binh Crispy Rice|🏯 Hoa Lu Ancient Capital
+quangtri|Heritage tourism, agriculture, fisheries|🏞️ Phong Nha|🌾 Rice|🐟 Cua Viet Seafood
+danang|Services, beach tourism, seaports, technology|🏖️ My Khe Beach|🌉 Dragon Bridge|💻 Tech & Seaport
+quangngai|Dung Quat oil refining, agriculture, island fisheries|🧄 Ly Son Garlic|🏭 Dung Quat Refinery|🐟 Ly Son Fisheries
+gialai|Coffee, rubber, pepper, hydropower, tourism|☕ Coffee|🌶️ Pepper|⚡ Hydropower
+khanhhoa|Beach tourism, aquaculture, services|🦞 Lobster|🏖️ Nha Trang Beach|🐦 Bird's Nest
+lamdong|High-tech agriculture, Da Lat tourism, hydropower|🌸 Da Lat Flowers|🥬 Da Lat Vegetables|☕ Bao Loc Coffee
+daklak|Coffee, rubber, pepper, wind power, tourism|☕ Coffee|🥑 Durian|⚡ Wind Power
+hcm|Services, finance, industry, seaports, technology|🏙️ Service Hub|🚢 Cat Lai Port|💻 Tech & Finance
+dongnai|Food processing, industrial parks, fruit farming|🍊 Tan Trieu Pomelo|🏭 Industrial Parks|🐔 Poultry Farming
+tayninh|Agriculture, rubber, sugarcane, spiritual tourism, border gates|🍠 Cassava|🍘 Trang Bang Rice Paper|🏯 Cao Dai Holy See
+cantho|Mekong Delta rice hub, trade, floating-market tourism|🍚 Rice|🛶 Cai Rang Floating Market|🐟 Snakehead Fish
+vinhlong|Fruit, coconut, handicrafts, eco-tourism|🥥 Ben Tre Coconut|🍈 Riverine Fruits|🧺 Woven Handicrafts
+dongthap|Agriculture, fisheries, lotus|🥭 Cao Lanh Mango|🐟 Pangasius|🌸 Flower Village
+camau|Fisheries, mangrove forestry, wind power, gas|🦐 Black Tiger Shrimp|🦀 Sea Crab|🌲 Melaleuca Forest
+angiang|Rice, fisheries, border and island tourism|🐟 Pangasius|🌾 Rice|🏝️ Phu Quoc
+hoang-sa|Marine economy, traditional fishing grounds, maritime sovereignty|🐟 Rich Fishing Grounds|⚓ Vietnam's Sovereignty|🌊 Marine Economy
+truong-sa|Marine economy, traditional fishing grounds, frontier at sea|🐟 Rich Fishing Grounds|⚓ Vietnam's Sovereignty|🌊 Marine Economy
+phu-quoc|International island and beach tourism, seaport and seafood processing|🏝️ Pearl Island|🐟 Fish Sauce|🦪 Pearls
+con-dao|Marine eco-tourism, nature conservation and historical relics|🐢 Sea Turtles|⚓ Seaport|🌿 National Park
+`;
+  const INFO_ZH_RAW = `
+hanoi|金融、科技、商贸与文化旅游|🍜 河内河粉|🏺 钵场陶瓷|💻 科技与服务
+hue|遗产旅游、城市服务、三江潟湖渔业|🏯 遗产旅游|🐟 潟湖渔业|🌿 沉香手艺
+laichau|水电、高原农林业、生态旅游|🍵 雪山茶|⚡ 黑河水电|🏔️ 生态旅游
+dienbien|芒清稻米、畜牧业、历史旅游|🌾 芒清大米|🐄 养牛业|🏛️ 历史旅游
+sonla|工业作物、奶牛、高原旅游|🥛 木州牛奶|🍵 木州茶|🌸 木州李花
+langson|农林业、口岸贸易、生态旅游|🌰 支棱八角|🛒 口岸贸易|🏔️ 茅山
+quangninh|煤炭、海港、下龙湾旅游、海洋渔业|⛏️ 煤炭|🦪 牡蛎与珍珠|🚢 下龙湾旅游
+thanhhoa|宜山炼化、农业、海洋渔业|🏭 宜山炼油厂|🐟 海洋捕捞|🏖️ 参山海滩
+nghean|农业、工业、商贸、海滨旅游|🍊 社岱橙|🦑 瓯罗海鲜|🏖️ 瓯罗海滩
+hatinh|永昂钢铁与深水港、农业、渔业|🏭 永昂钢铁|🐟 海鲜|🌾 稻米
+caobang|农林业、矿产、边境旅游|🌰 重庆板栗|🌿 草药|💧 板约瀑布
+tuyenquang|农业（橙、茶）、水电、那汉湖旅游|🍊 松江橙|🍵 茶叶|⚡ 宣光水电
+laocai|磷灰石采矿、茶叶、沙坝旅游|🌄 沙坝梯田|⛏️ 层窟磷灰石|🍑 三花李
+thainguyen|冶金、矿产、茶叶、湖泊旅游|🍵 新疆茶|🏭 太原钢铁|🏞️ 岑山湖
+phutho|农业、农产品加工、灵修旅游|🌳 端雄柚|🏛️ 雄王庙|🐓 芒鸡
+bacninh|电子、零部件、农业、工艺村|📱 电子与零部件|🍒 陆岸荔枝|🎶 官贺民歌
+hungyen|电子、汽车、水果种植|🐉 兴安龙眼|🏭 电子与汽车|🏯 宪城
+haiphong|海港、造船、工业、海滨旅游|⚓ 海港|🦀 吉海蟹|🏝️ 吉婆岛
+ninhbinh|遗产旅游、农业、建筑材料|🛶 长安|🍚 宁平锅巴饭|🏯 华闾古都
+quangtri|遗产旅游、农业、渔业|🏞️ 峰牙|🌾 稻米|🐟 瓯越海产
+danang|服务业、海滨旅游、海港、科技|🏖️ 美溪海滩|🌉 龙桥|💻 科技与海港
+quangngai|榕桔炼油、农业、海岛渔业|🧄 李山大蒜|🏭 榕桔炼油厂|🐟 李山渔业
+gialai|咖啡、橡胶、胡椒、水电、旅游|☕ 咖啡|🌶️ 胡椒|⚡ 水电
+khanhhoa|海滨旅游、水产养殖、服务业|🦞 龙虾|🏖️ 芽庄海滩|🐦 燕窝
+lamdong|高科技农业、大叻旅游、水电|🌸 大叻鲜花|🥬 大叻蔬菜|☕ 宝禄咖啡
+daklak|咖啡、橡胶、胡椒、风电、旅游|☕ 咖啡|🥑 榴莲|⚡ 风电
+hcm|服务业、金融、工业、海港、科技|🏙️ 服务中心|🚢 吉莱港|💻 科技与金融
+dongnai|农产品加工、工业园区、水果种植|🍊 新朝柚|🏭 工业园区|🐔 养鸡业
+tayninh|农业、橡胶、甘蔗、灵修旅游、口岸|🍠 木薯|🍘 崩崩米纸|🏯 高台教圣地
+cantho|湄公河三角洲稻米中心、商贸、水上市场旅游|🍚 稻米|🛶 芽朗水上市场|🐟 乌鱼
+vinhlong|水果、椰子、手工艺、生态旅游|🥥 槟椥椰子|🍈 水乡水果|🧺 编织工艺品
+dongthap|农业、渔业、莲花|🥭 高岭芒果|🐟 巴沙鱼|🌸 花村
+camau|渔业、红树林林业、风电、天然气|🦐 斑节虾|🦀 海蟹|🌲 白千层林
+angiang|稻米、渔业、边境与海岛旅游|🐟 巴沙鱼|🌾 稻米|🏝️ 富国岛
+hoang-sa|海洋经济、传统渔场、海洋主权|🐟 大渔场|⚓ 越南主权|🌊 海洋经济
+truong-sa|海洋经济、传统渔场、海上前哨|🐟 大渔场|⚓ 越南主权|🌊 海洋经济
+phu-quoc|国际海岛滨海旅游、海港与海产加工|🏝️ 珍珠岛|🐟 鱼露|🦪 珍珠
+con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|🌿 国家公园
+`;
+  const INFO_L = { vi: INFO };
+  [['en', INFO_EN_RAW], ['zh', INFO_ZH_RAW]].forEach(function (pr) {
+    const o = INFO_L[pr[0]] = {};
+    pr[1].split('\n').forEach(function (r) {
+      r = r.trim(); if (!r) return;
+      const f = r.split('|'); o[f[0]] = { e: f[1], s: f.slice(2, 5) };
+    });
+  });
+  // Bản dịch EN / ZH của 14 điểm MARKS: [tên n, địa danh sub, mô tả desc]
+  const MARK_L = {
+    'phu-quoc': { en: ['Phu Quoc Island', 'An Giang Province', 'The pearl island in the southwest, famed for its beaches and traditional fish sauce.'], zh: ['富国岛', '安江省', '西南部的明珠岛，以海岛风光和传统鱼露闻名。'] },
+    'con-dao': { en: ['Con Dao', 'Ho Chi Minh City', 'An archipelago of rich forests and seas, with many historical relics and Con Dao National Park.'], zh: ['昆岛', '胡志明市', '森林与海域丰饶的群岛，拥有众多历史遗迹和昆岛国家公园。'] },
+    'lungcu': { en: ['Lung Cu Flagpole', 'Tuyen Quang Province', 'The national flagpole on the Dong Van karst plateau, a sacred symbol of the northernmost point.'], zh: ['龙渠旗台', '宣光省', '位于同文石高原上的国旗旗台，是神圣的最北端象征。'] },
+    'thaprua': { en: ['Turtle Tower & One Pillar Pagoda', 'Hanoi City', 'Hoan Kiem Lake and the One Pillar Pagoda, emblems of ancient Thang Long architecture.'], zh: ['龟塔与独柱寺', '河内市', '还剑湖与独柱寺，是古升龙建筑的象征。'] },
+    'hontrongmai': { en: ['Trong Mai Rock (Fighting Cock Islet)', 'Ha Long Bay, Quang Ninh', 'A majestic limestone formation in Ha Long Bay, a UNESCO World Natural Heritage site.'], zh: ['斗鸡石', '广宁省下龙湾', '下龙湾中雄奇的石灰岩山体，世界自然遗产。'] },
+    'ngomon': { en: ['Ngo Mon Gate, Imperial City', 'Hue City', 'The main gate of the Hue Imperial City, where royal ceremonies were once held.'], zh: ['午门（顺化皇城）', '顺化市', '顺化皇城正门，昔日举行宫廷典礼之处。'] },
+    'cauRong': { en: ['Dragon Bridge & Golden Bridge', 'Da Nang City', 'The Dragon Bridge breathes fire and water on weekends; the Golden Bridge stands in Ba Na Hills.'], zh: ['龙桥与金桥', '岘港市', '龙桥周末喷火喷水；金桥坐落于巴拿山。'] },
+    'nharong': { en: ['Central Highlands Rong House', 'Gia Lai Province', 'The Rong House, a communal structure and cultural symbol of the Ba Na and Gia Rai peoples.'], zh: ['西原公房（Rông屋）', '嘉莱省', '公房是巴拿族和嘉莱族的公共建筑与文化象征。'] },
+    'ponagar': { en: ['Po Nagar Cham Towers', 'Khanh Hoa Province', 'A Cham tower complex built between the 7th and 13th centuries beside the Cai River, Nha Trang.'], zh: ['婆那加占婆塔', '庆和省', '建于7至13世纪的占婆塔群，位于芽庄盖河畔。'] },
+    'landmark81': { en: ['Nha Rong Wharf & Landmark 81', 'Ho Chi Minh City', 'Nha Rong Wharf is a historic site on the Saigon River; Landmark 81 is the tallest building in Vietnam.'], zh: ['龙屋码头与地标81大厦', '胡志明市', '龙屋码头是西贡河畔的历史遗迹；地标81是越南最高的建筑。'] },
+    'cauCanTho': { en: ['Can Tho Bridge & Floating Market', 'Can Tho City', 'A cable-stayed bridge over the Hau River, near the bustling Cai Rang floating market.'], zh: ['芹苴大桥与水上市场', '芹苴市', '横跨后江的斜拉桥，毗邻热闹的芽朗水上市场。'] },
+    'muiCaMau': { en: ['Ca Mau Cape', 'Ca Mau Province', 'The southernmost point of the country, where the mainland reaches out into the East Sea.'], zh: ['金瓯角', '金瓯省', '祖国最南端，陆地在此伸入东海。'] },
+    'mocHoangSa': { en: ['Hoang Sa (Paracel) Sovereignty Marker', 'Hoang Sa (Paracel) Islands', 'A marker affirming Vietnam\'s sovereignty over the Hoang Sa (Paracel) Islands.'], zh: ['西沙群岛主权标志', '西沙群岛（越称黄沙）', '宣示越南对西沙群岛（黄沙）主权的标志。'] },
+    'mocTruongSa': { en: ['Truong Sa (Spratly) Sovereignty Marker', 'Truong Sa (Spratly) Islands', 'A marker affirming sovereignty over the Truong Sa (Spratly) Islands, the nation\'s frontier at sea.'], zh: ['南沙群岛主权标志', '南沙群岛（越称长沙）', '宣示对南沙群岛（长沙）主权的标志，祖国海上前哨。'] }
+  };
   // Điểm đảo (Phú Quốc, Côn Đảo) và 12 công trình: lon/lat, nhãn, tỉnh, mô tả, icon SVG (hệ tọa độ quanh 0)
   const DOT = 'M-2.6 0A2.6 2.6 0 1 0 2.6 0A2.6 2.6 0 1 0-2.6 0Z';
   const MARKS = [
@@ -141,19 +247,26 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     { id: 'mocTruongSa', n: 'Cột mốc Chủ quyền Trường Sa', sub: 'Quần đảo Trường Sa', lon: 113.50, lat: 9.50, lm: 1, d: 'M-7 6Q-4 3-1 6T5 6M0 3V-7M0-7L6-5L0-3', desc: 'Cột mốc khẳng định chủ quyền trên quần đảo Trường Sa, tiền tiêu trên biển Tổ quốc.' }
   ];
   MARKS.forEach(function (m) {
-    BY[m.id] = { id: m.id, isl: 1, name: { vi: m.n, en: m.n, zh: m.n }, sub: { vi: m.sub }, desc: { vi: m.desc, en: m.desc, zh: m.desc }, minK: m.lm ? 1.45 : 1.15 };
+    const t = MARK_L[m.id] || {}, en = t.en || [m.n, m.sub, m.desc], zh = t.zh || en;
+    BY[m.id] = { id: m.id, isl: 1, name: { vi: m.n, en: en[0], zh: zh[0] }, sub: { vi: m.sub, en: en[1], zh: zh[1] }, desc: { vi: m.desc, en: en[2], zh: zh[2] }, minK: m.lm ? 1.45 : 1.15 };
   });
 
   // Lệch nhãn tay (đơn vị: cỡ chữ tỉnh) cho tỉnh có công trình khó tách
-  const NUDGE = { hue: [0, 1.25] };
+  const NUDGE = { khanhhoa: [-0.45, 0], hanoi: [0, 0] };
   // Tỉnh neo nhãn lên trên một công trình cụ thể: Cần Thơ neo trên icon Cầu Cần Thơ & Chợ Nổi
-  const AT = { cantho: 'cauCanTho' };
+  const AT = { cantho: 'cauCanTho', hanoi: 'thaprua', khanhhoa: 'ponagar', hue: 'ngomon' };
+  const UNDER = { hanoi: 1, khanhhoa: 1, hue: 1, cantho: 1 }; // nhãn đặt phía dưới icon công trình
   const UI = {
     vi: { close: 'Đóng', load: 'Đang tải bản đồ…', err: 'Không tải được bản đồ', merged: 'Sáp nhập từ: ', same: 'Giữ nguyên địa giới hành chính', eco: 'Kinh tế chủ yếu: ' },
     en: { close: 'Close', load: 'Loading map…', err: 'Could not load the map', merged: 'Merged from: ', same: 'Administrative boundaries unchanged', eco: 'Key economy: ' },
     zh: { close: '关闭', load: '地图加载中…', err: '无法加载地图', merged: '合并自：', same: '行政区划不变', eco: '主要经济：' }
   };
-  const SOV = ['Hoàng Sa, Trường Sa', 'là của Việt Nam'];
+  const SOV_L = {
+    vi: ['Hoàng Sa, Trường Sa', 'là của Việt Nam'],
+    en: ['Hoang Sa & Truong Sa', 'belong to Vietnam'],
+    zh: ['黄沙、长沙群岛', '属于越南']
+  };
+  let SOV = SOV_L.vi;
 
   function lang() {
     let l = 'vi';
@@ -188,7 +301,7 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
   let card = null, cardName = null, cardSt = null, cardReg = null, cardDesc = null, cardX = null, cardEco = null, cardStk = null;
   let raf = 0, last = 0, t = 0, cw = 0, ch = 0, dpr = 1, token = 0, state = 'load', VW = 1, VH = 1;
   let audio = null, openId = null, abortCtl = null, dust = [], rings = [], labels = [], els = {}, sovTs = [];
-  let mks = [], lmEl = null, sovKey = '', sovFit = 0; // sovKey/sovFit: cache cỡ chữ khẩu hiệu chủ quyền
+  let mks = [], lmEl = null, star = null, sovKey = '', sovFit = 0; // sovKey/sovFit: cache cỡ chữ khẩu hiệu chủ quyền
   let view = { k: 1, x: 0, y: 0 }, ptr = new Map(), moved = 0, multi = false, pd = 1;
 
   function initSprites() {
@@ -247,7 +360,7 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     } catch (e) {}
     const cx = parseFloat(sovEl.getAttribute('x')) || VW / 2, lo = (109.8 - GEO.lon0) * KX * S + PAD, hi = VW - 12;
     const room = 2 * Math.max(0, Math.min(cx - lo, hi - cx)) * un;
-    return Math.max(11, Math.min(17, 0.86 * room / w1));
+    return Math.max(10, Math.min(15, 0.84 * room / w1));
   }
   function applyView() {
     if (!vp) return;
@@ -264,10 +377,14 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     const fs = px / u, sw = ((3.5 + (px - 15) * 0.1) / u).toFixed(3) + 'px', all = k > 1.35;
     // Icon công trình (scale ico); tỉnh có công trình được đẩy nhãn lên cao hơn đỉnh icon để không bị che
     // Mobile: icon công trình nhỏ hơn ~0.7 lần và tăng theo zoom chậm hơn
-    const ico = (narrow ? 1.75 : 2.5) / (unit() * Math.pow(k, narrow ? 0.5 : 0.6)), liftY = 8 * ico + fs * 0.7;
+    // Zoom gần (k >= 1.45, công trình hiện rõ): đẩy nhãn tỉnh thêm lên, hệ số tăng nhẹ theo k, tối đa ~1 cỡ chữ
+    const ico = (narrow ? 1.75 : 2.5) / (unit() * Math.pow(k, narrow ? 0.5 : 0.6)),
+      near = k >= 1.45 ? Math.min(1, 0.35 + (k - 1.45) * 0.3) : 0,
+      liftY = 8 * ico + fs * (0.7 + near);
     labels.forEach(function (l) {
       // Tỉnh nhỏ (ĐB sông Hồng, miền Tây) ẩn nhãn ở mức zoom mặc định, chỉ hiện khi zoom > 1.35
-      const p = BY[l.id], crowded = (!all && p && (p.reg === 1 || p.reg === 6)) || (p && p.minK && k < p.minK);
+      // Chưa zoom: ẩn toàn bộ tên tỉnh, chỉ giữ tên 2 quần đảo (và điểm đảo có minK riêng)
+      const p = BY[l.id], crowded = (l.up && !all) || (p && p.minK && k < p.minK);
       l.el.style.display = crowded ? 'none' : '';
       l.el.style.fontSize = fs.toFixed(1) + 'px';
       l.el.style.strokeWidth = sw;
@@ -275,8 +392,8 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
       if (l.y0 !== undefined) {
         const nd = NUDGE[l.id] || [0, 0], am = AT[l.id] && mks.find(function (m) { return m.id === AT[l.id]; });
         if (am) { // nhãn nằm hẳn phía trên icon công trình, cách icon một khoảng hở ≈ cỡ chữ
-          l.el.setAttribute('x', am.x.toFixed(1));
-          l.el.setAttribute('y', (am.y - 7 * ico - fs).toFixed(1));
+          l.el.setAttribute('x', (am.x + (UNDER[l.id] ? nd[0] * fs : 0)).toFixed(1));
+          l.el.setAttribute('y', (UNDER[l.id] ? am.y + 8 * ico + fs * 0.75 : am.y - 7 * ico - fs).toFixed(1));
         } else {
           l.el.setAttribute('x', (l.x0 + nd[0] * fs).toFixed(1));
           l.el.setAttribute('y', (l.y0 - (l.lift ? liftY : 0) + nd[1] * fs).toFixed(1));
@@ -296,13 +413,17 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
       m.lb.setAttribute('y', (m.y + 8 * sc + extraY + lfs * 0.95).toFixed(1));
     });
     if (lmEl) lmEl.classList.toggle('on', k >= 1.45);
+    if (star) { // Sao đỏ Thủ đô: luôn hiện, scale mượt theo zoom; khi công trình hiện (k >= 1.45) dịch sang phải icon Tháp Rùa
+      const ss = (narrow ? 6.5 : 8) / (8 * unit() * Math.pow(k, 0.5)), dx = k >= 1.45 ? 12 * ico : 0;
+      star.g.setAttribute('transform', 'translate(' + (star.x + dx).toFixed(1) + ' ' + star.y.toFixed(1) + ') scale(' + ss.toFixed(3) + ')');
+    }
     if (sovEl) {
       // Khẩu hiệu "Hoàng Sa, Trường Sa / là của Việt Nam" nằm gọn trong dải biển bên phải bản đồ.
       // Cỡ chữ và độ giãn dòng tính theo px màn hình rồi quy về đơn vị SVG; dy là số thuần (không dùng em)
       // nên hai dòng không đè nhau ở mọi mức zoom. PC: giãn dòng 1.25; mobile: 1.75 (thoáng hẳn, không dính chữ).
       const un = u / k, key = (narrow ? 'm' : 'd') + un.toFixed(4);
       if (key !== sovKey) { sovKey = key; sovFit = sovSize(narrow, un); } // chỉ tính lại khi đổi khổ màn hình / xoay máy
-      const fu = sovFit / u, gap = (fu * (narrow ? 1.75 : 1.25)).toFixed(1);
+      const fu = sovFit / u, gap = (fu * (narrow ? 2.1 : 1.25)).toFixed(1);
       sovEl.style.fontSize = fu.toFixed(1) + 'px';
       sovTs.forEach(function (ts, i) { if (i) ts.setAttribute('dy', gap); });
     }
@@ -374,6 +495,16 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
       labels.push({ id: m.id, el: lb });
       mks.push({ id: m.id, g: inner, lb: lb, x: gx, y: gy, lm: !!m.lm });
     });
+    // Sao đỏ 5 cánh tại Hà Nội (ngoài .vn-landmarks nên luôn hiện từ k = 1), chạm để mở thẻ Hà Nội
+    let pts = '';
+    for (let i = 0; i < 10; i++) {
+      const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 3.1 : 8;
+      pts += (i ? ' ' : '') + (Math.cos(a) * r).toFixed(2) + ',' + (Math.sin(a) * r).toFixed(2);
+    }
+    const sg = se('g', { class: 's4-star', 'data-id': 'hanoi' }, parent), si = se('g', {}, sg);
+    se('circle', { r: 10, class: 's4-hit-pt' }, si);
+    se('polygon', { points: pts, class: 's4-star-shape' }, si);
+    star = { g: si, x: (105.85 - GEO.lon0) * KX * S + PAD, y: (GEO.lat1 - 21.03) * S + PAD };
   }
   function islands(parent) {
     ISL.forEach(function (o) {
@@ -531,7 +662,7 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     cardSt.hidden = !!p.isl;
     cardReg.textContent = p.sub ? pick(p.sub) : pick(p.isl ? SEA : R[p.reg]);
     cardDesc.textContent = pick(p.desc);
-    const d = INFO[id];
+    const d = (INFO_L[lang()] || INFO)[id] || INFO[id];
     cardEco.hidden = !d;
     cardEco.textContent = d ? L.eco + d.e : '';
     cardStk.textContent = '';
@@ -594,6 +725,11 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
       const nm = pick(BY[l.id].name);
       l.el.textContent = l.up ? nm.toUpperCase() : nm; // tên tỉnh in hoa toàn bộ
     });
+    // Khẩu hiệu chủ quyền theo ngôn ngữ đang chọn (textContent), tính lại cỡ chữ vì độ dài đổi
+    SOV = SOV_L[lang()] || SOV_L.vi;
+    sovTs.forEach(function (ts, i) { ts.textContent = SOV[i] || ''; });
+    sovKey = '';
+    applyView();
     if (openId) fillCard(openId); else cardX.setAttribute('aria-label', L.close);
   }
 
@@ -680,7 +816,7 @@ con-dao|Du lịch sinh thái biển, bảo tồn thiên nhiên và di tích lị
     if (stage) stage.remove();
     stage = canvas = g = mapEl = svg = vp = landEl = sovEl = card = cardName = cardSt = cardReg = cardDesc = cardX = null;
     dotEl = tieEl = cardEco = cardStk = null;
-    dust = []; rings = []; labels = []; els = {}; sovTs = []; mks = []; lmEl = null; sovKey = ''; sovFit = 0;
+    dust = []; rings = []; labels = []; els = {}; sovTs = []; mks = []; lmEl = null; star = null; sovKey = ''; sovFit = 0;
     ptr.clear();
     openId = null;
   }

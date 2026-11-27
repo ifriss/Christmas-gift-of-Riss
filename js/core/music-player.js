@@ -180,6 +180,7 @@
     seek.setAttribute('aria-label', t.seekAria);
     $('dp-vol-label').textContent = t.volLabel;
     vol.setAttribute('aria-label', t.volLabel);
+    muteBtn.setAttribute('aria-label', t.muteAria || t.volLabel);
     volHint.setAttribute('data-base', t.volHint);
     volHint.setAttribute('data-routed', t.volRouted || '');
     volHint.textContent = t.volHint;

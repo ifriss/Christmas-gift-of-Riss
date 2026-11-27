@@ -38,6 +38,11 @@
           pinLabel: '📌 Đã ghim',
           lockText: '🔒 Đăng nhập để đăng bài, phản hồi & thả tim.',
           lockBtn: 'Đăng nhập',
+          notiDelTitle: 'Xóa thông báo',
+          reactRemoveTitle: (em) => 'Bỏ ' + em,
+          reactClearTitle: 'Thu hồi',
+          replyFailAlert: (e) => 'Không lưu được trả lời lên Sheet: ' + (e || 'Chưa cập nhật Code.gs'),
+          notiFailAlert: (e) => 'Không đăng được thông báo: ' + (e || 'Chưa cập nhật action post_notice trong Code.gs'),
           deck: {
             title: '💿 Máy đĩa than',
             now: 'Đang phát',
@@ -150,6 +155,11 @@
           pinLabel: '📌 Pinned',
           lockText: '🔒 Log in to post, reply & like.',
           lockBtn: 'Log In',
+          notiDelTitle: 'Delete announcement',
+          reactRemoveTitle: (em) => 'Remove ' + em,
+          reactClearTitle: 'Undo',
+          replyFailAlert: (e) => 'Could not save the reply to the Sheet: ' + (e || 'Code.gs not updated'),
+          notiFailAlert: (e) => 'Could not post the announcement: ' + (e || 'post_notice action not updated in Code.gs'),
           deck: {
             title: '💿 Vinyl Turntable',
             now: 'Now Playing',
@@ -262,6 +272,11 @@
           pinLabel: '📌 置顶',
           lockText: '🔒 登录后即可发布动态、回复和点赞。',
           lockBtn: '登录',
+          notiDelTitle: '删除公告',
+          reactRemoveTitle: (em) => '移除 ' + em,
+          reactClearTitle: '撤回',
+          replyFailAlert: (e) => '回复未能保存到表格：' + (e || 'Code.gs 尚未更新'),
+          notiFailAlert: (e) => '公告发布失败：' + (e || 'Code.gs 中尚未更新 post_notice 操作'),
           deck: {
             title: '💿 黑胶唱片机',
             now: '正在播放',
@@ -398,7 +413,9 @@
       const mbGuestLoginBtn = document.getElementById('mb-guest-login-btn');
       const mbCompose = document.getElementById('mb-compose');
 
+      let lastAuthError = '';
       function showError(codeOrText) {
+        lastAuthError = codeOrText || '';
         if (!codeOrText) {
           authError.classList.remove('active');
           authError.textContent = '';
@@ -426,6 +443,18 @@
         b.addEventListener('click', () => switchAuthTab(b.getAttribute('data-tab')));
       });
 
+      function renderProfileInfo() {
+        if (!currentUser) return;
+        const tDict = I18N[curLang];
+        const badgeText = currentUser.badge
+          ? '<span class="user-badge">' + escapeHTML(currentUser.badge) + '</span>'
+          : '<span style="color:var(--dim)">' + tDict.profNoBadge + '</span>';
+
+        profileInfo.innerHTML =
+          '<div><b>' + tDict.profAccount + ':</b> @' + escapeHTML(currentUser.username) + '</div>' +
+          '<div><b>' + tDict.profBadge + ':</b> ' + badgeText + '</div>';
+      }
+
       function openAuthModal(defaultTab) {
         showError('');
         if (currentUser) {
@@ -436,13 +465,7 @@
           paneRegister.classList.remove('active');
           profilePane.classList.add('active');
 
-          const badgeText = currentUser.badge
-            ? '<span class="user-badge">' + escapeHTML(currentUser.badge) + '</span>'
-            : '<span style="color:var(--dim)">' + tDict.profNoBadge + '</span>';
-
-          profileInfo.innerHTML =
-            '<div><b>' + tDict.profAccount + ':</b> @' + escapeHTML(currentUser.username) + '</div>' +
-            '<div><b>' + tDict.profBadge + ':</b> ' + badgeText + '</div>';
+          renderProfileInfo();
           profDisplayInput.value = currentUser.displayName;
         } else {
           switchAuthTab(defaultTab || 'guest');
@@ -1208,7 +1231,7 @@ return '<button type="button" class="react-sum' + (t.total > 0 ? ' has' : '') + 
       reactPicker.className = 'react-picker';
       reactPicker.innerHTML = REACTION_EMOJIS.map(function (em) {
         return '<button type="button" data-emoji="' + em + '">' + em + '</button>';
-      }).join('') + '<button type="button" class="rp-clear" data-clear="1" title="Thu hồi / Undo">✕</button>';
+      }).join('') + '<button type="button" class="rp-clear" data-clear="1">✕</button>';
       document.body.appendChild(reactPicker);
 
       const reactDetail = document.createElement('div');
@@ -1282,7 +1305,7 @@ return '<button type="button" class="react-sum' + (t.total > 0 ? ' has' : '') + 
               x.type = 'button';
               x.className = 'rd-x';
               x.setAttribute('data-remove', em);
-              x.title = 'Bỏ ' + em;
+              x.title = I18N[curLang].reactRemoveTitle(em);
               x.textContent = '✕';
               chip.appendChild(x);
             }
@@ -1455,6 +1478,11 @@ return '<button type="button" class="react-sum' + (t.total > 0 ? ' has' : '') + 
         document.getElementById('btn-logout').textContent = tDict.btnLogout;
         document.getElementById('btn-prof-close').textContent = tDict.btnProfClose;
 
+        if (profilePane.classList.contains('active')) renderProfileInfo();
+        if (authError.classList.contains('active') && lastAuthError) showError(lastAuthError);
+        reactPicker.querySelector('.rp-clear').title = tDict.reactClearTitle;
+        closeReactDetail();
+
         updateCountdown();
         if (typeof renderNotices === 'function') renderNotices();
         renderWishes();
@@ -1473,6 +1501,7 @@ return '<button type="button" class="react-sum' + (t.total > 0 ? ' has' : '') + 
           localStorage.setItem('cgor_lang', curLang);
         } catch (e) {}
         applyLanguage();
+        try { window.dispatchEvent(new CustomEvent('cgor-lang', { detail: { lang: curLang } })); } catch (e) {}
       });
 
       function autoResizeInput() {
@@ -1537,7 +1566,7 @@ return '<button type="button" class="react-sum' + (t.total > 0 ? ' has' : '') + 
             if (data && data.ok) {
               await loadWishes();
             } else {
-              alert('Không lưu được trả lời lên Sheet: ' + ((data && data.error) || 'Chưa cập nhật Code.gs'));
+              alert(I18N[curLang].replyFailAlert(data && data.error));
             }
           } catch (err) {
             setTimeout(loadWishes, 2500);
@@ -1676,7 +1705,7 @@ return '<button type="button" class="react-sum' + (t.total > 0 ? ' has' : '') + 
           const badgeHtml = '<span class="user-badge">' + escapeHTML(n.badge || 'DEV') + '</span>';
           const newTagHtml = isNew ? '<span class="noti-new-badge">' + tDict.notiNewTag + '</span>' : '';
           const delBtnHtml = (canManage && n.row)
-            ? '<button type="button" class="noti-del-btn" data-row="' + n.row + '" title="Xóa thông báo">🗑</button>'
+            ? '<button type="button" class="noti-del-btn" data-row="' + n.row + '" title="' + escapeHTML(tDict.notiDelTitle) + '">🗑</button>'
             : '';
           return (
             '<div class="noti-item' + (isNew ? ' unread' : '') + '">' +
@@ -1807,7 +1836,7 @@ return '<button type="button" class="react-sum' + (t.total > 0 ? ' has' : '') + 
           });
           const data = await res.json();
           if (data && data.ok === false) {
-            alert('Không đăng được thông báo: ' + (data.error || 'Chưa cập nhật action post_notice trong Code.gs'));
+            alert(I18N[curLang].notiFailAlert(data.error));
           }
           await loadNotices();
         } catch (err) {

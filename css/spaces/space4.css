@@ -87,7 +87,6 @@ body[data-space="space4"] #top-tools { z-index: 30; }
   body[data-space="space4"] .s4-svg { overflow: visible !important; }
 }
 body[data-space="space4"] #top-tools,
-body[data-space="space4"] .s4-zoom,
 body[data-space="space4"] .space-nav,
 body[data-space="space4"] #signature,
 body[data-space="space4"] #deck-canvas { z-index: 10; }
@@ -102,6 +101,20 @@ body[data-space="space4"] #deck-canvas { z-index: 10; }
     margin-bottom: 6px;
   }
   body[data-space="space4"] #name { border: 1px solid rgba(251, 191, 36, 0.55) !important; }
+}
+/* Mobile: pill tên người dùng gọn, không tràn/cấn */
+@media (max-width: 768px) {
+  body[data-space="space4"] #name {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+    padding: 4px 10px !important;
+    max-width: calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .s4-sov { stroke-width: 0.1em; }
 }
 
 /* Tỉnh/thành: lớp vàng kim dưới (chỉ nửa ngoài lộ ra thành viền 1.1px), lớp sơn mài ngọc trên với ranh giới tỉnh cũ mảnh mờ */
@@ -121,11 +134,8 @@ body[data-space="space4"] #deck-canvas { z-index: 10; }
   fill-rule: evenodd;
 }
 .s4-hit {
-  fill: rgba(251, 191, 36, 0.05);
-  stroke: rgba(251, 191, 36, 0.35);
-  stroke-width: 0.8px;
-  stroke-dasharray: 4 4;
-  vector-effect: non-scaling-stroke;
+  fill: transparent;
+  stroke: none;
 }
 .s4-sel { filter: drop-shadow(0 0 5px #FBBF24) drop-shadow(0 0 10px rgba(251, 191, 36, 0.6)); }
 .s4-sel .s4-gold { stroke: #FDE68A; stroke-width: 3.4px; }
@@ -222,6 +232,15 @@ body[data-space="space4"] #deck-canvas { z-index: 10; }
   filter: drop-shadow(0 0 2px #FBBF24) drop-shadow(0 0 4px rgba(251, 191, 36, 0.6));
 }
 .s4-hit-pt { fill: transparent; }
+.s4-star { cursor: pointer; }
+.s4-star-shape {
+  fill: #ef4444;
+  stroke: #FDE68A;
+  stroke-width: 1.2px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  filter: drop-shadow(0 0 3px rgba(239, 68, 68, 0.75));
+}
 
 /* Thẻ thông tin sơn mài kính mờ */
 .s4-card {

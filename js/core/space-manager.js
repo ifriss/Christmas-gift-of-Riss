@@ -21,8 +21,22 @@
     document.body.appendChild(b);
     return b;
   }
-  const next = mkNav('space-next', 'Space kế tiếp / Next space', '>');
-  const prev = mkNav('space-prev', 'Space trước / Previous space', '<');
+  const next = mkNav('space-next', 'Space kế tiếp', '>');
+  const prev = mkNav('space-prev', 'Space trước', '<');
+  const NAV_LABELS = {
+    vi: { next: 'Space kế tiếp', prev: 'Space trước' },
+    en: { next: 'Next space', prev: 'Previous space' },
+    zh: { next: '下一个空间', prev: '上一个空间' }
+  };
+  function syncNavLang() {
+    let l = 'vi';
+    try { l = localStorage.getItem('cgor_lang') || 'vi'; } catch (e) {}
+    const t = NAV_LABELS[l] || NAV_LABELS.vi;
+    next.setAttribute('aria-label', t.next);
+    prev.setAttribute('aria-label', t.prev);
+  }
+  syncNavLang();
+  window.addEventListener('cgor-lang', syncNavLang);
 
   function saved() {
     try { const v = localStorage.getItem(KEY); return ORDER.indexOf(v) >= 0 && reg[v] ? v : ORDER[0]; }

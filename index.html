@@ -365,5 +365,33 @@
   <!-- AETHERISS CORE: chữ ký + quản lý Space (nạp cuối, sau khi mọi Space đã đăng ký) -->
   <script src="js/core/signature.js?v=1"></script>
   <script src="js/core/space-manager.js?v=1"></script>
+  <!-- Nhãn aria-label/title tĩnh đa ngôn ngữ (VI/EN/ZH), cập nhật theo sự kiện cgor-lang -->
+  <script>
+  (function () {
+    var A = {
+      close: { vi: 'Đóng', en: 'Close', zh: '关闭' },
+      deck: { vi: 'Máy đĩa than', en: 'Turntable', zh: '黑胶唱机' },
+      search: { vi: 'Tìm bài', en: 'Search songs', zh: '搜索歌曲' },
+      clear: { vi: 'Xóa', en: 'Clear', zh: '清除' },
+      cancel: { vi: 'Hủy trả lời', en: 'Cancel reply', zh: '取消回复' }
+    };
+    var MAP = [
+      ['qa-close', 'aria-label', 'close'], ['ctl-close', 'aria-label', 'close'], ['cd-close', 'aria-label', 'close'],
+      ['noti-close', 'aria-label', 'close'], ['mb-close', 'aria-label', 'close'], ['dp-close', 'aria-label', 'close'],
+      ['add-song-close', 'aria-label', 'close'], ['deck-canvas', 'aria-label', 'deck'],
+      ['dp-search', 'title', 'search'], ['dp-search-clear', 'title', 'clear'], ['reply-cancel', 'title', 'cancel']
+    ];
+    function apply() {
+      var l = 'vi';
+      try { var v = localStorage.getItem('cgor_lang'); if (v === 'en' || v === 'zh') l = v; } catch (e) {}
+      MAP.forEach(function (m) {
+        var el = document.getElementById(m[0]);
+        if (el) el.setAttribute(m[1], A[m[2]][l]);
+      });
+    }
+    apply();
+    window.addEventListener('cgor-lang', apply);
+  })();
+  </script>
 </body>
 </html>

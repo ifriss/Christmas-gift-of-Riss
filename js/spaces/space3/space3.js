@@ -719,6 +719,13 @@
   }
 
   // ---- Vòng đời ----
+  var CV_ARIA = {
+    vi: 'Cửa hàng pixel RGB lơ lửng trong vũ trụ ngọc lục bảo',
+    en: 'Floating pixel RGB shop in an emerald cosmos',
+    zh: '翡翠宇宙中漂浮的像素 RGB 商店'
+  };
+  function setCvAria() { if (cv) cv.setAttribute('aria-label', CV_ARIA[lang()] || CV_ARIA.en); }
+
   function mount() {
     if (alive) return;
     alive = true;
@@ -728,7 +735,8 @@
     cv = document.createElement('canvas');
     cv.id = 'space3-canvas';
     cv.setAttribute('role', 'img');
-    cv.setAttribute('aria-label', 'Floating pixel RGB shop in an emerald cosmos');
+    setCvAria();
+    window.addEventListener('cgor-lang', setCvAria);
     bubble = document.createElement('div');
     bubble.className = 's3-bubble';
     bubble.setAttribute('aria-live', 'polite');
@@ -756,6 +764,7 @@
     clearTimeout(resizeTimer); clearTimeout(bubbleTimer);
     window.removeEventListener('resize', onResize);
     window.removeEventListener('orientationchange', onResize);
+    window.removeEventListener('cgor-lang', setCvAria);
     if (cv) {
       cv.removeEventListener('click', onClick);
       cv.removeEventListener('pointerdown', unlock);

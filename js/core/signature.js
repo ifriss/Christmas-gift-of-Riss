@@ -28,6 +28,7 @@
     let l = 'vi';
     try { l = localStorage.getItem('cgor_lang') || 'vi'; } catch (e) {}
     el.title = TITLES[l] || TITLES.vi;
+    el.setAttribute('aria-label', el.title);
   }
   syncLang();
   window.addEventListener('cgor-lang', syncLang);
