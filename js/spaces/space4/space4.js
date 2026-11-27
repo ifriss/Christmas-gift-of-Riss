@@ -70,9 +70,20 @@
     (r[5] ? r[5].split(' + ') : [r[1]]).forEach(function (n) { K2I[norm(n)] = r[0]; });
   });
   const ISL = [
-    { id: 'hoang-sa', box: [111.2, 112.8, 15.7, 17.1], cnt: 16, seed: 7, n: 8, name: { vi: 'Quần đảo Hoàng Sa', en: 'Paracel Islands', zh: '西沙群岛' },
+    { id: 'hoang-sa', box: [111.2, 112.8, 15.7, 17.1], n: 8,
+      // [kinh độ, vĩ độ, bán kính (độ, phóng đại để nhìn thấy), kiểu: 0 tròn · 1 thuôn ĐB–TN · 2 vành khuyên (atoll)]
+      pts: [[112.34, 16.83, 0.13, 1], [112.73, 16.67, 0.09, 1], [112.27, 16.98, 0.05, 0], [112.31, 16.96, 0.05, 0], [112.32, 16.95, 0.05, 0], [112.33, 16.94, 0.05, 0],
+        [111.5, 17.09, 0.1, 1], [111.67, 16.25, 0.11, 2], [112.55, 16.04, 0.13, 2],
+        [111.61, 16.53, 0.08, 1], [111.51, 16.45, 0.08, 1], [111.58, 16.51, 0.05, 0], [111.74, 16.46, 0.08, 1], [111.71, 16.45, 0.05, 0], [111.77, 16.06, 0.08, 0], [111.2, 15.78, 0.07, 0]],
+      name: { vi: 'Quần đảo Hoàng Sa', en: 'Paracel Islands', zh: '西沙群岛' },
       desc: { vi: 'Quần đảo Hoàng Sa — một phần thiêng liêng của lãnh thổ biển đảo Việt Nam.', en: 'The Paracel Islands — a sacred part of Vietnam\'s sea and island territory.', zh: '西沙群岛——越南海洋与岛屿领土的神圣组成部分。' } },
-    { id: 'truong-sa', box: [111.5, 115.8, 7.5, 11.5], cnt: 34, seed: 19, n: 9, name: { vi: 'Quần đảo Trường Sa', en: 'Spratly Islands', zh: '南沙群岛' },
+    { id: 'truong-sa', box: [110.3, 116, 7.4, 11.6],n: 9,
+      pts: [[114.33, 11.43, 0.09, 1], [114.36, 11.45, 0.05, 0], [114.28, 11.05, 0.08, 0], [114.08, 10.92, 0.13, 2], [114.42, 10.67, 0.08, 0], [115.02, 11.09, 0.07, 0], [115.82, 10.82, 0.07, 0], [115.8, 10.73, 0.06, 0],
+        [114.36, 10.38, 0.12, 1], [114.37, 10.18, 0.1, 1], [114.48, 10.38, 0.06, 0], [113.85, 10.06, 0.13, 1], [114.22, 10.21, 0.06, 0], [114.33, 9.88, 0.09, 1], [114.56, 9.9, 0.06, 0], [114.25, 9.77, 0.06, 0], [114.37, 9.78, 0.06, 0], [114.28, 9.72, 0.06, 0],
+        [112.96, 9.58, 0.14, 1], [115.53, 9.9, 0.14, 2], [115.86, 9.75, 0.07, 0], [114.66, 8.85, 0.11, 2], [113.68, 8.97, 0.07, 0], [113.98, 8.81, 0.07, 0], [114.18, 8.71, 0.07, 0],
+        [111.92, 8.64, 0.07, 0], [112.35, 8.94, 0.07, 0], [112.2, 8.85, 0.07, 0], [112.59, 8.83, 0.07, 0], [111.67, 8.68, 0.07, 0], [113.31, 8.17, 0.14, 1], [112.9, 7.89, 0.08, 1],
+        [110.62, 7.55, 0.1, 1], [110.55, 8.13, 0.07, 0], [110.62, 8.02, 0.07, 0], [110.48, 7.8, 0.07, 0], [111.72, 7.93, 0.07, 0]],
+      name: { vi: 'Quần đảo Trường Sa', en: 'Spratly Islands', zh: '南沙群岛' },
       desc: { vi: 'Quần đảo Trường Sa — tiền tiêu trên biển Tổ quốc, nơi ngư dân bám biển bền bỉ.', en: 'The Spratly Islands — Vietnam\'s frontier at sea, home to resilient fishermen.', zh: '南沙群岛——祖国海上前哨，渔民坚守的海域。' } }
   ];
   ISL.forEach(function (o) { BY[o.id] = { id: o.id, isl: 1, name: o.name, desc: o.desc }; });
@@ -211,6 +222,64 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
       const f = r.split('|'); o[f[0]] = { e: f[1], s: f.slice(2, 5) };
     });
   });
+  // 11 đảo / cụm đảo ven bờ + đa giác Côn Đảo. pts: [lon, lat, bán kính (độ, phóng đại), kiểu 0 tròn · 1 thuôn]
+  // Hình dạng luôn hiện; nhãn chữ chỉ hiện khi zoom (k > 1.35). Mỗi dòng: n(vi,en,zh) · sub(vi,en,zh) · desc(vi,en,zh) · eco(vi,en,zh) · sticker(vi,en,zh)
+  [
+    { id: 'con-dao-isl', ref: 'con-dao', pts: [[106.60, 8.68, 0.06, 1], [106.70, 8.72, 0.03, 0], [106.57, 8.72, 0.025, 0], [106.63, 8.64, 0.025, 0]] },
+    { id: 'dao-tran', pts: [[107.97, 21.24, 0.05, 1]],
+      n: ['Đảo Trần', 'Tran Island', '陈岛'], sub: ['Tỉnh Quảng Ninh', 'Quang Ninh Province', '广宁省'],
+      d: ['Đảo tiền tiêu vùng Đông Bắc, nổi tiếng với rừng nguyên sinh và bãi cát trắng.', 'A frontier island in the northeast, known for primeval forest and white sand beaches.', '东北部前哨岛屿，以原始森林和白沙滩闻名。'],
+      e: ['Thủy sản, du lịch sinh thái, bảo vệ biên giới biển', 'Fisheries, eco-tourism, maritime border protection', '渔业、生态旅游、海防'], s: [['🌲 Rừng nguyên sinh', '🌲 Primeval forest', '🌲 原始森林'], ['🏖️ Bãi cát trắng', '🏖️ White sands', '🏖️ 白沙滩'], ['🐟 Hải sản', '🐟 Seafood', '🐟 海产']] },
+    { id: 'co-to', pts: [[107.76, 20.98, 0.04, 0], [107.72, 21.0, 0.03, 1], [107.80, 20.96, 0.03, 0]],
+      n: ['Quần đảo Cô Tô', 'Co To Islands', '古苏群岛'], sub: ['Tỉnh Quảng Ninh', 'Quang Ninh Province', '广宁省'],
+      d: ['Quần đảo hoang sơ với bãi biển đẹp, hải đăng Cô Tô và làng chài yên bình.', 'Pristine archipelago with lovely beaches, Co To lighthouse and peaceful fishing villages.', '原始的群岛，拥有美丽海滩、古苏灯塔和宁静渔村。'],
+      e: ['Du lịch biển, nuôi trồng và đánh bắt hải sản', 'Beach tourism, aquaculture and fishing', '海滨旅游、水产养殖与捕捞'], s: [['🏖️ Bãi Vàn Chảy', '🏖️ Van Chay beach', '🏖️ 万柴海滩'], ['🗼 Hải đăng Cô Tô', '🗼 Co To lighthouse', '🗼 古苏灯塔'], ['🦑 Mực khô', '🦑 Dried squid', '🦑 鱿鱼干']] },
+    { id: 'bach-long-vi', pts: [[107.73, 20.13, 0.045, 0]],
+      n: ['Đảo Bạch Long Vĩ', 'Bach Long Vi Island', '白龙尾岛'], sub: ['TP. Hải Phòng', 'Hai Phong City', '海防市'],
+      d: ['Đảo xa bờ giữa vịnh Bắc Bộ, tiền tiêu trên biển và ngư trường lớn.', 'A remote island in the Gulf of Tonkin, a frontier outpost and rich fishing ground.', '北部湾中的远海岛屿，海上前哨与大渔场。'],
+      e: ['Đánh bắt hải sản xa bờ, dịch vụ hậu cần nghề cá', 'Offshore fishing and fishery logistics', '远海捕捞与渔业后勤'], s: [['🐟 Ngư trường vịnh Bắc Bộ', '🐟 Tonkin Gulf fishery', '🐟 北部湾渔场'], ['⚓ Tiền tiêu biển', '⚓ Sea outpost', '⚓ 海上前哨'], ['🗼 Hải đăng', '🗼 Lighthouse', '🗼 灯塔']] },
+    { id: 'hon-me', pts: [[105.93, 19.37, 0.04, 0]],
+      n: ['Đảo Hòn Mê', 'Hon Me Island', '洪梅岛'], sub: ['Tỉnh Thanh Hóa', 'Thanh Hoa Province', '清化省'],
+      d: ['Hòn đảo nhỏ ngoài khơi Tĩnh Gia với rừng cây xanh và nghề cá truyền thống.', 'A small island off Tinh Gia with green forest and traditional fishing.', '静嘉外海的小岛，森林葱郁，渔业传统悠久。'],
+      e: ['Đánh bắt hải sản, du lịch sinh thái', 'Fishing and eco-tourism', '捕捞与生态旅游'], s: [['🐟 Cá biển', '🐟 Sea fish', '🐟 海鱼'], ['🌿 Rừng đảo', '🌿 Island forest', '🌿 岛屿森林'], ['🛶 Làng chài', '🛶 Fishing village', '🛶 渔村']] },
+    { id: 'con-co', pts: [[107.34, 17.16, 0.035, 0]],
+      n: ['Đảo Cồn Cỏ', 'Con Co Island', '昆草岛'], sub: ['Tỉnh Quảng Trị', 'Quang Tri Province', '广治省'],
+      d: ['Đảo tiền tiêu anh hùng nơi cửa ngõ vĩ tuyến 17, nay là điểm du lịch sinh thái.', 'The heroic frontier island at the 17th parallel, now an eco-tourism spot.', '位于十七度线门户的英雄前哨岛，如今是生态旅游地。'],
+      e: ['Du lịch lịch sử – sinh thái, đánh bắt hải sản', 'History and eco-tourism, fishing', '历史与生态旅游、捕捞'], s: [['🎖️ Đảo anh hùng', '🎖️ Heroic island', '🎖️ 英雄岛'], ['🌿 Rừng nguyên sinh', '🌿 Primeval forest', '🌿 原始森林'], ['🦑 Mực', '🦑 Squid', '🦑 鱿鱼']] },
+    { id: 'cu-lao-cham', pts: [[108.51, 15.95, 0.04, 0], [108.52, 15.97, 0.03, 0], [108.48, 15.94, 0.025, 0]],
+      n: ['Cù Lao Chàm', 'Cu Lao Cham', '占婆岛'], sub: ['TP. Đà Nẵng', 'Da Nang City', '岘港市'],
+      d: ['Khu dự trữ sinh quyển thế giới với rạn san hô và biển xanh trong vắt.', 'A UNESCO biosphere reserve with coral reefs and crystal-clear sea.', '联合国教科文组织生物圈保护区，珊瑚礁与碧海清澈。'],
+      e: ['Du lịch lặn biển, nghề biển, bảo tồn sinh quyển', 'Diving tourism, fishing, biosphere conservation', '潜水旅游、渔业、生物圈保护'], s: [['🪸 San hô', '🪸 Coral reefs', '🪸 珊瑚'], ['🤿 Lặn biển', '🤿 Diving', '🤿 潜水'], ['🦞 Tôm hùm', '🦞 Lobster', '🦞 龙虾']] },
+    { id: 'ly-son', pts: [[109.12, 15.38, 0.05, 1], [109.15, 15.39, 0.025, 0]],
+      n: ['Đảo Lý Sơn', 'Ly Son Island', '李山岛'], sub: ['Tỉnh Quảng Ngãi (Đảo Lớn & Đảo Bé)', 'Quang Ngai Province (Great & Small Islands)', '广义省（大岛与小岛）'],
+      d: ['Đảo núi lửa với đồng tỏi, cổng Tò Vò và truyền thống đội Hoàng Sa.', 'A volcanic island with garlic fields, To Vo arch and the Hoang Sa flotilla heritage.', '火山岛，以大蒜田、拱门及黄沙队传统闻名。'],
+      e: ['Trồng tỏi, đánh bắt hải sản, du lịch biển đảo', 'Garlic farming, fishing, island tourism', '种植大蒜、捕捞、海岛旅游'], s: [['🧄 Tỏi Lý Sơn', '🧄 Ly Son garlic', '🧄 李山大蒜'], ['🌋 Núi lửa cổ', '🌋 Ancient volcano', '🌋 古火山'], ['🏝️ Cổng Tò Vò', '🏝️ To Vo arch', '🏝️ 拱门']] },
+    { id: 'phu-quy', pts: [[108.94, 10.53, 0.05, 0]],
+      n: ['Đảo Phú Quý', 'Phu Quy Island', '富贵岛'], sub: ['Tỉnh Lâm Đồng', 'Lam Dong Province', '林同省'],
+      d: ['Đảo ngọc ngoài khơi Phan Thiết với biển xanh, gió điện và hải sản tươi.', 'A pearl island off Phan Thiet with blue sea, wind power and fresh seafood.', '潘切外海的明珠岛，海水湛蓝，有风电与鲜美海产。'],
+      e: ['Đánh bắt hải sản, điện gió, du lịch biển', 'Fishing, wind power, beach tourism', '捕捞、风电、海滨旅游'], s: [['🐟 Cá cơm', '🐟 Anchovy', '🐟 鳀鱼'], ['💨 Điện gió', '💨 Wind power', '💨 风电'], ['🏖️ Bãi Cát Cát', '🏖️ Sandy beaches', '🏖️ 沙滩']] },
+    { id: 'nam-du', pts: [[104.35, 9.68, 0.04, 0], [104.37, 9.70, 0.025, 0], [104.33, 9.66, 0.02, 0]],
+      n: ['Quần đảo Nam Du', 'Nam Du Islands', '南珠群岛'], sub: ['Tỉnh An Giang', 'An Giang Province', '安江省'],
+      d: ['Quần đảo gần 21 hòn đảo với bãi đá, rừng và biển trong xanh.', 'An archipelago of about 21 islands with rocky shores, forests and clear water.', '约21座岛屿组成，礁岸、森林与海水清澈。'],
+      e: ['Du lịch biển, nuôi cá lồng bè, đánh bắt', 'Beach tourism, cage fish farming, fishing', '海滨旅游、网箱养鱼、捕捞'], s: [['🐟 Cá lồng bè', '🐟 Cage-farmed fish', '🐟 网箱鱼'], ['🪨 Bãi đá', '🪨 Rocky shores', '🪨 礁岸'], ['🦑 Mực', '🦑 Squid', '🦑 鱿鱼']] },
+    { id: 'tho-chu', pts: [[103.47, 9.30, 0.05, 0], [103.50, 9.33, 0.02, 0]],
+      n: ['Quần đảo Thổ Chu', 'Tho Chu Islands', '土珠群岛'], sub: ['Tỉnh An Giang', 'An Giang Province', '安江省'],
+      d: ['Quần đảo xa nhất vùng Tây Nam, tiền tiêu trên biển với ngư trường giàu.', 'The southwestern-most archipelago, a sea outpost with rich fishing grounds.', '西南最远的群岛，海上前哨，渔场丰富。'],
+      e: ['Đánh bắt hải sản, bảo vệ chủ quyền biển', 'Fishing and sovereignty protection', '捕捞与海权守护'], s: [['🐟 Ngư trường Tây Nam', '🐟 Southwest fishery', '🐟 西南渔场'], ['⚓ Tiền tiêu biển', '⚓ Sea outpost', '⚓ 海上前哨'], ['🏝️ Bãi hoang sơ', '🏝️ Wild beaches', '🏝️ 原始海滩']] },
+    { id: 'hon-khoai', pts: [[104.83, 8.43, 0.04, 0], [104.86, 8.42, 0.02, 0]],
+      n: ['Cụm đảo Hòn Khoai', 'Hon Khoai Islands', '芋头岛群'], sub: ['Tỉnh Cà Mau', 'Ca Mau Province', '金瓯省'],
+      d: ['Cụm đảo ngoài khơi mũi Cà Mau với hải đăng cổ và rừng nguyên sinh.', 'Islands off Ca Mau Cape with an old lighthouse and primeval forest.', '金瓯角外海岛群，有古灯塔和原始森林。'],
+      e: ['Đánh bắt hải sản, du lịch sinh thái, lịch sử', 'Fishing, eco-tourism, history', '捕捞、生态旅游、历史'], s: [['🗼 Hải đăng Hòn Khoai', '🗼 Hon Khoai lighthouse', '🗼 芋头岛灯塔'], ['🌲 Rừng nguyên sinh', '🌲 Primeval forest', '🌲 原始森林'], ['🦀 Hải sản', '🦀 Seafood', '🦀 海产']] }
+  ].forEach(function (o) {
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    o.pts.forEach(function (p) { x0 = Math.min(x0, p[0] - p[2]); x1 = Math.max(x1, p[0] + p[2]); y0 = Math.min(y0, p[1] - p[2]); y1 = Math.max(y1, p[1] + p[2]); });
+    o.box = [x0, x1, y0, y1];
+    ISL.push(o);
+    if (o.ref) return;
+    const li = { vi: 0, en: 1, zh: 2 };
+    BY[o.id] = { id: o.id, isl: 1, minK: 1.35, name: { vi: o.n[0], en: o.n[1], zh: o.n[2] }, sub: { vi: o.sub[0], en: o.sub[1], zh: o.sub[2] }, desc: { vi: o.d[0], en: o.d[1], zh: o.d[2] } };
+    Object.keys(li).forEach(function (l) { INFO_L[l][o.id] = { e: o.e[li[l]], s: o.s.map(function (t) { return t[li[l]]; }) }; });
+  });
   // Bản dịch EN / ZH của 14 điểm MARKS: [tên n, địa danh sub, mô tả desc]
   const MARK_L = {
     'phu-quoc': { en: ['Phu Quoc Island', 'An Giang Province', 'The pearl island in the southwest, famed for its beaches and traditional fish sauce.'], zh: ['富国岛', '安江省', '西南部的明珠岛，以海岛风光和传统鱼露闻名。'] },
@@ -346,12 +415,18 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
   }
 
   // ---- Zoom / Pan ----
-  function unit() { return svg ? (svg.getBoundingClientRect().width / VW) || 1 : 1; }
+  function unit() { if (!svg) return 1; const r = svg.getBoundingClientRect(); return Math.min(r.width / VW, r.height / VH) || 1; }
+  // Phần bù (đơn vị SVG) khi khung màn hình rộng/cao hơn tỷ lệ VW/VH (xMidYMid meet)
+  function pads() {
+    if (!svg) return { u: 1, padX: 0, padY: 0 };
+    const r = svg.getBoundingClientRect(), u = Math.min(r.width / VW, r.height / VH) || 1;
+    return { u: u, padX: Math.max(0, (r.width / u - VW) / 2), padY: Math.max(0, (r.height / u - VH) / 2) };
+  }
   // Cỡ chữ khẩu hiệu chủ quyền (px màn hình). PC: 26–34px theo kích thước bản đồ.
   // Mobile: tối đa 17px (như cũ), tự thu nhỏ để dòng dài nhất chỉ chiếm ≤ 86% dải biển trống bên phải bờ biển
   // (từ kinh độ 109.8 đến mép phải bản đồ, đối xứng quanh tâm khẩu hiệu) nên máy hẹp như iPhone SE vẫn gọn.
   function sovSize(narrow, un) {
-    if (!narrow) return Math.min(34, Math.max(26, un * VW * 0.035));
+    if (!narrow) return Math.min(28, Math.max(21, un * VW * 0.029));
     let w1 = Math.max.apply(null, SOV.map(function (s) { return s.length; })) * 0.58; // dự phòng: ≈ 0.58 × cỡ chữ mỗi ký tự
     try {
       sovEl.style.fontSize = '100px';
@@ -360,31 +435,33 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     } catch (e) {}
     const cx = parseFloat(sovEl.getAttribute('x')) || VW / 2, lo = (109.8 - GEO.lon0) * KX * S + PAD, hi = VW - 12;
     const room = 2 * Math.max(0, Math.min(cx - lo, hi - cx)) * un;
-    return Math.max(10, Math.min(15, 0.84 * room / w1));
+    return Math.max(9.5, Math.min(14, 0.76 * room / w1));
   }
   function applyView() {
     if (!vp) return;
     const k = view.k;
-    view.x = Math.min(0, Math.max(VW * (1 - k), view.x));
-    view.y = Math.min(0, Math.max(VH * (1 - k), view.y));
+    const pd = pads();
+    const xlo = VW + pd.padX - VW * k, xhi = -pd.padX, ylo = VH + pd.padY - VH * k, yhi = -pd.padY;
+    view.x = xlo > xhi ? (xlo + xhi) / 2 : Math.min(xhi, Math.max(xlo, view.x));
+    view.y = ylo > yhi ? (ylo + yhi) / 2 : Math.min(yhi, Math.max(ylo, view.y));
     vp.setAttribute('transform', 'translate(' + view.x.toFixed(1) + ' ' + view.y.toFixed(1) + ') scale(' + k.toFixed(3) + ')');
     // Cỡ chữ nhãn giữ theo px màn hình (nghịch đảo với zoom): tăng nhẹ theo k, không teo khi zoom ra
     // Cỡ chữ trên màn hình = 15px × min(zoom, 6)^0.45: tăng rõ theo zoom, không teo khi zoom ra.
     // Viền tính theo px màn hình (3.5px, tăng nhẹ theo cỡ chữ), quy đổi về đơn vị SVG bằng unit*k.
     // Màn hình mobile (≤768px): cỡ chữ ≈ 0.6 lần, tăng theo zoom chậm hơn và dừng sớm hơn để các tên sát nhau không đè
     const narrow = window.matchMedia('(max-width: 768px)').matches;
-    const kz = Math.min(k, narrow ? 4 : 6), px = (narrow ? 9 : 15) * Math.pow(kz, narrow ? 0.35 : 0.45), u = unit() * k;
+    const kz = Math.min(k, narrow ? 4 : 4.5), px = (narrow ? 9 : 10) * Math.pow(kz, narrow ? 0.35 : 0.28), u = unit() * k;
     const fs = px / u, sw = ((3.5 + (px - 15) * 0.1) / u).toFixed(3) + 'px', all = k > 1.35;
     // Icon công trình (scale ico); tỉnh có công trình được đẩy nhãn lên cao hơn đỉnh icon để không bị che
     // Mobile: icon công trình nhỏ hơn ~0.7 lần và tăng theo zoom chậm hơn
     // Zoom gần (k >= 1.45, công trình hiện rõ): đẩy nhãn tỉnh thêm lên, hệ số tăng nhẹ theo k, tối đa ~1 cỡ chữ
-    const ico = (narrow ? 1.75 : 2.5) / (unit() * Math.pow(k, narrow ? 0.5 : 0.6)),
+    const ico = (narrow ? 1.15 : 2.0) / (unit() * Math.pow(k, 0.5)),
       near = k >= 1.45 ? Math.min(1, 0.35 + (k - 1.45) * 0.3) : 0,
       liftY = 8 * ico + fs * (0.7 + near);
     labels.forEach(function (l) {
       // Tỉnh nhỏ (ĐB sông Hồng, miền Tây) ẩn nhãn ở mức zoom mặc định, chỉ hiện khi zoom > 1.35
       // Chưa zoom: ẩn toàn bộ tên tỉnh, chỉ giữ tên 2 quần đảo (và điểm đảo có minK riêng)
-      const p = BY[l.id], crowded = (l.up && !all) || (p && p.minK && k < p.minK);
+      const p = BY[l.id], crowded = (l.up && !all) || (p && p.minK && (p.minK === 1.35 ? k <= 1.35 : k < p.minK));
       l.el.style.display = crowded ? 'none' : '';
       l.el.style.fontSize = fs.toFixed(1) + 'px';
       l.el.style.strokeWidth = sw;
@@ -414,8 +491,13 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     });
     if (lmEl) lmEl.classList.toggle('on', k >= 1.45);
     if (star) { // Sao đỏ Thủ đô: luôn hiện, scale mượt theo zoom; khi công trình hiện (k >= 1.45) dịch sang phải icon Tháp Rùa
-      const ss = (narrow ? 6.5 : 8) / (8 * unit() * Math.pow(k, 0.5)), dx = k >= 1.45 ? 12 * ico : 0;
-      star.g.setAttribute('transform', 'translate(' + (star.x + dx).toFixed(1) + ' ' + star.y.toFixed(1) + ') scale(' + ss.toFixed(3) + ')');
+      // Sao to thêm ~30% (×1.3) ở mọi mức zoom; khoảng cách dịch sang phải giữ nguyên để không chạm icon Tháp Rùa
+      const ss = 1.3 * (narrow ? 6.5 : 8) / (8 * unit() * Math.pow(k, 1.45)), hm = mks.find(function (m) { return m.id === 'thaprua'; });
+      let sx = star.x, sy = star.y;
+      if (all && hm) { // zoom gần: sao nằm ngay dưới chữ HÀ NỘI, thu nhỏ dần theo zoom
+        sx = hm.x; sy = hm.y + 8 * ico + fs * 0.75 + fs * 0.95 + 6 * ss;
+      }
+      star.g.setAttribute('transform', 'translate(' + sx.toFixed(1) + ' ' + sy.toFixed(1) + ') scale(' + ss.toFixed(3) + ')');
     }
     if (sovEl) {
       // Khẩu hiệu "Hoàng Sa, Trường Sa / là của Việt Nam" nằm gọn trong dải biển bên phải bản đồ.
@@ -430,8 +512,8 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     if (openId) placeCard();
   }
   function zoomAt(cx, cy, f) {
-    const r = svg.getBoundingClientRect(), u = r.width / VW, nk = Math.min(8, Math.max(1, view.k * f));
-    const px = (cx - r.left) / u, py = (cy - r.top) / u;
+    const r = svg.getBoundingClientRect(), pd = pads(), u = pd.u, nk = Math.min(8, Math.max(1, view.k * f));
+    const px = (cx - r.left) / u - pd.padX, py = (cy - r.top) / u - pd.padY;
     view.x = px - (px - view.x) * nk / view.k;
     view.y = py - (py - view.y) * nk / view.k;
     view.k = nk;
@@ -508,23 +590,30 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
   }
   function islands(parent) {
     ISL.forEach(function (o) {
-      let sd = o.seed;
-      const rnd = function () { sd = (sd * 16807) % 2147483647; return sd / 2147483647; };
       const b = o.box, cx = (b[0] + b[1]) / 2, cy = (b[2] + b[3]) / 2, rx = (b[1] - b[0]) / 2, ry = (b[3] - b[2]) / 2;
       const gx = function (lon) { return (lon - GEO.lon0) * KX * S + PAD; }, gy = function (lat) { return (GEO.lat1 - lat) * S + PAD; };
       const ds = [];
-      for (let i = 0; i < o.cnt; i++) {
-        const a = rnd() * 6.283, d = Math.sqrt(rnd()), x = cx + Math.cos(a) * d * rx, y = cy + Math.sin(a) * d * ry, r = 0.05 + rnd() * 0.09;
+      // Đường bao 14 điểm, gợn nhẹ tất định: tròn / thuôn dài hướng ĐB–TN (kiểu 1) / vành khuyên rỗng ruột (kiểu 2)
+      const ring = function (x, y, r, t, k, dir, sgn, ph) {
+        const ca = Math.cos(dir), sa = Math.sin(dir);
         let s = '';
-        for (let j = 0; j < 7; j++) {
-          const q = j / 7 * 6.283, rr = r * (0.7 + rnd() * 0.6);
-          s += (j ? 'L' : 'M') + gx(x + Math.cos(q) * rr).toFixed(1) + ' ' + gy(y + Math.sin(q) * rr).toFixed(1);
+        for (let j = 0; j < 14; j++) {
+          const q = sgn * j / 14 * 6.283, w = 1 + 0.12 * Math.sin(q * 3 + ph) + 0.07 * Math.sin(q * 5 + ph * 2);
+          const ex = Math.cos(q) * r * k * w, ey = Math.sin(q) * r * (t === 1 ? 0.42 : 1) * k * w;
+          s += (j ? 'L' : 'M') + gx(x + ex * ca - ey * sa).toFixed(1) + ' ' + gy(y + ex * sa + ey * ca).toFixed(1);
         }
-        ds.push(s + 'Z');
-      }
+        return s + 'Z';
+      };
+      o.pts.forEach(function (p, i) {
+        const t = p[3], dir = t === 1 ? 0.7 : 0;
+        ds.push(ring(p[0], p[1], p[2], t, 1, dir, 1, i));
+        if (t === 2) ds.push(ring(p[0], p[1], p[2], t, 0.55, dir, -1, i)); // chiều ngược: lòng hồ rỗng
+      });
       const gr = addShape(parent, o.id, ds, '#047857');
       gr.insertBefore(se('ellipse', { cx: gx(cx), cy: gy(cy), rx: (rx + 0.2) * KX * S, ry: (ry + 0.2) * S, class: 's4-hit' }), gr.firstChild);
-      const lb = se('text', { x: gx(cx), y: gy(b[2]) + 22, 'text-anchor': 'middle', class: 's4-lb' }, vp);
+      if (o.ref) { gr.setAttribute('data-id', o.ref); return; } // đa giác Côn Đảo: chạm mở thẻ Côn Đảo, nhãn dùng điểm đảo sẵn có
+      // Nhãn Trường Sa nâng lên 14 đơn vị SVG để không sát mép dưới (tránh vùng safe-area iPhone)
+      const lb = se('text', { x: gx(cx), y: gy(b[2]) + 22 - (o.id === 'truong-sa' ? 14 : 0), 'text-anchor': 'middle', class: 's4-lb' }, vp);
       labels.push({ id: o.id, el: lb });
     });
   }
@@ -562,7 +651,7 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     }
     VW = (GEO.lon1 - GEO.lon0) * KX * S + PAD * 2; VH = (GEO.lat1 - GEO.lat0) * S + PAD * 2;
     stage.style.setProperty('--s4-ar', (VW / VH).toFixed(4));
-    svg = se('svg', { class: 's4-svg', viewBox: '0 0 ' + VW.toFixed(1) + ' ' + VH.toFixed(1), role: 'img' }, mapEl);
+    svg = se('svg', { class: 's4-svg', viewBox: '0 0 ' + VW.toFixed(1) + ' ' + VH.toFixed(1), preserveAspectRatio: 'xMidYMid meet', role: 'img' }, mapEl);
     vp = se('g', {}, svg);
     landEl = se('g', {}, vp);
 
