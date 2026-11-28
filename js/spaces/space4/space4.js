@@ -24,7 +24,7 @@
   const SEA = { vi: 'Biển Đông · Lãnh thổ biển đảo', en: 'East Sea · Sea & island territory', zh: '东海 · 海岛领土' };
   // [id, vi, en, zh, thành phố?, sáp nhập từ, vùng, mô tả vi, en, zh]
   const ROWS = [
-    ['hanoi', 'Hà Nội', 'Hanoi', '河内', 1, '', 1, 'Thủ đô nghìn năm văn hiến, phố cổ và hồ Hoàn Kiếm.', 'Thousand-year capital: Old Quarter and Hoan Kiem Lake.', '千年古都，老城区与还剑湖。'],
+    ['hanoi', 'Hà Nội', 'Ha Noi', '河内', 1, '', 1, 'Thủ đô nghìn năm văn hiến, phố cổ và hồ Hoàn Kiếm.', 'Thousand-year capital: Old Quarter and Hoan Kiem Lake.', '千年古都，老城区与还剑湖。'],
     ['hue', 'Huế', 'Hue', '顺化', 1, '', 2, 'Cố đô Đại Nội, sông Hương, nhã nhạc cung đình.', 'Imperial city, Perfume River and royal court music.', '古都皇城、香江与宫廷雅乐。'],
     ['laichau', 'Lai Châu', 'Lai Chau', '莱州', 0, '', 0, 'Đèo Ô Quy Hồ, chợ phiên vùng cao, văn hóa Thái – Mông.', 'O Quy Ho Pass, highland markets, Thai and Hmong culture.', '奥奇湖山口、高原集市与民族文化。'],
     ['dienbien', 'Điện Biên', 'Dien Bien', '奠边', 0, '', 0, 'Chiến trường Điện Biên Phủ, cánh đồng Mường Thanh.', 'Dien Bien Phu battlefield and the Muong Thanh valley.', '奠边府战场与孟清谷地。'],
@@ -66,7 +66,7 @@
     return ALIAS[s] || s;
   }
   ROWS.forEach(function (r) {
-    const p = BY[r[0]] = { id: r[0], name: { vi: r[1], en: r[2], zh: r[3] }, city: r[4], from: r[5], reg: r[6], desc: { vi: r[7], en: r[8], zh: r[9] } };
+    const p = BY[r[0]] = { id: r[0], name: { vi: r[1], en: r[2], zh: r[2] }, city: r[4], from: r[5], reg: r[6], desc: { vi: r[7], en: r[8], zh: r[9] } };
     (r[5] ? r[5].split(' + ') : [r[1]]).forEach(function (n) { K2I[norm(n)] = r[0]; });
   });
   const ISL = [
@@ -225,12 +225,12 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
   // 11 đảo / cụm đảo ven bờ + đa giác Côn Đảo. pts: [lon, lat, bán kính (độ, phóng đại), kiểu 0 tròn · 1 thuôn]
   // Hình dạng luôn hiện; nhãn chữ chỉ hiện khi zoom (k > 1.35). Mỗi dòng: n(vi,en,zh) · sub(vi,en,zh) · desc(vi,en,zh) · eco(vi,en,zh) · sticker(vi,en,zh)
   [
-    { id: 'con-dao-isl', ref: 'con-dao', pts: [[106.60, 8.68, 0.06, 1], [106.70, 8.72, 0.03, 0], [106.57, 8.72, 0.025, 0], [106.63, 8.64, 0.025, 0]] },
+    { id: 'con-dao-isl', ref: 'con-dao', pts: [[106.60, 8.68, 0.033, 1], [106.70, 8.72, 0.017, 0], [106.57, 8.72, 0.014, 0], [106.63, 8.64, 0.014, 0]] },
     { id: 'dao-tran', pts: [[107.97, 21.24, 0.05, 1]],
       n: ['Đảo Trần', 'Tran Island', '陈岛'], sub: ['Tỉnh Quảng Ninh', 'Quang Ninh Province', '广宁省'],
       d: ['Đảo tiền tiêu vùng Đông Bắc, nổi tiếng với rừng nguyên sinh và bãi cát trắng.', 'A frontier island in the northeast, known for primeval forest and white sand beaches.', '东北部前哨岛屿，以原始森林和白沙滩闻名。'],
       e: ['Thủy sản, du lịch sinh thái, bảo vệ biên giới biển', 'Fisheries, eco-tourism, maritime border protection', '渔业、生态旅游、海防'], s: [['🌲 Rừng nguyên sinh', '🌲 Primeval forest', '🌲 原始森林'], ['🏖️ Bãi cát trắng', '🏖️ White sands', '🏖️ 白沙滩'], ['🐟 Hải sản', '🐟 Seafood', '🐟 海产']] },
-    { id: 'co-to', pts: [[107.76, 20.98, 0.04, 0], [107.72, 21.0, 0.03, 1], [107.80, 20.96, 0.03, 0]],
+    { id: 'co-to', pts: [[107.78, 21.05, 0.04, 0], [107.74, 21.03, 0.025, 1], [107.82, 21.02, 0.025, 0]],
       n: ['Quần đảo Cô Tô', 'Co To Islands', '古苏群岛'], sub: ['Tỉnh Quảng Ninh', 'Quang Ninh Province', '广宁省'],
       d: ['Quần đảo hoang sơ với bãi biển đẹp, hải đăng Cô Tô và làng chài yên bình.', 'Pristine archipelago with lovely beaches, Co To lighthouse and peaceful fishing villages.', '原始的群岛，拥有美丽海滩、古苏灯塔和宁静渔村。'],
       e: ['Du lịch biển, nuôi trồng và đánh bắt hải sản', 'Beach tourism, aquaculture and fishing', '海滨旅游、水产养殖与捕捞'], s: [['🏖️ Bãi Vàn Chảy', '🏖️ Van Chay beach', '🏖️ 万柴海滩'], ['🗼 Hải đăng Cô Tô', '🗼 Co To lighthouse', '🗼 古苏灯塔'], ['🦑 Mực khô', '🦑 Dried squid', '🦑 鱿鱼干']] },
@@ -238,6 +238,10 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
       n: ['Đảo Bạch Long Vĩ', 'Bach Long Vi Island', '白龙尾岛'], sub: ['TP. Hải Phòng', 'Hai Phong City', '海防市'],
       d: ['Đảo xa bờ giữa vịnh Bắc Bộ, tiền tiêu trên biển và ngư trường lớn.', 'A remote island in the Gulf of Tonkin, a frontier outpost and rich fishing ground.', '北部湾中的远海岛屿，海上前哨与大渔场。'],
       e: ['Đánh bắt hải sản xa bờ, dịch vụ hậu cần nghề cá', 'Offshore fishing and fishery logistics', '远海捕捞与渔业后勤'], s: [['🐟 Ngư trường vịnh Bắc Bộ', '🐟 Tonkin Gulf fishery', '🐟 北部湾渔场'], ['⚓ Tiền tiêu biển', '⚓ Sea outpost', '⚓ 海上前哨'], ['🗼 Hải đăng', '🗼 Lighthouse', '🗼 灯塔']] },
+    { id: 'cat-ba', pts: [[107.05, 20.78, 0.07, 1], [107.02, 20.74, 0.03, 0]],
+      n: ['Đảo Cát Bà', 'Cat Ba Island', '吉婆岛'], sub: ['TP. Hải Phòng', 'Hai Phong City', '海防市'],
+      d: ['Đảo lớn nhất vịnh Lan Hạ với vườn quốc gia, rừng ngập mặn và voọc Cát Bà quý hiếm.', 'The largest island of Lan Ha Bay, with a national park, mangroves and the rare Cat Ba langur.', '兰河湾最大岛屿，拥有国家公园、红树林和珍稀的吉婆叶猴。'],
+      e: ['Du lịch biển đảo, nuôi trồng và đánh bắt hải sản', 'Island tourism, aquaculture and fishing', '海岛旅游、水产养殖与捕捞'], s: [['🏝️ Vịnh Lan Hạ', '🏝️ Lan Ha Bay', '🏝️ 兰河湾'], ['🐒 Voọc Cát Bà', '🐒 Cat Ba langur', '🐒 吉婆叶猴'], ['🦀 Hải sản', '🦀 Seafood', '🦀 海产']] },
     { id: 'hon-me', pts: [[105.93, 19.37, 0.04, 0]],
       n: ['Đảo Hòn Mê', 'Hon Me Island', '洪梅岛'], sub: ['Tỉnh Thanh Hóa', 'Thanh Hoa Province', '清化省'],
       d: ['Hòn đảo nhỏ ngoài khơi Tĩnh Gia với rừng cây xanh và nghề cá truyền thống.', 'A small island off Tinh Gia with green forest and traditional fishing.', '静嘉外海的小岛，森林葱郁，渔业传统悠久。'],
@@ -285,7 +289,7 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     'phu-quoc': { en: ['Phu Quoc Island', 'An Giang Province', 'The pearl island in the southwest, famed for its beaches and traditional fish sauce.'], zh: ['富国岛', '安江省', '西南部的明珠岛，以海岛风光和传统鱼露闻名。'] },
     'con-dao': { en: ['Con Dao', 'Ho Chi Minh City', 'An archipelago of rich forests and seas, with many historical relics and Con Dao National Park.'], zh: ['昆岛', '胡志明市', '森林与海域丰饶的群岛，拥有众多历史遗迹和昆岛国家公园。'] },
     'lungcu': { en: ['Lung Cu Flagpole', 'Tuyen Quang Province', 'The national flagpole on the Dong Van karst plateau, a sacred symbol of the northernmost point.'], zh: ['龙渠旗台', '宣光省', '位于同文石高原上的国旗旗台，是神圣的最北端象征。'] },
-    'thaprua': { en: ['Turtle Tower & One Pillar Pagoda', 'Hanoi City', 'Hoan Kiem Lake and the One Pillar Pagoda, emblems of ancient Thang Long architecture.'], zh: ['龟塔与独柱寺', '河内市', '还剑湖与独柱寺，是古升龙建筑的象征。'] },
+    'thaprua': { en: ['Turtle Tower & One Pillar Pagoda', 'Ha Noi City', 'Hoan Kiem Lake and the One Pillar Pagoda, emblems of ancient Thang Long architecture.'], zh: ['龟塔与独柱寺', '河内市', '还剑湖与独柱寺，是古升龙建筑的象征。'] },
     'hontrongmai': { en: ['Trong Mai Rock (Fighting Cock Islet)', 'Ha Long Bay, Quang Ninh', 'A majestic limestone formation in Ha Long Bay, a UNESCO World Natural Heritage site.'], zh: ['斗鸡石', '广宁省下龙湾', '下龙湾中雄奇的石灰岩山体，世界自然遗产。'] },
     'ngomon': { en: ['Ngo Mon Gate, Imperial City', 'Hue City', 'The main gate of the Hue Imperial City, where royal ceremonies were once held.'], zh: ['午门（顺化皇城）', '顺化市', '顺化皇城正门，昔日举行宫廷典礼之处。'] },
     'cauRong': { en: ['Dragon Bridge & Golden Bridge', 'Da Nang City', 'The Dragon Bridge breathes fire and water on weekends; the Golden Bridge stands in Ba Na Hills.'], zh: ['龙桥与金桥', '岘港市', '龙桥周末喷火喷水；金桥坐落于巴拿山。'] },
@@ -311,7 +315,7 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     { id: 'ponagar', n: 'Tháp Bà Ponagar', sub: 'Tỉnh Khánh Hòa', lon: 109.19, lat: 12.26, lm: 1, d: 'M-5 6V-1H5V6M-3-1V-6H3V-1M-1-6V-8', desc: 'Quần thể tháp Chăm xây từ thế kỷ VII đến XIII bên sông Cái, Nha Trang.' },
     { id: 'landmark81', n: 'Bến Nhà Rồng & Landmark 81', sub: 'TP. Hồ Chí Minh', lon: 106.70, lat: 10.78, lm: 1, d: 'M-4 6V-4H4V6M-4-4H4M0-4V-8', desc: 'Bến Nhà Rồng, dấu tích lịch sử bên sông Sài Gòn; Landmark 81 là tòa nhà cao nhất Việt Nam.' },
     { id: 'cauCanTho', n: 'Cầu Cần Thơ & Chợ Nổi', sub: 'TP. Cần Thơ', lon: 105.78, lat: 10.03, lm: 1, d: 'M-7 4H7M-4 4V-6M4 4V-6M-4-6L0 4L4-6', desc: 'Cầu dây văng bắc qua sông Hậu, gần chợ nổi Cái Răng sôi động.' },
-    { id: 'muiCaMau', n: 'Mũi Cà Mau', sub: 'Tỉnh Cà Mau', lon: 104.73, lat: 8.61, lm: 1, d: 'M-6-6Q4-6 5 1L1 6L-1 0Q-6-2-6-6Z', desc: 'Điểm cực Nam của Tổ quốc, nơi đất liền vươn ra biển Đông.' },
+    { id: 'muiCaMau', n: 'Mũi Cà Mau', sub: 'Tỉnh Cà Mau', lon: 104.82, lat: 8.72, lm: 1, d: 'M-6 2.5Q0 4.5 6.5-1M0-7V3.5M0-7Q5-3 4.3 2M0-5Q-3-2-3.5 2M-7 6.5Q-5.2 5.2-3.5 6.5T0 6.5T3.5 6.5T7 6.5', desc: 'Điểm cực Nam của Tổ quốc, nơi đất liền vươn ra biển Đông.' },
     { id: 'mocHoangSa', n: 'Cột mốc Chủ quyền Hoàng Sa', sub: 'Quần đảo Hoàng Sa', lon: 112.00, lat: 16.50, lm: 1, d: 'M-5 6H5M0 6V-7M0-7L6-5L0-3', desc: 'Cột mốc khẳng định chủ quyền Việt Nam trên quần đảo Hoàng Sa.' },
     { id: 'mocTruongSa', n: 'Cột mốc Chủ quyền Trường Sa', sub: 'Quần đảo Trường Sa', lon: 113.50, lat: 9.50, lm: 1, d: 'M-7 6Q-4 3-1 6T5 6M0 3V-7M0-7L6-5L0-3', desc: 'Cột mốc khẳng định chủ quyền trên quần đảo Trường Sa, tiền tiêu trên biển Tổ quốc.' }
   ];
@@ -320,6 +324,17 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     BY[m.id] = { id: m.id, isl: 1, name: { vi: m.n, en: en[0], zh: zh[0] }, sub: { vi: m.sub, en: en[1], zh: zh[1] }, desc: { vi: m.desc, en: en[2], zh: zh[2] }, minK: m.lm ? 1.45 : 1.15 };
   });
 
+  // zh: tên tỉnh/thành, đảo, công trình & địa danh dùng tiếng Anh không dấu (ASCII); mô tả/thông tin giữ tiếng Trung
+  Object.keys(BY).forEach(function (k) {
+    const b = BY[k];
+    if (b.name) b.name.zh = b.name.en;
+    if (b.sub) b.sub.zh = b.sub.en;
+  });
+  // Tâm nhãn đặt tay (kinh, vĩ) gần trung tâm phần đất liền của Tây Ninh (+Long An) và TP. Hồ Chí Minh (+Bình Dương, Bà Rịa - Vũng Tàu)
+  // Đồng Tháp (+Tiền Giang): tâm nhãn đặt tay giữa dải đất xanh, dưới đường ranh Tây Ninh – Long An và trên đường viền phía nam (không đè viền vàng); Tây Ninh dịch trái ~0.1° để tách khỏi TP. Hồ Chí Minh
+  const LBL_AT = { tayninh: [106.20, 11.22], hcm: [106.68, 10.95], dongthap: [106.07, 10.49] };
+  // Điểm neo thẻ thông tin (chú trỏ + chấm sáng) trùng đúng tâm nhãn thay vì tâm khung bao cả tỉnh
+  const ANCHOR_AT = { dongthap: LBL_AT.dongthap };
   // Lệch nhãn tay (đơn vị: cỡ chữ tỉnh) cho tỉnh có công trình khó tách
   const NUDGE = { khanhhoa: [-0.45, 0], hanoi: [0, 0] };
   // Tỉnh neo nhãn lên trên một công trình cụ thể: Cần Thơ neo trên icon Cầu Cần Thơ & Chợ Nổi
@@ -333,7 +348,7 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
   const SOV_L = {
     vi: ['Hoàng Sa, Trường Sa', 'là của Việt Nam'],
     en: ['Hoang Sa & Truong Sa', 'belong to Vietnam'],
-    zh: ['黄沙、长沙群岛', '属于越南']
+    zh: ['Hoang Sa, Truong Sa', '属于 Viet Nam']
   };
   let SOV = SOV_L.vi;
 
@@ -343,6 +358,13 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     return UI[l] ? l : 'vi';
   }
   function pick(o) { return o[lang()] || o.vi; }
+  // Tên hiển thị: tiếng Việt thêm "TP. " trước 6 thành phố (không lặp "TP. TP.")
+  function dispName(p) {
+    const n = pick(p.name);
+    if (!p.city || p.isl) return n;
+    if (lang() === 'vi') return /^TP\.?\s/i.test(n) ? n : 'TP. ' + n;
+    return /\sCity$/i.test(n) ? n : n + ' City';
+  }
   function se(tag, attrs, parent) {
     const e = document.createElementNS(NS, tag);
     for (const k in attrs) e.setAttribute(k, attrs[k]);
@@ -372,6 +394,8 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
   let audio = null, openId = null, abortCtl = null, dust = [], rings = [], labels = [], els = {}, sovTs = [];
   let mks = [], lmEl = null, star = null, sovKey = '', sovFit = 0; // sovKey/sovFit: cache cỡ chữ khẩu hiệu chủ quyền
   let view = { k: 1, x: 0, y: 0 }, ptr = new Map(), moved = 0, multi = false, pd = 1;
+  // Cache RAM: rc (vị trí svg), sr (khung stage + viewport), PD (u, padX, padY), nar (mobile), cardWH, bbc (tâm bbox từng tỉnh/công trình)
+  let rc = null, sr = null, PD = null, nar = false, cardWH = null, bbc = {}, need = 0, vraf = 0;
 
   function initSprites() {
     dust = [];
@@ -411,16 +435,48 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     canvas.width = Math.round(cw * dpr);
     canvas.height = Math.round(ch * dpr);
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    applyView();
+    measure();
+    sovKey = '';
+    schedule(true);
+  }
+
+  // ---- Cache RAM: chỉ đo layout ở measure() (mount / resize / orientationchange), không đo trong sự kiện kéo/lăn/vuốt ----
+  function measure() {
+    if (!svg || !stage) return;
+    const r = svg.getBoundingClientRect(), s = stage.getBoundingClientRect(), u = Math.min(r.width / VW, r.height / VH) || 1;
+    rc = { left: r.left, top: r.top };
+    sr = { left: s.left, top: s.top, w: window.innerWidth, h: window.innerHeight };
+    PD = { u: u, padX: Math.max(0, (r.width / u - VW) / 2), padY: Math.max(0, (r.height / u - VH) / 2) };
+    nar = window.matchMedia('(max-width: 768px)').matches;
+    if (card && openId) cardWH = [card.offsetWidth, card.offsetHeight];
+  }
+  function onOrient() { setTimeout(onResize, 120); }
+  // Gom mọi cập nhật kéo/zoom vào 1 lần ghi DOM mỗi khung hình (RAF); full = tính lại nhãn/icon theo mức zoom
+  function schedule(full) {
+    if (full) need = 2; else if (!need) need = 1;
+    if (!vraf) vraf = requestAnimationFrame(flush);
+  }
+  function flush() {
+    vraf = 0;
+    const m = need; need = 0;
+    if (!vp) return;
+    if (m === 2) applyView(); else { setT(); if (openId) placeCard(); }
+  }
+  function setT() { vp.style.transform = 'translate3d(' + view.x.toFixed(1) + 'px,' + view.y.toFixed(1) + 'px,0) scale(' + view.k.toFixed(3) + ')'; }
+  function clampView() {
+    const k = view.k, pd = PD;
+    if (!pd) return;
+    const xlo = VW + pd.padX - VW * k, xhi = -pd.padX, ylo = VH + pd.padY - VH * k, yhi = -pd.padY;
+    view.x = xlo > xhi ? (xlo + xhi) / 2 : Math.min(xhi, Math.max(xlo, view.x));
+    view.y = ylo > yhi ? (ylo + yhi) / 2 : Math.min(yhi, Math.max(ylo, view.y));
   }
 
   // ---- Zoom / Pan ----
-  function unit() { if (!svg) return 1; const r = svg.getBoundingClientRect(); return Math.min(r.width / VW, r.height / VH) || 1; }
-  // Phần bù (đơn vị SVG) khi khung màn hình rộng/cao hơn tỷ lệ VW/VH (xMidYMid meet)
+  function unit() { if (!PD) measure(); return PD ? PD.u : 1; }
+  // Phần bù (đơn vị SVG) khi khung màn hình rộng/cao hơn tỷ lệ VW/VH (xMidYMid meet) — đọc từ cache
   function pads() {
-    if (!svg) return { u: 1, padX: 0, padY: 0 };
-    const r = svg.getBoundingClientRect(), u = Math.min(r.width / VW, r.height / VH) || 1;
-    return { u: u, padX: Math.max(0, (r.width / u - VW) / 2), padY: Math.max(0, (r.height / u - VH) / 2) };
+    if (!PD) measure();
+    return PD || { u: 1, padX: 0, padY: 0 };
   }
   // Cỡ chữ khẩu hiệu chủ quyền (px màn hình). PC: 26–34px theo kích thước bản đồ.
   // Mobile: tối đa 17px (như cũ), tự thu nhỏ để dòng dài nhất chỉ chiếm ≤ 86% dải biển trống bên phải bờ biển
@@ -440,16 +496,14 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
   function applyView() {
     if (!vp) return;
     const k = view.k;
-    const pd = pads();
-    const xlo = VW + pd.padX - VW * k, xhi = -pd.padX, ylo = VH + pd.padY - VH * k, yhi = -pd.padY;
-    view.x = xlo > xhi ? (xlo + xhi) / 2 : Math.min(xhi, Math.max(xlo, view.x));
-    view.y = ylo > yhi ? (ylo + yhi) / 2 : Math.min(yhi, Math.max(ylo, view.y));
-    vp.setAttribute('transform', 'translate(' + view.x.toFixed(1) + ' ' + view.y.toFixed(1) + ') scale(' + k.toFixed(3) + ')');
+    if (!PD) measure();
+    clampView();
+    setT();
     // Cỡ chữ nhãn giữ theo px màn hình (nghịch đảo với zoom): tăng nhẹ theo k, không teo khi zoom ra
     // Cỡ chữ trên màn hình = 15px × min(zoom, 6)^0.45: tăng rõ theo zoom, không teo khi zoom ra.
     // Viền tính theo px màn hình (3.5px, tăng nhẹ theo cỡ chữ), quy đổi về đơn vị SVG bằng unit*k.
     // Màn hình mobile (≤768px): cỡ chữ ≈ 0.6 lần, tăng theo zoom chậm hơn và dừng sớm hơn để các tên sát nhau không đè
-    const narrow = window.matchMedia('(max-width: 768px)').matches;
+    const narrow = nar;
     const kz = Math.min(k, narrow ? 4 : 4.5), px = (narrow ? 9 : 10) * Math.pow(kz, narrow ? 0.35 : 0.28), u = unit() * k;
     const fs = px / u, sw = ((3.5 + (px - 15) * 0.1) / u).toFixed(3) + 'px', all = k > 1.35;
     // Icon công trình (scale ico); tỉnh có công trình được đẩy nhãn lên cao hơn đỉnh icon để không bị che
@@ -475,6 +529,11 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
           l.el.setAttribute('x', (l.x0 + nd[0] * fs).toFixed(1));
           l.el.setAttribute('y', (l.y0 - (l.lift ? liftY : 0) + nd[1] * fs).toFixed(1));
         }
+      } else if (l.ay !== undefined) {
+        // Nhãn đảo/quần đảo: căn giữa ngay dưới mép dưới đa giác (text-anchor middle + dominant-baseline text-before-edge = "top"), đệm cố định 5px màn hình
+        const by = l.dot ? l.dot.y + 3 * ico : l.ay;
+        l.el.setAttribute('x', l.ax.toFixed(1));
+        l.el.setAttribute('y', Math.min(by + 5 / u, VH - 6 - fs * 1.2).toFixed(1));
       }
     });
     // Icon giữ kích thước gần đều trên màn hình; lớp công trình hiện khi zoom >= 1.45
@@ -487,9 +546,31 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
       // Tên công trình không hiển thị trên bản đồ (vẫn chạm icon để xem thẻ thông tin)
       if (m.lm) m.lb.style.display = 'none';
       const extraY = m.id === 'ngomon' ? 7 * sc : 0;
-      m.lb.setAttribute('y', (m.y + 8 * sc + extraY + lfs * 0.95).toFixed(1));
+      if (!m.anc) m.lb.setAttribute('y', (m.y + 8 * sc + extraY + lfs * 0.95).toFixed(1)); // điểm đảo có neo: vị trí do vòng nhãn ở trên đặt
     });
     if (lmEl) lmEl.classList.toggle('on', k >= 1.45);
+    // Chống chồng nhãn/icon: nhãn tỉnh né icon công trình (đẩy lên); nhãn đảo/điểm phụ ẩn nếu đè nhãn đã đặt hoặc icon
+    const bx = function (l, isPrv) {
+      const x = +l.el.getAttribute('x'), y = +l.el.getAttribute('y'), w = (l.el.textContent || '').length * fs * 0.58, h = fs;
+      if (l.top) return [x - w / 2, x + w / 2, y, y + h * 1.1]; // nhãn đảo neo mép trên
+      return [x - w / 2, x + w / 2, isPrv ? y - h / 2 : y - h * 0.8, isPrv ? y + h / 2 : y + h * 0.2];
+    };
+    const hit = function (a, b) { return a[0] < b[1] && a[1] > b[0] && a[2] < b[3] && a[3] > b[2]; };
+    const icb = k >= 1.45 ? mks.filter(function (m) { return m.lm; }).map(function (m) { return [m.x - 8 * ico, m.x + 8 * ico, m.y - 8 * ico, m.y + 8 * ico]; }) : [];
+    const placed = [];
+    labels.forEach(function (l) {
+      if (l.y0 === undefined || l.el.style.display === 'none') return;
+      let b = bx(l, true);
+      if (icb.some(function (r) { return hit(b, r); })) {
+        l.el.setAttribute('y', (+l.el.getAttribute('y') - fs * 0.8).toFixed(1)); b = bx(l, true);
+      }
+      placed.push(b);
+    });
+    labels.forEach(function (l) {
+      if (l.y0 !== undefined || l.el.style.display === 'none') return;
+      const b = bx(l, false);
+      if (placed.some(function (r) { return hit(b, r); }) || icb.some(function (r) { return hit(b, r); })) l.el.style.display = 'none'; else placed.push(b);
+    });
     if (star) { // Sao đỏ Thủ đô: luôn hiện, scale mượt theo zoom; khi công trình hiện (k >= 1.45) dịch sang phải icon Tháp Rùa
       // Sao to thêm ~30% (×1.3) ở mọi mức zoom; khoảng cách dịch sang phải giữ nguyên để không chạm icon Tháp Rùa
       const ss = 1.3 * (narrow ? 6.5 : 8) / (8 * unit() * Math.pow(k, 1.45)), hm = mks.find(function (m) { return m.id === 'thaprua'; });
@@ -512,14 +593,16 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     if (openId) placeCard();
   }
   function zoomAt(cx, cy, f) {
-    const r = svg.getBoundingClientRect(), pd = pads(), u = pd.u, nk = Math.min(8, Math.max(1, view.k * f));
-    const px = (cx - r.left) / u - pd.padX, py = (cy - r.top) / u - pd.padY;
+    if (!rc || !PD) return;
+    const pd = PD, u = pd.u, nk = Math.min(8, Math.max(1, view.k * f));
+    const px = (cx - rc.left) / u - pd.padX, py = (cy - rc.top) / u - pd.padY, ch2 = nk !== view.k;
     view.x = px - (px - view.x) * nk / view.k;
     view.y = py - (py - view.y) * nk / view.k;
     view.k = nk;
-    applyView();
+    clampView();
+    schedule(ch2);
   }
-  function pan(dx, dy) { const u = unit(); view.x += dx / u; view.y += dy / u; applyView(); }
+  function pan(dx, dy) { if (!PD) return; view.x += dx / PD.u; view.y += dy / PD.u; clampView(); schedule(false); }
   function dist() { const a = Array.from(ptr.values()); return Math.hypot(a[0][0] - a[1][0], a[0][1] - a[1][1]) || 1; }
   function mid() { const a = Array.from(ptr.values()); return [(a[0][0] + a[1][0]) / 2, (a[0][1] + a[1][1]) / 2]; }
   function onDown(e) {
@@ -555,10 +638,23 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
   function onWheel(e) { e.preventDefault(); zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0015)); }
 
   // ---- Dựng bản đồ ----
+  // Làm mượt đường viền: Catmull-Rom khép kín -> Bezier bậc 3 (không còn đa giác thô)
+  function smoothD(q) {
+    const n0 = q.length, f = function (v) { return v.toFixed(1); };
+    if (n0 > 1 && q[0][0] === q[n0 - 1][0] && q[0][1] === q[n0 - 1][1]) q = q.slice(0, n0 - 1);
+    const n = q.length;
+    if (n < 4) return 'M' + q.map(function (a) { return f(a[0]) + ' ' + f(a[1]); }).join('L') + 'Z';
+    let d = 'M' + f(q[0][0]) + ' ' + f(q[0][1]);
+    for (let i = 0; i < n; i++) {
+      const a = q[(i - 1 + n) % n], b = q[i], c = q[(i + 1) % n], e = q[(i + 2) % n];
+      d += 'C' + f(b[0] + (c[0] - a[0]) / 6) + ' ' + f(b[1] + (c[1] - a[1]) / 6) + ' ' + f(c[0] - (e[0] - b[0]) / 6) + ' ' + f(c[1] - (e[1] - b[1]) / 6) + ' ' + f(c[0]) + ' ' + f(c[1]);
+    }
+    return d + 'Z';
+  }
   function addShape(parent, id, ds, fill) {
     const gr = se('g', { class: 's4-prov', 'data-id': id }, parent);
-    ds.forEach(function (d) { se('path', { d: d, class: 's4-gold' }, gr); });
-    ds.forEach(function (d) { se('path', { d: d, class: 's4-fill', fill: fill }, gr); });
+    ds.forEach(function (d) { se('path', { d: d, class: 's4-gold', 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, gr); });
+    ds.forEach(function (d) { se('path', { d: d, class: 's4-fill', fill: fill, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, gr); });
     els[id] = gr;
     return gr;
   }
@@ -571,10 +667,12 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
       const g2 = se('g', { class: 's4-prov', 'data-id': m.id }, m.lm ? lmEl : ptEl);
       const inner = se('g', {}, g2);
       se('circle', { r: 8, class: 's4-hit-pt' }, inner);
-      se('path', { d: m.d, class: 's4-ic' }, inner);
-      const lb = se('text', { x: gx.toFixed(1), y: gy.toFixed(1), 'text-anchor': 'middle', class: 's4-lb' }, parent);
+      se('path', { d: m.d, class: 's4-ic', 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, inner);
+      const la = { x: gx.toFixed(1), y: gy.toFixed(1), 'text-anchor': 'middle', class: 's4-lb' };
+      if (!m.lm) la['dominant-baseline'] = 'text-before-edge'; // điểm đảo (Phú Quốc, Côn Đảo): nhãn neo mép trên, nằm dưới đảo
+      const lb = se('text', la, parent);
       els[m.id] = g2;
-      labels.push({ id: m.id, el: lb });
+      labels.push({ id: m.id, el: lb, top: !m.lm });
       mks.push({ id: m.id, g: inner, lb: lb, x: gx, y: gy, lm: !!m.lm });
     });
     // Sao đỏ 5 cánh tại Hà Nội (ngoài .vn-landmarks nên luôn hiện từ k = 1), chạm để mở thẻ Hà Nội
@@ -589,33 +687,91 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     star = { g: si, x: (105.85 - GEO.lon0) * KX * S + PAD, y: (GEO.lat1 - 21.03) * S + PAD };
   }
   function islands(parent) {
+    const lf = landEl ? landEl.querySelectorAll('.s4-fill') : [];
+    const onLand = function (x, y) {
+      for (let i = 0; i < lf.length; i++) { try { if (lf[i].isPointInFill(new DOMPoint(x, y))) return true; } catch (e) {} }
+      return false;
+    };
     ISL.forEach(function (o) {
       const b = o.box, cx = (b[0] + b[1]) / 2, cy = (b[2] + b[3]) / 2, rx = (b[1] - b[0]) / 2, ry = (b[3] - b[2]) / 2;
       const gx = function (lon) { return (lon - GEO.lon0) * KX * S + PAD; }, gy = function (lat) { return (GEO.lat1 - lat) * S + PAD; };
       const ds = [];
+      let bx0 = 1e9, bx1 = -1e9, by1 = -1e9; // khung thực của đa giác đảo (SVG): mép trái/phải/dưới
       // Đường bao 14 điểm, gợn nhẹ tất định: tròn / thuôn dài hướng ĐB–TN (kiểu 1) / vành khuyên rỗng ruột (kiểu 2)
       const ring = function (x, y, r, t, k, dir, sgn, ph) {
         const ca = Math.cos(dir), sa = Math.sin(dir);
-        let s = '';
+        const pp = [];
         for (let j = 0; j < 14; j++) {
           const q = sgn * j / 14 * 6.283, w = 1 + 0.12 * Math.sin(q * 3 + ph) + 0.07 * Math.sin(q * 5 + ph * 2);
           const ex = Math.cos(q) * r * k * w, ey = Math.sin(q) * r * (t === 1 ? 0.42 : 1) * k * w;
-          s += (j ? 'L' : 'M') + gx(x + ex * ca - ey * sa).toFixed(1) + ' ' + gy(y + ex * sa + ey * ca).toFixed(1);
+          pp.push([gx(x + ex * ca - ey * sa), gy(y + ex * sa + ey * ca)]);
         }
-        return s + 'Z';
+        pp.forEach(function (q) { if (q[0] < bx0) bx0 = q[0]; if (q[0] > bx1) bx1 = q[0]; if (q[1] > by1) by1 = q[1]; });
+        return smoothD(pp);
       };
       o.pts.forEach(function (p, i) {
         const t = p[3], dir = t === 1 ? 0.7 : 0;
+        if (o.sub && !o.ref && onLand(gx(p[0]), gy(p[1]))) return; // đã có đất liền/đảo tại đây: không vẽ chồng
         ds.push(ring(p[0], p[1], p[2], t, 1, dir, 1, i));
         if (t === 2) ds.push(ring(p[0], p[1], p[2], t, 0.55, dir, -1, i)); // chiều ngược: lòng hồ rỗng
       });
       const gr = addShape(parent, o.id, ds, '#047857');
       gr.insertBefore(se('ellipse', { cx: gx(cx), cy: gy(cy), rx: (rx + 0.2) * KX * S, ry: (ry + 0.2) * S, class: 's4-hit' }), gr.firstChild);
-      if (o.ref) { gr.setAttribute('data-id', o.ref); return; } // đa giác Côn Đảo: chạm mở thẻ Côn Đảo, nhãn dùng điểm đảo sẵn có
-      // Nhãn Trường Sa nâng lên 14 đơn vị SVG để không sát mép dưới (tránh vùng safe-area iPhone)
-      const lb = se('text', { x: gx(cx), y: gy(b[2]) + 22 - (o.id === 'truong-sa' ? 14 : 0), 'text-anchor': 'middle', class: 's4-lb' }, vp);
-      labels.push({ id: o.id, el: lb });
+      const ax = bx0 < bx1 ? (bx0 + bx1) / 2 : gx(cx), ay = by1 > -1e9 ? by1 : gy(b[2]);
+      o.anc = [ax, ay]; // neo nhãn: giữa ngang + mép dưới đa giác
+      if (o.ref) { gr.setAttribute('data-id', o.ref); return; } // đa giác Côn Đảo: chạm mở thẻ Côn Đảo, nhãn dùng điểm đảo sẵn có (neo ở anchorIslandLabels)
+      // Nhãn đảo/quần đảo: ngay dưới mép dưới đa giác (vị trí chính xác đặt trong applyView theo zoom)
+      const lb = se('text', { x: ax.toFixed(1), y: ay.toFixed(1), 'text-anchor': 'middle', 'dominant-baseline': 'text-before-edge', class: 's4-lb' }, vp);
+      labels.push({ id: o.id, el: lb, top: true, ax: ax, ay: ay });
     });
+  }
+
+  // Polygon GeoJSON nhỏ nằm đè lên mảng đảo bổ sung của Đảo Trần, Cô Tô, Cát Bà: bỏ đi để mỗi đảo chỉ có 1 mảng xanh + 1 viền vàng
+  function dupIsle(po, ll) {
+    const rg = po && po[0];
+    if (!rg || !rg.length) return false;
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    for (let j = 0; j < rg.length; j++) {
+      const q = ll(rg[j]);
+      if (q[0] < x0) x0 = q[0]; if (q[0] > x1) x1 = q[0];
+      if (q[1] < y0) y0 = q[1]; if (q[1] > y1) y1 = q[1];
+    }
+    if (x1 - x0 > 0.5 || y1 - y0 > 0.5) return false; // đất liền / mảng lớn: giữ nguyên
+    const M = 0.08;
+    return ISL.some(function (o) {
+      return (o.id === 'dao-tran' || o.id === 'co-to' || o.id === 'cat-ba') && x1 >= o.box[0] - M && x0 <= o.box[1] + M && y1 >= o.box[2] - M && y0 <= o.box[3] + M;
+    });
+  }
+  // Quét lưới điểm trong khung kinh/vĩ để tìm mép dưới + tâm ngang của phần đất (đảo) thuộc 1 tỉnh; null nếu không thấy
+  function scanIsle(id, lo0, lo1, la0, la1, step) {
+    const gr = els[id], fl = gr ? gr.querySelectorAll('.s4-fill') : [];
+    if (!fl.length) return null;
+    const xa = (lo0 - GEO.lon0) * KX * S + PAD, xb = (lo1 - GEO.lon0) * KX * S + PAD;
+    const ya = (GEO.lat1 - la1) * S + PAD, yb = (GEO.lat1 - la0) * S + PAD;
+    let mnx = 1e9, mxx = -1e9, mxy = -1e9;
+    for (let y = ya; y <= yb; y += step) {
+      for (let x = xa; x <= xb; x += step) {
+        let hit = false;
+        for (let i = 0; i < fl.length && !hit; i++) {
+          try { hit = fl[i].isPointInFill(new DOMPoint(x, y)); } catch (e) { return null; }
+        }
+        if (hit) { if (x < mnx) mnx = x; if (x > mxx) mxx = x; if (y > mxy) mxy = y; }
+      }
+    }
+    return mxy > -1e9 ? { x: (mnx + mxx) / 2, y: mxy } : null;
+  }
+  // Neo nhãn các đảo không thuộc ISL: Côn Đảo (đa giác ISL), Phú Quốc (đất An Giang) — căn giữa, ngay mép dưới đảo
+  function anchorIslandLabels() {
+    const lbOf = function (id) { return labels.find(function (l) { return l.id === id; }); };
+    const mkOf = function (id) { return mks.find(function (m) { return m.id === id; }); };
+    const cd = ISL.find(function (o) { return o.id === 'con-dao-isl'; }), mC = mkOf('con-dao'), lC = lbOf('con-dao');
+    if (cd && cd.anc && mC && lC) { lC.ax = cd.anc[0]; lC.ay = cd.anc[1]; mC.anc = true; }
+    const mP = mkOf('phu-quoc'), lP = lbOf('phu-quoc');
+    if (mP && lP) {
+      const a = scanIsle('angiang', 103.70, 104.22, 9.70, 10.55, 1.5);
+      mP.anc = true;
+      if (a) { lP.ax = a.x; lP.ay = a.y; } else { lP.ax = mP.x; lP.ay = mP.y; lP.dot = mP; } // không thấy đất: neo ngay dưới chấm đảo
+    }
   }
 
   function buildMap(data) {
@@ -662,9 +818,9 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
       const G = groups[id] || (groups[id] = { ds: [], A: 0, sx: 0, sy: 0 });
       if (G.ds.length === 0) order.push(id);
       let d = '';
-      f.polys.forEach(function (po) { po.forEach(function (rg, i) {
+      f.polys.forEach(function (po) { if (dupIsle(po, ll)) return; po.forEach(function (rg, i) {
         const q = rg.map(function (c) { const l = ll(c); return [(l[0] - GEO.lon0) * KX * S + PAD, (GEO.lat1 - l[1]) * S + PAD]; });
-        d += 'M' + q.map(function (a) { return a[0].toFixed(1) + ' ' + a[1].toFixed(1); }).join('L') + 'Z';
+        d += smoothD(q);
         if (i) return;
         let a = 0, cx = 0, cy = 0;
         for (let j = 0; j < q.length; j++) {
@@ -680,10 +836,13 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     order.forEach(function (id) {
       const G = groups[id];
       if (!G.A) return;
-      const lb = se('text', { x: (G.sx / G.A).toFixed(1), y: (G.sy / G.A).toFixed(1), 'text-anchor': 'middle', 'dominant-baseline': 'central', class: 's4-lb s4-prv' }, vp);
-      labels.push({ id: id, el: lb, x0: G.sx / G.A, y0: G.sy / G.A, up: true });
+      let lx = G.sx / G.A, ly = G.sy / G.A;
+      if (LBL_AT[id]) { lx = (LBL_AT[id][0] - GEO.lon0) * KX * S + PAD; ly = (GEO.lat1 - LBL_AT[id][1]) * S + PAD; }
+      const lb = se('text', { x: lx.toFixed(1), y: ly.toFixed(1), 'text-anchor': 'middle', 'dominant-baseline': 'central', class: 's4-lb s4-prv' }, vp);
+      labels.push({ id: id, el: lb, x0: lx, y0: ly, up: true });
     });
     marks(vp);
+    anchorIslandLabels();
     // Xác định tỉnh chứa từng công trình (kiểm tra điểm trong vùng tô) để đẩy nhãn tỉnh đó lên trên
     const lift = {};
     mks.forEach(function (m) {
@@ -742,12 +901,21 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
   function full(p) {
     const l = lang(), n = pick(p.name);
     if (p.isl || p.extra) return n;
-    return l === 'vi' ? (p.city ? 'TP. ' : 'Tỉnh ') + n : l === 'en' ? n + (p.city ? ' City' : ' Province') : n + (p.city ? '市' : '省');
+    return p.city ? dispName(p) : l === 'vi' ? 'Tỉnh ' + n : n + ' Province';
+  }
+  // en/zh: tên tỉnh/thành sáp nhập theo tên quốc tế tiếng Anh không dấu ("TP.HCM" -> Ho Chi Minh City)
+  function fromText(f) {
+    if (lang() === 'vi') return f;
+    return f.split(' + ').map(function (n) {
+      if (/^TP\.?\s*HCM$/i.test(n)) return 'Ho Chi Minh City';
+      const a = n.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+      return /^Hai Phong$|^Ha Noi$|^Hue$|^Da Nang$|^Can Tho$/.test(a) ? a + ' City' : a;
+    }).join(' + ');
   }
   function fillCard(id) {
     const p = BY[id], L = UI[lang()];
     cardName.textContent = full(p);
-    cardSt.textContent = p.isl ? '' : p.from ? L.merged + p.from : L.same;
+    cardSt.textContent = p.isl ? '' : p.from ? L.merged + fromText(p.from) : L.same;
     cardSt.hidden = !!p.isl;
     cardReg.textContent = p.sub ? pick(p.sub) : pick(p.isl ? SEA : R[p.reg]);
     cardDesc.textContent = pick(p.desc);
@@ -776,33 +944,61 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     openId = id;
     fillCard(id);
     card.hidden = false;
+    cardWH = [card.offsetWidth, card.offsetHeight];
     setSel(id);
     placeCard();
     pluck(id.charCodeAt(0) + id.length);
   }
   // Đặt thẻ sát tỉnh vừa chạm: bên phải/trái tỉnh tùy chỗ trống, kẹp trong lề 12px, nối bằng chấm + vạch
+  // Tâm khung bao của tỉnh hình lõm/nhiều mảnh (vd. TP.HCM + Bình Dương + Vũng Tàu) có thể rơi ra ngoài biển:
+  // nếu vậy, đổi sang điểm nằm trong đất gần tâm nhất (ưu tiên điểm cách mép ≥ 6 đơn vị SVG)
+  function pinInside(id, c, b) {
+    const fl = els[id] ? els[id].querySelectorAll('.s4-fill') : [];
+    if (!fl.length) return c;
+    let bad = false;
+    const inn = function (x, y) {
+      for (let i = 0; i < fl.length; i++) {
+        try { if (fl[i].isPointInFill(new DOMPoint(x, y))) return true; } catch (e) { bad = true; return false; }
+      }
+      return false;
+    };
+    if (inn(c[0], c[1]) || bad) return c;
+    let best = null, bd = 1e18, alt = null, ad = 1e18;
+    for (let y = b.y; y <= b.y + b.height; y += 2) {
+      for (let x = b.x; x <= b.x + b.width; x += 2) {
+        const d = (x - c[0]) * (x - c[0]) + (y - c[1]) * (y - c[1]);
+        if (d >= bd && d >= ad) continue;
+        if (!inn(x, y)) continue;
+        if (d < ad) { ad = d; alt = [x, y]; }
+        if (d < bd && inn(x - 6, y) && inn(x + 6, y) && inn(x, y - 6) && inn(x, y + 6)) { bd = d; best = [x, y]; }
+      }
+    }
+    return best || alt || c;
+  }
   function placeCard() {
-    if (!openId || !card || !svg || !els[openId] || !dotEl) return;
-    const el = els[openId], ctm = el.getScreenCTM();
-    if (!ctm) return;
-    const sr = stage.getBoundingClientRect(), vw = window.innerWidth, vh = window.innerHeight, M = 12, G = 18;
-    const b = el.getBBox(), p = svg.createSVGPoint();
-    p.x = b.x + b.width / 2; p.y = b.y + b.height / 2;
-    const q = p.matrixTransform(ctm), ax = q.x, ay = q.y, cwid = card.offsetWidth, chei = card.offsetHeight;
+    if (!openId || !card || !svg || !els[openId] || !dotEl || !rc || !PD || !sr) return;
+    let c = bbc[openId];
+    if (!c) {
+      const aa = ANCHOR_AT[openId];
+      if (aa) c = bbc[openId] = [(aa[0] - GEO.lon0) * KX * S + PAD, (GEO.lat1 - aa[1]) * S + PAD];
+      else { const b = els[openId].getBBox(); c = bbc[openId] = pinInside(openId, [b.x + b.width / 2, b.y + b.height / 2], b); } // đo 1 lần, tái dùng khi kéo/zoom
+    }
+    if (!cardWH) cardWH = [card.offsetWidth, card.offsetHeight];
+    const vw = sr.w, vh = sr.h, M = 12, G = 18, u = PD.u;
+    const ax = rc.left + (PD.padX + view.x + view.k * c[0]) * u, ay = rc.top + (PD.padY + view.y + view.k * c[1]) * u;
+    const cwid = cardWH[0], chei = cardWH[1];
     const right = ax + G + cwid <= vw - M;
     const L = Math.min(Math.max(right ? ax + G : ax - G - cwid, M), vw - M - cwid);
     const T = Math.min(Math.max(ay - chei / 2, M), vh - M - chei);
     const edge = right ? L : L + cwid;
-    card.dataset.side = right ? 'r' : 'l';
-    card.style.left = (L - sr.left) + 'px';
-    card.style.top = (T - sr.top) + 'px';
-    card.style.setProperty('--tail-y', (ay - T) + 'px');
-    dotEl.style.left = (ax - sr.left) + 'px';
-    dotEl.style.top = (ay - sr.top) + 'px';
+    const side = right ? 'r' : 'l';
+    if (card.dataset.side !== side) card.dataset.side = side;
+    card.style.transform = 'translate3d(' + (L - sr.left).toFixed(1) + 'px,' + (T - sr.top).toFixed(1) + 'px,0)';
+    card.style.setProperty('--tail-y', (ay - T).toFixed(1) + 'px');
+    dotEl.style.transform = 'translate3d(' + (ax - sr.left).toFixed(1) + 'px,' + (ay - sr.top).toFixed(1) + 'px,0)';
     dotEl.hidden = false;
-    tieEl.style.left = (Math.min(ax, edge) - sr.left) + 'px';
-    tieEl.style.top = (ay - sr.top) + 'px';
-    tieEl.style.width = Math.abs(edge - ax) + 'px';
+    tieEl.style.transform = 'translate3d(' + (Math.min(ax, edge) - sr.left).toFixed(1) + 'px,' + (ay - sr.top).toFixed(1) + 'px,0)';
+    tieEl.style.width = Math.abs(edge - ax).toFixed(1) + 'px';
     tieEl.hidden = false;
   }
   function onKey(e) { if (e.key === 'Escape' && openId) closeCard(); }
@@ -811,7 +1007,7 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     if (!stage) return;
     const L = UI[lang()];
     labels.forEach(function (l) {
-      const nm = pick(BY[l.id].name);
+      const nm = dispName(BY[l.id]);
       l.el.textContent = l.up ? nm.toUpperCase() : nm; // tên tỉnh in hoa toàn bộ
     });
     // Khẩu hiệu chủ quyền theo ngôn ngữ đang chọn (textContent), tính lại cỡ chữ vì độ dài đổi
@@ -819,7 +1015,7 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     sovTs.forEach(function (ts, i) { ts.textContent = SOV[i] || ''; });
     sovKey = '';
     applyView();
-    if (openId) fillCard(openId); else cardX.setAttribute('aria-label', L.close);
+    if (openId) { fillCard(openId); cardWH = [card.offsetWidth, card.offsetHeight]; } else cardX.setAttribute('aria-label', L.close);
   }
 
   // Tiếng gảy đàn tranh ngũ cung
@@ -871,6 +1067,7 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     tieEl.hidden = true;
     cardX.addEventListener('click', closeCard);
     window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onOrient);
     window.addEventListener('cgor-lang', renderTexts);
     window.addEventListener('keydown', onKey);
     document.body.appendChild(stage);
@@ -891,7 +1088,10 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     if (abortCtl) { try { abortCtl.abort(); } catch (e) {} abortCtl = null; }
     if (raf) cancelAnimationFrame(raf);
     raf = 0;
+    if (vraf) cancelAnimationFrame(vraf);
+    vraf = 0; need = 0;
     window.removeEventListener('resize', onResize);
+    window.removeEventListener('orientationchange', onOrient);
     window.removeEventListener('cgor-lang', renderTexts);
     window.removeEventListener('keydown', onKey);
     if (mapEl) {
@@ -903,6 +1103,7 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     }
     if (cardX) cardX.removeEventListener('click', closeCard);
     if (audio) { audio.close().catch(function () {}); audio = null; }
+    if (canvas) { canvas.width = 0; canvas.height = 0; } // giải phóng bộ nhớ canvas (Safari iPhone)
     if (stage) stage.remove();
     document.body.classList.remove('s4-active');
     stage = canvas = g = mapEl = svg = vp = landEl = sovEl = card = cardName = cardSt = cardReg = cardDesc = cardX = null;
@@ -910,6 +1111,8 @@ con-dao|海洋生态旅游、自然保护与历史遗迹|🐢 海龟|⚓ 海港|
     dust = []; rings = []; labels = []; els = {}; sovTs = []; mks = []; lmEl = null; star = null; sovKey = ''; sovFit = 0;
     ptr.clear();
     openId = null;
+    rc = sr = PD = cardWH = null; bbc = {}; nar = false; moved = 0; multi = false;
+    cw = ch = 0;
   }
 
   window.CGOR_SPACES = window.CGOR_SPACES || {};

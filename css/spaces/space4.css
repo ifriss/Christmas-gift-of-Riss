@@ -67,7 +67,14 @@ body[data-space="space4"] #top-tools { z-index: 30; }
   height: 100%;
   display: block;
   cursor: grab;
+  touch-action: none;
+  will-change: transform;
+  transform: translateZ(0);
 }
+/* Kéo/zoom xuất qua translate3d(...) scale(...) (JS ghi 1 lần/khung hình bằng RAF) */
+.s4-svg > g { transform-origin: 0 0; }
+.s4-card, .s4-dot, .s4-tie { will-change: transform; }
+.s4-tie { transform-origin: 0 0; }
 
 /* PC: bản đồ phủ kín 4 cạnh màn hình, nằm dưới các nút (z-index >= 10) */
 @media (min-width: 431px) {
@@ -118,6 +125,8 @@ body.s4-active #name { display: none !important; }
     white-space: nowrap;
   }
   .s4-sov { stroke-width: 0.1em; }
+  .s4-map, .s4-svg { touch-action: none; overscroll-behavior: none; }
+  .s4-card { width: min(340px, calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px))); }
 }
 
 /* Tỉnh/thành: lớp vàng kim dưới (chỉ nửa ngoài lộ ra thành viền 1.1px), lớp sơn mài ngọc trên với ranh giới tỉnh cũ mảnh mờ */
