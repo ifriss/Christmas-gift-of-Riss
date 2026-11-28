@@ -243,5 +243,23 @@
           name: "Lựa Chọn Của Em",
           type: 'audio',
           src: 'music/lua-chon-cua-em-mwxdskyq.mp3'
+        },
+        {
+          id: 'mp3_mwz3pq3m',
+          name: "Dưới Tán Cây Khô Hoa Nở",
+          type: 'audio',
+          src: 'music/duoi-tan-cay-kho-hoa-no-mwz3pq3m.mp3'
+        },
+        {
+          id: 'mp3_mwz3qvgq',
+          name: "MRT",
+          type: 'audio',
+          src: 'music/mrt-mwz3qvgq.mp3'
+        },
+        {
+          id: 'mp3_mwz44kzn',
+          name: "Beautiful In White",
+          type: 'audio',
+          src: 'music/beautiful-in-white-mwz44kzn.mp3'
         }
       ];
